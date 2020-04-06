@@ -1,3 +1,5 @@
+![](docs/mona.gif)
+
 ## Requirements
 
 * conda
