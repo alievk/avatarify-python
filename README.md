@@ -1,5 +1,9 @@
 ![](docs/mona.gif)
 
+# Avatarify
+
+Avatars for Skype and Zoom. Democratized.
+
 ## Requirements
 
 * conda
