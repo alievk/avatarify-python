@@ -8,6 +8,6 @@ PYTHONPATH=$PYTHONPATH:fomm
 FFCMD='ffmpeg -y -i pipe:0 tmp.mp4'
 FFCMD='ffmpeg -re -i pipe:0 -vf format=pix_fmts=yuv420p -f v4l2 /dev/video99'
 
-#python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale --pipe | $FFCMD
-python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale 
+python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale --pipe | $FFCMD
+#python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale 
 
