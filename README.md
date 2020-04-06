@@ -2,7 +2,7 @@
 
 * conda
 
-This app is tested only GPU.
+This app is tested only on GPU.
 
 ## Install
 
