@@ -2,7 +2,7 @@
 
 * conda
 
-This app is tested only on GPU.
+This app is tested only on GPU and Linux (Ubuntu 18.04).
 
 ## Install
 
