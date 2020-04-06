@@ -14,5 +14,5 @@ git clone https://github.com/umlaeute/v4l2loopback
 cd v4l2loopback
 make && sudo make install
 sudo depmod -a
-sudo insmod v4l2loopback.ko exclusive_caps=1 video_nr=99 card_label="avatarify"
+sudo insmod v4l2loopback.ko exclusive_caps=1 video_nr=1 card_label="avatarify"
 cd ..
