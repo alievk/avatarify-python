@@ -74,6 +74,16 @@ Go to Settings -> Video and choose `avatarify` or `CamTwist` from Camera drop-do
 ![Zoom](docs/zoom.jpg)
 
 
+## Contribution
+
+Our goal is to democratize deepfake avatars. To make the technology even more accessible, we have to tackle two major problems:
+
+1. Add support for more platforms (Linux and Mac are already supported).
+2. Optimize neural network run-time. Running network real-time on CPU is of high priority.
+
+Please make pull requests if you have any improvements or bug-fixes.
+
+
 ## Troubleshooting
 
 * *Zoom/Skype doesn't see `avatarify` camera*. Restart Zoom/Skype and try again.
