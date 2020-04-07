@@ -1,6 +1,7 @@
 import os, sys
 import glob
 import yaml
+import time
 from argparse import ArgumentParser
 
 import imageio
@@ -19,20 +20,20 @@ import cv2
 
 
 
-def load_checkpoints(config_path, checkpoint_path):
+def load_checkpoints(config_path, checkpoint_path, device='cuda'):
 
     with open(config_path) as f:
         config = yaml.load(f)
 
     generator = OcclusionAwareGenerator(**config['model_params']['generator_params'],
                                         **config['model_params']['common_params'])
-    generator.cuda()
+    generator.to(device)
 
     kp_detector = KPDetector(**config['model_params']['kp_detector_params'],
                              **config['model_params']['common_params'])
-    kp_detector.cuda()
+    kp_detector.to(device)
 
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     generator.load_state_dict(checkpoint['generator'])
     kp_detector.load_state_dict(checkpoint['kp_detector'])
 
@@ -63,12 +64,12 @@ def pad_img(img, orig):
     return out
 
 
-def predict(driving_frame, source_image, relative, adapt_movement_scale):
+def predict(driving_frame, source_image, relative, adapt_movement_scale, device='cuda'):
     global kp_driving_initial
 
     with torch.no_grad():
-        source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).cuda()
-        driving_frame = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).cuda()
+        source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
+        driving_frame = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
         kp_source = kp_detector(source)
 
         if kp_driving_initial is None:
@@ -94,15 +95,18 @@ if __name__ == "__main__":
 
     parser.add_argument("--relative", dest="relative", action="store_true", help="use relative or absolute keypoint coordinates")
     parser.add_argument("--adapt_scale", dest="adapt_scale", action="store_true", help="adapt movement scale based on convex hull of keypoints")
+    parser.add_argument("--no-pad", dest="no_pad", action="store_true", help="don't pad output image")
 
     parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
     parser.add_argument("--pipe", action="store_true", help="Output jpeg images into stdout")
  
- 
     parser.set_defaults(relative=False)
     parser.set_defaults(adapt_scale=False)
+    parser.set_defaults(no_pad=False)
 
     opt = parser.parse_args()
+
+    device = 'cuda' if torch.cuda.is_available() else 'cpu' 
 
     avatars=[]
     for f in glob.glob('./avatars/*[png|jpg]'):
@@ -111,7 +115,7 @@ if __name__ == "__main__":
         avatars.append(img)
     
     print('load checkpoints..')
-    generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint)
+    generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint, device=device)
 
     kp_driving_initial = None
 
@@ -122,12 +126,12 @@ if __name__ == "__main__":
         exit()
 
     cur_ava = 0
-    passthrough = True
+    passthrough = False
 
-    cv2.namedWindow('cam')
-    cv2.namedWindow('avatar')
-    cv2.moveWindow('cam', 0, 0)
-    cv2.moveWindow('avatar', 600, 0)
+    cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
+
+    cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
+    cv2.resizeWindow('avatarify', 256, 256)
 
     while True:
         ret, frame = cap.read()
@@ -141,10 +145,11 @@ if __name__ == "__main__":
         frame = resize(frame, (256, 256))[..., :3]
 
         if passthrough:
-            out = frame_orig
+            out = frame
         else:
-            pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale)
-            pred = pad_img(pred, frame_orig)
+            pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, device=device)
+            if not opt.no_pad:
+                pred = pad_img(pred, frame_orig)
             out = pred
         
         key = cv2.waitKey(1)
@@ -166,9 +171,7 @@ if __name__ == "__main__":
         frame_rect = cv2.rectangle(frame_orig, (lrud[0], lrud[2]), (lrud[1], lrud[3]), (0, 0, 255), 2)
 
         cv2.imshow('cam', frame_rect)
-        # cv2.imshow('input', frame)
-        cv2.imshow('avatar', out)
-
+        cv2.imshow('avatarify', out)
 
     cap.release()
     cv2.destroyAllWindows()
