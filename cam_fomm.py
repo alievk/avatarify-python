@@ -103,6 +103,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
     parser.add_argument("--pipe", action="store_true", help="Output jpeg images into stdout")
+    parser.add_argument("--debug", action="store_true", help="Print debug information")
 
     parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
  
@@ -122,11 +123,10 @@ if __name__ == "__main__":
             img = imageio.imread(f)
             if img.ndim == 2:
                 img = np.tile(img[..., None], [1, 1, 3])
-            log(img.shape)
             img = resize(img, (256, 256))[..., :3]
             avatars.append(img)
     
-    print('load checkpoints..')
+    log('load checkpoints..')
     generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint, device=device)
 
     kp_driving_initial = None
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture(opt.cam)
 
     if not cap.isOpened():
-        print("Cannot open camera")
+        log("Cannot open camera")
         exit()
 
     cur_ava = 0
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
+            log("Can't receive frame (stream end?). Exiting ...")
             break
 
         frame_orig = frame.copy()
@@ -159,10 +159,14 @@ if __name__ == "__main__":
         if passthrough:
             out = frame_orig
         else:
+            pred_start = time.time()
             pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, device=device)
             if not opt.no_pad:
                 pred = pad_img(pred, frame_orig)
             out = pred
+            pred_time = (time.time() - pred_start) * 1000
+            if opt.debug:
+                log(f'PRED: {pred_time:.3f}ms')
         
         key = cv2.waitKey(1)
 
@@ -174,7 +178,7 @@ if __name__ == "__main__":
         elif key == 48:
             passthrough = not passthrough
         elif key != -1 and not opt.pipe:
-            print(key)
+            log(key)
 
         if opt.pipe:
             buf = cv2.imencode('.jpg', out)[1].tobytes()
