@@ -58,7 +58,7 @@ bash run_mac.sh
 ```
 2. Go to [CamTwist](http://camtwiststudio.com).
 3. Choose `Desktop+` and press `Select`.
-4. In the `Settings` sction choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
+4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
 
 
 ## Tips
@@ -94,6 +94,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 
 * *Zoom/Skype doesn't see `avatarify` camera*. Restart Zoom/Skype and try again.
 * *Avatar image is frozen*: In Zoom, try Stop and Start Video.
+* *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1` or `2`
 
 
 ## Credits
