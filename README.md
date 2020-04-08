@@ -1,5 +1,9 @@
 ![](docs/mona.gif)
 
+:arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs) 
+
+:arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
+
 # Avatarify
 
 Avatars for Skype and Zoom. Democratized.
@@ -9,7 +13,7 @@ Avatars for Skype and Zoom. Democratized.
 * [conda](https://docs.conda.io/en/latest/miniconda.html)
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-This app is tested only on GPU and Linux (Ubuntu 18.04).
+This app is tested only on GPU and Linux (Ubuntu 18.04) and Mac (low FPS).
 
 ## Install
 
@@ -89,3 +93,8 @@ Please make pull requests if you have any improvements or bug-fixes.
 
 * *Zoom/Skype doesn't see `avatarify` camera*. Restart Zoom/Skype and try again.
 * *Avatar image is frozen*: In Zoom, try Stop and Start Video.
+
+
+## Credits
+
+- Avatrify uses [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model) for generating avatars.
