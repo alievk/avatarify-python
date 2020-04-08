@@ -13,7 +13,9 @@ Avatars for Skype and Zoom. Democratized.
 * [conda](https://docs.conda.io/en/latest/miniconda.html)
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-This app is tested only on GPU and Linux (Ubuntu 18.04) and Mac (low FPS).
+## Performance:
+- Linux (with 1080 Ti GPU): **33 fps**
+- Mac OSX (MacBook Pro 2018; no GPU): **~1 fps**
 
 ## Install
 
