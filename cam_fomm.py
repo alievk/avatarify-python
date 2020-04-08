@@ -88,6 +88,10 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, device=
         return out
 
 
+def log(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--config", required=True, help="path to config")
@@ -111,10 +115,14 @@ if __name__ == "__main__":
     device = 'cuda' if torch.cuda.is_available() else 'cpu' 
 
     avatars=[]
-    for i, f in enumerate(glob.glob(f'{opt.avatars}/*')):
-        if f.endswith('.jpg') or f.endswith('.png'):
-            print(f'{i}: {f}', file=sys.stderr)
+    images_list = sorted(glob.glob(f'{opt.avatars}/*'))
+    for i, f in enumerate(images_list):
+        if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
+            log(f'{i}: {f}')
             img = imageio.imread(f)
+            if img.ndim == 2:
+                img = np.tile(img[..., None], [1, 1, 3])
+            log(img.shape)
             img = resize(img, (256, 256))[..., :3]
             avatars.append(img)
     
