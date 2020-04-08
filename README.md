@@ -17,12 +17,15 @@ This app is tested only on GPU and Linux (Ubuntu 18.04) and Mac (low FPS).
 
 ## Install
 
+#### Download
+1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
+2. Place `vox-adv-cpk.pth.tar` file in the root directory
+
 #### Linux
 It is supposed that there is only one web cam connected to the computer and it's in `/dev/video0`. Installation process will create a virtual camera `/dev/video1`, so this device must be reserved.
 
 ```bash
 source scripts/install.sh
-bash scripts/download_data.sh
 ```
 
 #### Mac
@@ -32,10 +35,6 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 2. Setup `avatarify` conda environment with all required dependencies:
 ```bash
 source scripts/install_mac.sh
-```
-3. Download models' weights:
-```bash
-bash scripts/download_data.sh
 ```
 
 ## Setup avatars
