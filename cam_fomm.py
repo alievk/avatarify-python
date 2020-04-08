@@ -99,6 +99,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
     parser.add_argument("--pipe", action="store_true", help="Output jpeg images into stdout")
+
+    parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
  
     parser.set_defaults(relative=False)
     parser.set_defaults(adapt_scale=False)
@@ -109,10 +111,12 @@ if __name__ == "__main__":
     device = 'cuda' if torch.cuda.is_available() else 'cpu' 
 
     avatars=[]
-    for f in glob.glob('./avatars/*[png|jpg]'):
-        img = imageio.imread(f)
-        img = resize(img, (256, 256))[..., :3]
-        avatars.append(img)
+    for i, f in enumerate(glob.glob(f'{opt.avatars}/*')):
+        if f.endswith('.jpg') or f.endswith('.png'):
+            print(f'{i}: {f}', file=sys.stderr)
+            img = imageio.imread(f)
+            img = resize(img, (256, 256))[..., :3]
+            avatars.append(img)
     
     print('load checkpoints..')
     generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint, device=device)
@@ -126,12 +130,12 @@ if __name__ == "__main__":
         exit()
 
     cur_ava = 0
-    passthrough = False
+    passthrough = True
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
-
     cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
-    cv2.resizeWindow('avatarify', 256, 256)
+    cv2.moveWindow('cam', 0, 0)
+    cv2.moveWindow('avatarify', 600, 0)
 
     while True:
         ret, frame = cap.read()
@@ -145,7 +149,7 @@ if __name__ == "__main__":
         frame = resize(frame, (256, 256))[..., :3]
 
         if passthrough:
-            out = frame
+            out = frame_orig
         else:
             pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, device=device)
             if not opt.no_pad:

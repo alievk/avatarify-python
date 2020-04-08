@@ -6,7 +6,8 @@ Avatars for Skype and Zoom. Democratized.
 
 ## Requirements
 
-* conda
+* [conda](https://docs.conda.io/en/latest/miniconda.html)
+* [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 This app is tested only on GPU and Linux (Ubuntu 18.04).
 
