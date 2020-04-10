@@ -81,6 +81,12 @@ Go to Settings -> Video and choose `avatarify` or `CamTwist` from Camera drop-do
 
 ![Zoom](docs/zoom.jpg)
 
+### Slack
+
+Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` in Video settings drop-down menu.
+
+![Slack](docs/slack.jpg)
+
 
 ## Contribution
 
