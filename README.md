@@ -8,21 +8,28 @@
 
 Avatars for Skype and Zoom. Democratized.
 
+**Disclaimer**: This project is unrelated to Samsung AI Center.
+
 ## Requirements
 
 * [conda](https://docs.conda.io/en/latest/miniconda.html)
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
-This app is tested only on GPU and Linux (Ubuntu 18.04) and Mac (low FPS).
+## Performance:
+- Linux (with 1080 Ti GPU): **33 fps**
+- Mac OSX (MacBook Pro 2018; no GPU): **~1 fps**
 
 ## Install
+
+#### Download
+1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
+2. Place `vox-adv-cpk.pth.tar` file in the root directory
 
 #### Linux
 It is supposed that there is only one web cam connected to the computer and it's in `/dev/video0`. Installation process will create a virtual camera `/dev/video1`, so this device must be reserved.
 
 ```bash
 source scripts/install.sh
-bash scripts/download_data.sh
 ```
 
 #### Mac
@@ -32,10 +39,6 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 2. Setup `avatarify` conda environment with all required dependencies:
 ```bash
 source scripts/install_mac.sh
-```
-3. Download models' weights:
-```bash
-bash scripts/download_data.sh
 ```
 
 ## Setup avatars
@@ -57,7 +60,7 @@ bash run_mac.sh
 ```
 2. Go to [CamTwist](http://camtwiststudio.com).
 3. Choose `Desktop+` and press `Select`.
-4. In the `Settings` sction choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
+4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
 
 
 ## Tips
@@ -93,6 +96,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 
 * *Zoom/Skype doesn't see `avatarify` camera*. Restart Zoom/Skype and try again.
 * *Avatar image is frozen*: In Zoom, try Stop and Start Video.
+* *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1` or `2`
 
 
 ## Credits
