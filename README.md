@@ -8,6 +8,8 @@
 
 Avatars for Skype and Zoom. Democratized.
 
+**Disclaimer**: This project is unrelated to Samsung AI Center.
+
 ## Requirements
 
 * [conda](https://docs.conda.io/en/latest/miniconda.html)
