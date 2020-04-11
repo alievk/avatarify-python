@@ -244,7 +244,7 @@ if __name__ == "__main__":
         
         key = cv2.waitKey(1)
 
-        if key == ord('q'):
+        if key == 27: # ESC
             break
         elif key == ord('d'):
             cur_ava += 1

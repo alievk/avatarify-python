@@ -89,6 +89,7 @@ X | Reset reference frame.
 F | Toggle reference frame search mode.
 R | Mirror reference window.
 T | Mirror output window.
+ESC | Quit
 
 ## Tips
 
