@@ -14,6 +14,8 @@ Avatars for Skype and Zoom. Democratized. Specifically for Windows.
 
 ## Install
 
+YouTube guide coming soon!
+
 #### Download
 1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
 2. Place `vox-adv-cpk.pth.tar` file in the root directory
@@ -34,13 +36,29 @@ Copy your avatars into `avatars` folder. Crop pictures to make them square. Pref
 ## Run
 Your web cam must be plugged-in. You can choose your camera when running ```run.bat```
 
+## Controls
+
+1-9 | These will immediately switch between the first 9 avatars.
+--- | ---
+0 | Toggles avatar display on and off.
+--- | ---
+A/D | Previous/next avatar in folder.
+--- | ---
+W/S | Zoom camera in/out.
+--- | ---
+Z/C | Adjust avatar target overlay opacity.
+--- | ---
+X | Reset reference frame.
+--- | ---
+R | Mirror reference window.
+--- | ---
+T | Mirror output window.
+
 ## Tips
 
-Your face should fit in the red rectagle: it should not fit perfectly, but don't get too close/far. After that, press any number from 0 to 9 on your keyboard and one of the avatars from `avatars` directory will appear.
+It is recommended to use the avatar overlay and the zoom in/out function to align your face in the preview window as closely as possible in proportion and position to the target avatar. When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation.
 
-You can also use the A and D keys to scroll through your avatars folder, if you have more than one avatar available.
-
-Run Skype or Zoom only when Avatarify is running.
+You don't need to be exact, and some other configurations can yield better results still, but it's usually a good starting point.
 
 ### Skype
 
@@ -52,9 +70,7 @@ Go to Settings -> Video and choose `OBSCam` from Camera drop-down menu.
 
 ### Slack
 
-Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` in Video settings drop-down menu.
-
-![Slack](docs/slack.jpg)
+Make a call, allow browser using cameras, click on Settings icon, choose `OBSCam` in Video settings drop-down menu.
 
 
 ## Contribution

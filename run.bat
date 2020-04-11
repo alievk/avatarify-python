@@ -1,7 +1,8 @@
-source scripts/settings.sh
+@call conda activate avatarify
 
-CONFIG=fomm/config/vox-adv-256.yaml
-CKPT=vox-adv-cpk.pth.tar
+@set CONFIG=fomm/config/vox-adv-256.yaml
 
-export PYTHONPATH=$PYTHONPATH:fomm
-python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale --no-pad
+@set /P cam_id="Pick the webcam id you want to use (typically "0"): "
+
+@set PYTHONPATH=%PYTHONPATH%;%CD%/fomm
+@call python cam_fomm.py --config %CONFIG% --cam %cam_id% --relative --adapt_scale --no-pad --checkpoint vox-adv-cpk.pth.tar

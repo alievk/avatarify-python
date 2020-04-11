@@ -1,10 +1,10 @@
-#!/usr/bin/env bash
+set env_name=avatarify
 
-ENV_NAME=avatarify
+call conda create -y -n %env_name% python=3.8
+call conda activate %env_name%
 
-conda create -y -n $ENV_NAME python=3.8
-conda activate $ENV_NAME
+call conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
 
-# FOMM
-git clone https://github.com/alievk/first-order-model.git fomm
-pip install -r fomm/requirements.txt
+REM ###FOMM###
+call git clone https://github.com/alievk/first-order-model.git fomm
+call pip install -r fomm/requirements.txt

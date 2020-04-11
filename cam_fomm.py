@@ -18,8 +18,6 @@ from scipy.spatial import ConvexHull
 
 import cv2
 
-
-
 def load_checkpoints(config_path, checkpoint_path, device='cuda'):
 
     with open(config_path) as f:
@@ -91,8 +89,10 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, device=
 def log(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
-
 if __name__ == "__main__":
+
+    global kp_driving_initial
+
     parser = ArgumentParser()
     parser.add_argument("--config", required=True, help="path to config")
     parser.add_argument("--checkpoint", default='vox-cpk.pth.tar', help="path to checkpoint to restore")
@@ -127,6 +127,7 @@ if __name__ == "__main__":
             avatars.append(img)
     
     log('load checkpoints..')
+    
     generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint, device=device)
 
     kp_driving_initial = None
@@ -138,12 +139,18 @@ if __name__ == "__main__":
         exit()
 
     cur_ava = 0
-    passthrough = True
+    passthrough = False
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
     cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
     cv2.moveWindow('cam', 0, 0)
     cv2.moveWindow('avatarify', 600, 0)
+
+    frame_proportion = 0.9
+
+    overlay_alpha = 0.2
+    preview_flip = False
+    output_flip = False
 
     while True:
         ret, frame = cap.read()
@@ -153,11 +160,11 @@ if __name__ == "__main__":
 
         frame_orig = frame.copy()
 
-        frame, lrud = crop(frame)
+        frame, lrud = crop(frame, p=frame_proportion)
         frame = resize(frame, (256, 256))[..., :3]
 
         if passthrough:
-            out = frame_orig
+            out = frame
         else:
             pred_start = time.time()
             pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, device=device)
@@ -172,6 +179,32 @@ if __name__ == "__main__":
 
         if key == ord('q'):
             break
+        elif key == ord('d'):
+            cur_ava += 1
+            if cur_ava >= len(avatars):
+                cur_ava = 0
+            passthrough = False
+        elif key == ord('a'):
+            cur_ava -= 1
+            if cur_ava < 0:
+                cur_ava = len(avatars) - 1
+            passthrough = False
+        elif key == ord('w'):
+            frame_proportion -= 0.05
+            frame_proportion = max(frame_proportion, 0.1)
+        elif key == ord('s'):
+            frame_proportion += 0.05
+            frame_proportion = min(frame_proportion, 1.0)
+        elif key == ord('x'):
+           kp_driving_initial = None
+        elif key == ord('z'):
+            overlay_alpha = max(overlay_alpha - 0.1, 0.0)
+        elif key == ord('c'):
+            overlay_alpha = min(overlay_alpha + 0.1, 1.0)
+        elif key == ord('r'):
+            preview_flip = not preview_flip
+        elif key == ord('t'):
+            output_flip = not output_flip
         elif 48 < key < 58:
             cur_ava = min(key - 49, len(avatars) - 1)
             passthrough = False
@@ -184,9 +217,15 @@ if __name__ == "__main__":
             buf = cv2.imencode('.jpg', out)[1].tobytes()
             sys.stdout.buffer.write(buf)
 
-        frame_rect = cv2.rectangle(frame_orig, (lrud[0], lrud[2]), (lrud[1], lrud[3]), (0, 0, 255), 2)
+        preview_frame = cv2.addWeighted( avatars[cur_ava][:,:,::-1], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
+        
+        if preview_flip:
+            preview_frame = cv2.flip(preview_frame, 1)
+            
+        if output_flip:
+            out = cv2.flip(out, 1)
 
-        cv2.imshow('cam', frame_rect)
+        cv2.imshow('cam', preview_frame)
         cv2.imshow('avatarify', out)
 
     cap.release()
