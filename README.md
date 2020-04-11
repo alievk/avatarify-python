@@ -29,7 +29,7 @@ Avatars for Skype and Zoom. Democratized.
 It is supposed that there is only one web cam connected to the computer and it's in `/dev/video0`. Installation process will create a virtual camera `/dev/video9`, so this device must be reserved. You can change settings in `scripts/settings.sh`.
 
 ```bash
-source scripts/install.sh
+bash scripts/install.sh
 ```
 
 #### Mac
