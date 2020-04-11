@@ -2,10 +2,8 @@
 
 source scripts/settings.sh
 
-ENV_NAME=avatarify
-
-conda create -y -n $ENV_NAME python=3.8
-conda activate $ENV_NAME
+conda create -y -n $CONDA_ENV_NAME python=3.8
+conda activate $CONDA_ENV_NAME
 
 # FOMM
 git clone https://github.com/alievk/first-order-model.git fomm
