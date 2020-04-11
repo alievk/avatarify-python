@@ -39,6 +39,7 @@ Your web cam must be plugged-in. You can choose your camera when running ```run.
 ## Controls
 
 Keys | Controls
+--- | ---
 1-9 | These will immediately switch between the first 9 avatars.
 0 | Toggles avatar display on and off.
 A/D | Previous/next avatar in folder.
@@ -66,11 +67,7 @@ Go to Settings -> Video and choose `OBSCam` from Camera drop-down menu.
 
 Make a call, allow browser using cameras, click on Settings icon, choose `OBSCam` in Video settings drop-down menu.
 
-
-## Contribution
-
-Forked from [Avatarify](https://github.com/alievk/avatarify) and adapted for Windows.
-
 ## Credits
 
+- Forked from [Avatarify](https://github.com/alievk/avatarify) and adapted for Windows.
 - Avatrify uses [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model) for generating avatars.
