@@ -46,12 +46,17 @@ A/D | Previous/next avatar in folder.
 W/S | Zoom camera in/out.
 Z/C | Adjust avatar target overlay opacity.
 X | Reset reference frame.
+F | Toggle reference frame search mode.
 R | Mirror reference window.
 T | Mirror output window.
 
 ## Tips
 
 It is recommended to use the avatar overlay and the zoom in/out function to align your face in the preview window as closely as possible in proportion and position to the target avatar. When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation.
+
+Alternatively, you can hit 'F' for the software to attempt to find a better reference frame itself. This will slow down the framerate, but while this is happening, you can keep moving your head around: the preview window will flash green when it finds your facial pose is a closer match to the avatar than the one it is currently using. You will see two numbers displayed as well: the first number is how closely you are currently aligned to the avatar, and the second number is how closely the reference frame is aligned.
+
+You want to get the first number as small as possible - around 10 is usually a good alignment. When you are done, press 'F' again to exit reference frame search mode.
 
 You don't need to be exact, and some other configurations can yield better results still, but it's usually a good starting point.
 
