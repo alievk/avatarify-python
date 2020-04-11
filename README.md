@@ -22,7 +22,7 @@ Avatars for Skype and Zoom. Democratized.
 ## Install
 
 #### Download
-1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
+1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) or [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) [716 MB]
 2. Place `vox-adv-cpk.pth.tar` file in the root directory
 
 #### Linux
