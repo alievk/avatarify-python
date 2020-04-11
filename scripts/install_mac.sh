@@ -8,3 +8,4 @@ conda activate $ENV_NAME
 # FOMM
 git clone https://github.com/alievk/first-order-model.git fomm
 pip install -r fomm/requirements.txt
+pip install pyyaml
