@@ -16,9 +16,9 @@ from modules.keypoint_detector import KPDetector
 from animate import normalize_kp
 from scipy.spatial import ConvexHull
 
+import face_alignment
+
 import cv2
-
-
 
 def load_checkpoints(config_path, checkpoint_path, device='cuda'):
 
@@ -45,6 +45,52 @@ def load_checkpoints(config_path, checkpoint_path, device='cuda'):
     
     return generator, kp_detector
 
+def normalize_alignment_kp(kp):
+    kp = kp - kp.mean(axis=0, keepdims=True)
+    area = ConvexHull(kp[:, :2]).volume
+    area = np.sqrt(area)
+    kp[:, :2] = kp[:, :2] / area
+    return kp
+    
+def get_frame_kp(fa, image):
+    kp_landmarks = fa.get_landmarks(255 * image)
+    if kp_landmarks:
+        kp_image = kp_landmarks[0]
+        kp_image = normalize_alignment_kp(kp_image)
+        
+        return kp_image
+    else:
+        return None
+
+def is_new_frame_better(fa, source, driving, device):
+    global start_frame
+    global start_frame_kp
+    global avatar_kp
+    global display_string
+    
+    if avatar_kp is None:
+        display_string = "No face detected in avatar."
+        return False
+    
+    if start_frame is None:
+        display_string = "No frame to compare to."
+        return True
+    
+    driving_smaller = resize(driving, (128, 128))[..., :3]
+    new_kp = get_frame_kp(fa, driving)
+    
+    if new_kp is not None:
+        new_norm = (np.abs(avatar_kp - new_kp) ** 2).sum()
+        old_norm = (np.abs(avatar_kp - start_frame_kp) ** 2).sum()
+        
+        out_string = "{0} : {1}".format(int(new_norm * 100), int(old_norm * 100))
+        display_string = out_string
+        log(out_string)
+        
+        return new_norm < old_norm
+    else:
+        display_string = "No face found!"
+        return False
 
 def crop(img, p=0.7):
     h, w = img.shape[:2]
@@ -64,18 +110,22 @@ def pad_img(img, orig):
     return out
 
 
-def predict(driving_frame, source_image, relative, adapt_movement_scale, device='cuda'):
+def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, device='cuda'):
+    global start_frame
+    global start_frame_kp
     global kp_driving_initial
 
     with torch.no_grad():
         source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
-        driving_frame = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
+        driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
         kp_source = kp_detector(source)
 
         if kp_driving_initial is None:
-            kp_driving_initial = kp_detector(driving_frame)
+            kp_driving_initial = kp_detector(driving)
+            start_frame = driving_frame.copy()
+            start_frame_kp = get_frame_kp(fa, driving_frame)
 
-        kp_driving = kp_detector(driving_frame)
+        kp_driving = kp_detector(driving)
         kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
                             kp_driving_initial=kp_driving_initial, use_relative_movement=relative,
                             use_relative_jacobian=relative, adapt_movement_scale=adapt_movement_scale)
@@ -87,12 +137,20 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, device=
 
         return out
 
+def change_avatar(fa, new_avatar):
+    global avatar_kp    
+    avatar_kp = get_frame_kp(fa, new_avatar)
 
 def log(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
-
 if __name__ == "__main__":
+
+    global display_string
+    display_string = ""
+    global kp_driving_initial
+    kp_driving_initial = None
+
     parser = ArgumentParser()
     parser.add_argument("--config", required=True, help="path to config")
     parser.add_argument("--checkpoint", default='vox-cpk.pth.tar', help="path to checkpoint to restore")
@@ -127,9 +185,10 @@ if __name__ == "__main__":
             avatars.append(img)
     
     log('load checkpoints..')
+    
     generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint, device=device)
-
-    kp_driving_initial = None
+    
+    fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True, device=device)
 
     cap = cv2.VideoCapture(opt.cam)
 
@@ -137,15 +196,25 @@ if __name__ == "__main__":
         log("Cannot open camera")
         exit()
 
-    cur_ava = 0
-    passthrough = True
+    cur_ava = 0    
+    change_avatar(fa, avatars[cur_ava])
+    passthrough = False
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
     cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
     cv2.moveWindow('cam', 0, 0)
     cv2.moveWindow('avatarify', 600, 0)
 
+    frame_proportion = 0.9
+
+    overlay_alpha = 0.0
+    preview_flip = False
+    output_flip = False
+    find_keyframe = False
+
     while True:
+        green_overlay = False
+        
         ret, frame = cap.read()
         if not ret:
             log("Can't receive frame (stream end?). Exiting ...")
@@ -153,14 +222,20 @@ if __name__ == "__main__":
 
         frame_orig = frame.copy()
 
-        frame, lrud = crop(frame)
+        frame, lrud = crop(frame, p=frame_proportion)
         frame = resize(frame, (256, 256))[..., :3]
 
+        if find_keyframe:
+            if is_new_frame_better(fa, avatars[cur_ava], frame, device):
+                log("Taking new frame!")
+                green_overlay = True
+                kp_driving_initial = None
+
         if passthrough:
-            out = frame_orig
+            out = frame
         else:
             pred_start = time.time()
-            pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, device=device)
+            pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, fa, device=device)
             if not opt.no_pad:
                 pred = pad_img(pred, frame_orig)
             out = pred
@@ -172,9 +247,40 @@ if __name__ == "__main__":
 
         if key == ord('q'):
             break
+        elif key == ord('d'):
+            cur_ava += 1
+            if cur_ava >= len(avatars):
+                cur_ava = 0
+            passthrough = False
+            change_avatar(fa, avatars[cur_ava])
+        elif key == ord('a'):
+            cur_ava -= 1
+            if cur_ava < 0:
+                cur_ava = len(avatars) - 1
+            passthrough = False
+            change_avatar(fa, avatars[cur_ava])
+        elif key == ord('w'):
+            frame_proportion -= 0.05
+            frame_proportion = max(frame_proportion, 0.1)
+        elif key == ord('s'):
+            frame_proportion += 0.05
+            frame_proportion = min(frame_proportion, 1.0)
+        elif key == ord('x'):
+           kp_driving_initial = None
+        elif key == ord('z'):
+            overlay_alpha = max(overlay_alpha - 0.1, 0.0)
+        elif key == ord('c'):
+            overlay_alpha = min(overlay_alpha + 0.1, 1.0)
+        elif key == ord('r'):
+            preview_flip = not preview_flip
+        elif key == ord('t'):
+            output_flip = not output_flip
+        elif key == ord('f'):
+            find_keyframe = not find_keyframe
         elif 48 < key < 58:
             cur_ava = min(key - 49, len(avatars) - 1)
             passthrough = False
+            change_avatar(fa, avatars[cur_ava])
         elif key == 48:
             passthrough = not passthrough
         elif key != -1 and not opt.pipe:
@@ -184,9 +290,24 @@ if __name__ == "__main__":
             buf = cv2.imencode('.jpg', out)[1].tobytes()
             sys.stdout.buffer.write(buf)
 
-        frame_rect = cv2.rectangle(frame_orig, (lrud[0], lrud[2]), (lrud[1], lrud[3]), (0, 0, 255), 2)
+        preview_frame = cv2.addWeighted( avatars[cur_ava][:,:,::-1], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
+        
+        if preview_flip:
+            preview_frame = cv2.flip(preview_frame, 1)
+            
+        if output_flip:
+            out = cv2.flip(out, 1)
+            
+        if green_overlay:
+            green_alpha = 0.8
+            overlay = preview_frame.copy()
+            overlay[:] = (0, 255, 0)
+            preview_frame = cv2.addWeighted( preview_frame, green_alpha, overlay, 1.0 - green_alpha, 0.0)
+            
+        if find_keyframe:
+            preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5, (255, 255, 255), 1)
 
-        cv2.imshow('cam', frame_rect)
+        cv2.imshow('cam', preview_frame)
         cv2.imshow('avatarify', out)
 
     cap.release()

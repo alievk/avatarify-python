@@ -18,6 +18,7 @@ FF_CMD="ffmpeg -re -i pipe:0 -vf format=pix_fmts=yuv420p -f v4l2 /dev/video$CAMI
 
 FOMM_CMD="python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale"
 
+echo "Running Avatarify (may take some while for the first time)..."
 if [ x$1 = "x--no-stream" ]; then
     $FOMM_CMD
 else

@@ -49,6 +49,8 @@ Copy your avatars into `avatars` folder. Crop pictures to make them square. Pref
 ## Run
 Your web cam must be plugged-in. You can choose your camera by changing `CAMID` in `scripts/settings.sh` script.
 
+Run Skype or Zoom only when Avatarify is started.
+
 #### Linux
 It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
 
@@ -69,11 +71,30 @@ bash run_mac.sh
 4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
 
 
+## Controls
+
+
+Keys | Controls
+--- | ---
+1-9 | These will immediately switch between the first 9 avatars.
+0 | Toggles avatar display on and off.
+A/D | Previous/next avatar in folder.
+W/S | Zoom camera in/out.
+Z/C | Adjust avatar target overlay opacity.
+X | Reset reference frame.
+F | Toggle reference frame search mode.
+R | Mirror reference window.
+T | Mirror output window.
+
 ## Tips
 
-Your face should fit in the red rectagle: it should not fit perfectly, but don't get too close/far. After that, press any number from 0 to 9 on your keyboard and one of the avatars from `avatars` directory will appear.
+It is recommended to use the avatar overlay and the zoom in/out function to align your face in the preview window as closely as possible in proportion and position to the target avatar. When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation.
 
-Run Skype or Zoom only when Avatarify is running.
+Alternatively, you can hit 'F' for the software to attempt to find a better reference frame itself. This will slow down the framerate, but while this is happening, you can keep moving your head around: the preview window will flash green when it finds your facial pose is a closer match to the avatar than the one it is currently using. You will see two numbers displayed as well: the first number is how closely you are currently aligned to the avatar, and the second number is how closely the reference frame is aligned.
+
+You want to get the first number as small as possible - around 10 is usually a good alignment. When you are done, press 'F' again to exit reference frame search mode.
+
+You don't need to be exact, and some other configurations can yield better results still, but it's usually a good starting point.
 
 ### Skype
 
@@ -110,6 +131,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 * *Avatar image is frozen*: In Zoom, try Stop and Start Video.
 * *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1` or `2`
 * `pipe:0: Invalid data found when processing input`: Make sure `CAMID` in `scripts/settings.sh` is correct. Use `v4l2-ctl --list-devices` to query available devices.
+* `ASSERT: "false" in file qasciikey.cpp, line 501`. If you have several keyboard layouts, switch to English layout.
 
 
 ## Credits
