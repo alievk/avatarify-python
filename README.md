@@ -17,7 +17,7 @@ Based on:
 - Windows (with 1080 Ti GPU): **~30 fps**
 
 ## Guide
-[**YOUTUBE TUTORIAL**](https://youtu.be/i0XBGXnyejg)
+:arrow_forward: [**YOUTUBE TUTORIAL**](https://youtu.be/i0XBGXnyejg)
 
 ## Install
 
