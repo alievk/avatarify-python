@@ -38,20 +38,14 @@ Your web cam must be plugged-in. You can choose your camera when running ```run.
 
 ## Controls
 
+Keys | Controls
 1-9 | These will immediately switch between the first 9 avatars.
---- | ---
 0 | Toggles avatar display on and off.
---- | ---
 A/D | Previous/next avatar in folder.
---- | ---
 W/S | Zoom camera in/out.
---- | ---
 Z/C | Adjust avatar target overlay opacity.
---- | ---
 X | Reset reference frame.
---- | ---
 R | Mirror reference window.
---- | ---
 T | Mirror output window.
 
 ## Tips
