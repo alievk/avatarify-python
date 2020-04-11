@@ -22,7 +22,7 @@ YouTube guide coming soon!
 ## Install
 
 #### Download
-1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
+1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB] or from [Mega](https://mega.nz/file/R8kxQKLD#036S-bobZ9IW-kNNcSlgpfJWBKSi5nkhouCYAsxz3qI) [716 MB]
 2. Place `vox-adv-cpk.pth.tar` file in the root directory
 
 #### Windows
