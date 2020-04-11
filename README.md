@@ -26,7 +26,9 @@ Avatars for Skype and Zoom. Democratized.
 2. Place `vox-adv-cpk.pth.tar` file in the root directory
 
 #### Linux
-It is supposed that there is only one web cam connected to the computer and it's in `/dev/video0`. Installation process will create a virtual camera `/dev/video9`, so this device must be reserved. You can change settings in `scripts/settings.sh`.
+Linux uses `v4l2loopback` to create virtual camera.
+
+Install `avatarify` dependencies (sudo privelege is required):
 
 ```bash
 bash scripts/install.sh
@@ -48,6 +50,10 @@ Copy your avatars into `avatars` folder. Crop pictures to make them square. Pref
 Your web cam must be plugged-in. You can choose your camera by changing `CAMID` in `scripts/settings.sh` script.
 
 #### Linux
+It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
+
+You can use command `v4l2-ctl --list-devices` to list all devices in your system. For example, if the web camera is `/dev/video1` then the device id is 1. 
+
 Run:
 ```bash
 bash run.sh
