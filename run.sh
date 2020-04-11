@@ -4,6 +4,8 @@
 
 source scripts/settings.sh
 
+bash scripts/create_virtual_camera.sh
+
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate $CONDA_ENV_NAME
 
