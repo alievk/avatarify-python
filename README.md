@@ -2,7 +2,11 @@
 
 # Avatarify
 
-Avatars for Skype and Zoom. Democratized. Specifically for Windows.
+Avatars for video calls - set up for Windows.
+
+Based on:
+- [Avatarify](https://github.com/alievk/avatarify) adapted for Windows.
+- [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model) for generating avatars.
 
 ## Requirements
 
@@ -10,11 +14,12 @@ Avatars for Skype and Zoom. Democratized. Specifically for Windows.
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 ## Performance:
-- Windows (with 1080 Ti GPU): **33 fps**
+- Windows (with 1080 Ti GPU): **~30 fps**
+
+## Guide
+YouTube guide coming soon!
 
 ## Install
-
-YouTube guide coming soon!
 
 #### Download
 1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
@@ -62,17 +67,16 @@ You don't need to be exact, and some other configurations can yield better resul
 
 ### Skype
 
-Go to Settings -> Audio & Video, choose `OBSCam` camera.
+Go to Settings -> Audio & Video, choose `OBS-Camera` camera.
 
 ### Zoom
 
-Go to Settings -> Video and choose `OBSCam` from Camera drop-down menu.
+Go to Settings -> Video and choose `OBS-Camera` from Camera drop-down menu.
 
 ### Slack
 
-Make a call, allow browser using cameras, click on Settings icon, choose `OBSCam` in Video settings drop-down menu.
+Make a call, allow browser using cameras, click on Settings icon, choose `OBS-Camera` in Video settings drop-down menu.
 
-## Credits
+### Discord
 
-- Forked from [Avatarify](https://github.com/alievk/avatarify) and adapted for Windows.
-- Avatrify uses [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model) for generating avatars.
+Go to User Settings -> Voice & Video, choose `OBS-Camera` from Camera drop-down menu.
