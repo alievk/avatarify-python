@@ -191,9 +191,8 @@ if __name__ == "__main__":
     fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True, device=device)
 
     cap = cv2.VideoCapture(opt.cam)
-
     if not cap.isOpened():
-        log("Cannot open camera")
+        log("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
         exit()
 
     cur_ava = 0    

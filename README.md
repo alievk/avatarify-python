@@ -43,6 +43,10 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 source scripts/install_mac.sh
 ```
 
+#### Window
+
+Coming soon!
+
 ## Setup avatars
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
 
@@ -100,19 +104,19 @@ You don't need to be exact, and some other configurations can yield better resul
 
 Go to Settings -> Audio & Video, choose `avatarify` or `CamTwist` camera.
 
-![Skype](docs/skype.jpg)
+<img src=docs/skype.jpg width=600>
 
 ### Zoom
 
 Go to Settings -> Video and choose `avatarify` or `CamTwist` from Camera drop-down menu.
 
-![Zoom](docs/zoom.jpg)
+<img src=docs/zoom.jpg width=600>
 
 ### Slack
 
 Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` in Video settings drop-down menu.
 
-![Slack](docs/slack.jpg)
+<img src=docs/slack.jpg width=600>
 
 
 ## Contribution
