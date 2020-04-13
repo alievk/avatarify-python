@@ -10,6 +10,10 @@ Avatars for Skype and Zoom. Democratized.
 
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
+## News
+
+* 13 April 2020. Added Windows support (kudos to [9of9](https://github.com/9of9)) 
+
 ## Requirements
 
 * [conda](https://docs.conda.io/en/latest/miniconda.html)
@@ -45,9 +49,29 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 source scripts/install_mac.sh
 ```
 
-#### Window
+#### Windows
 
-Coming soon!
+This guide is tested for Windows 10.
+
+1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Windows.
+2. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
+3. In the prompt, run the following commands:
+```bash
+git clone https://github.com/alievk/avatarify
+cd avatarify
+scripts\install_windows.bat
+```
+4. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable.
+5. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
+6. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
+7. Run OBS Studio.
+8. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
+9. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
+10. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
+
+The steps 8-9 are required only once during setup.
+
+To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
 
 ## Setup avatars
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
@@ -76,6 +100,15 @@ bash run_mac.sh
 3. Choose `Desktop+` and press `Select`.
 4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
 
+#### Windows
+
+If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable.
+
+In Anaconda Prompt:
+```
+cd C:\path\to\avatarify
+run_windows.bat
+```
 
 ## Controls
 
@@ -105,19 +138,19 @@ You don't need to be exact, and some other configurations can yield better resul
 
 ### Skype
 
-Go to Settings -> Audio & Video, choose `avatarify` or `CamTwist` camera.
+Go to Settings -> Audio & Video, choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) camera.
 
 <img src=docs/skype.jpg width=600>
 
 ### Zoom
 
-Go to Settings -> Video and choose `avatarify` or `CamTwist` from Camera drop-down menu.
+Go to Settings -> Video and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) from Camera drop-down menu.
 
 <img src=docs/zoom.jpg width=600>
 
 ### Slack
 
-Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` in Video settings drop-down menu.
+Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) in Video settings drop-down menu.
 
 <img src=docs/slack.jpg width=600>
 
