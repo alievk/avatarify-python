@@ -71,8 +71,6 @@ scripts\install_windows.bat
 
 The steps 8-9 are required only once during setup.
 
-To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
-
 ## Setup avatars
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
 
@@ -104,11 +102,14 @@ bash run_mac.sh
 
 If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable.
 
-In Anaconda Prompt:
+1. In Anaconda Prompt:
 ```
 cd C:\path\to\avatarify
 run_windows.bat
 ```
+2. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
+
+To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
 
 ## Controls
 
