@@ -134,7 +134,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 
 * *Zoom/Skype doesn't see `avatarify` camera*. Restart Zoom/Skype and try again.
 * *Avatar image is frozen*: In Zoom, try Stop and Start Video.
-* *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1` or `2`
+* *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1`, `2`, ...
 * `pipe:0: Invalid data found when processing input`: Make sure `CAMID` in `scripts/settings.sh` is correct. Use `v4l2-ctl --list-devices` to query available devices.
 * `ASSERT: "false" in file qasciikey.cpp, line 501`. If you have several keyboard layouts, switch to English layout.
 
