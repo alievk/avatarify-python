@@ -20,6 +20,13 @@ import face_alignment
 
 import cv2
 
+from sys import platform as _platform
+_streaming = False
+if _platform == 'linux' or _platform == 'linux2':
+    import pyfakewebcam
+    _streaming = True
+
+
 def load_checkpoints(config_path, checkpoint_path, device='cuda'):
 
     with open(config_path) as f:
@@ -160,7 +167,8 @@ if __name__ == "__main__":
     parser.add_argument("--no-pad", dest="no_pad", action="store_true", help="don't pad output image")
 
     parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
-    parser.add_argument("--pipe", action="store_true", help="Output jpeg images into stdout")
+    parser.add_argument("--virt-cam", type=int, default=0, help="Virtualcam device ID")
+    parser.add_argument("--no-stream", action="store_true", help="On Linux, force no streaming")
     parser.add_argument("--debug", action="store_true", help="Print debug information")
 
     parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
@@ -170,6 +178,10 @@ if __name__ == "__main__":
     parser.set_defaults(no_pad=False)
 
     opt = parser.parse_args()
+
+    if opt.no_stream:
+        log('Force no streaming')
+        _streaming = False
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu' 
 
@@ -194,6 +206,14 @@ if __name__ == "__main__":
     if not cap.isOpened():
         log("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
         exit()
+
+    ret, frame = cap.read()
+    if not ret:
+        log("Cannot read from camera")
+        exit()
+
+    if _streaming:
+        stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', frame.shape[1], frame.shape[0])
 
     cur_ava = 0    
     change_avatar(fa, avatars[cur_ava])
@@ -235,12 +255,16 @@ if __name__ == "__main__":
         else:
             pred_start = time.time()
             pred = predict(frame, avatars[cur_ava], opt.relative, opt.adapt_scale, fa, device=device)
-            if not opt.no_pad:
-                pred = pad_img(pred, frame_orig)
             out = pred
             pred_time = (time.time() - pred_start) * 1000
             if opt.debug:
                 log(f'PRED: {pred_time:.3f}ms')
+
+        if not opt.no_pad:
+            out = pad_img(out, frame_orig)
+
+        if out.dtype != np.uint8:
+            out = (out * 255).astype(np.uint8)
         
         key = cv2.waitKey(1)
 
@@ -282,12 +306,11 @@ if __name__ == "__main__":
             change_avatar(fa, avatars[cur_ava])
         elif key == 48:
             passthrough = not passthrough
-        elif key != -1 and not opt.pipe:
+        elif key != -1:
             log(key)
 
-        if opt.pipe:
-            buf = cv2.imencode('.jpg', out)[1].tobytes()
-            sys.stdout.buffer.write(buf)
+        if _streaming:
+            stream.schedule_frame(out)
 
         preview_frame = cv2.addWeighted( avatars[cur_ava][:,:,::-1], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
         

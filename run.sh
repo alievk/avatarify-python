@@ -12,15 +12,7 @@ conda activate $CONDA_ENV_NAME
 CONFIG=fomm/config/vox-adv-256.yaml
 CKPT=vox-adv-cpk.pth.tar
 
+# TODO: abs path
 export PYTHONPATH=$PYTHONPATH:fomm
 
-FF_CMD="ffmpeg -re -i pipe:0 -vf format=pix_fmts=yuv420p -f v4l2 /dev/video$CAMID_VIRT"
-
-FOMM_CMD="python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --relative --adapt_scale"
-
-echo "Running Avatarify (may take some while for the first time)..."
-if [ x$1 = "x--no-stream" ]; then
-    $FOMM_CMD
-else
-    $FOMM_CMD --pipe | $FF_CMD
-fi
+python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --virt-cam $CAMID_VIRT --relative --adapt_scale $@
