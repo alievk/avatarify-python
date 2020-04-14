@@ -12,7 +12,6 @@ conda activate $CONDA_ENV_NAME
 CONFIG=fomm/config/vox-adv-256.yaml
 CKPT=vox-adv-cpk.pth.tar
 
-# TODO: abs path
-export PYTHONPATH=$PYTHONPATH:fomm
+export PYTHONPATH=$PYTHONPATH:$(pwd)/fomm
 
 python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --virt-cam $CAMID_VIRT --relative --adapt_scale $@
