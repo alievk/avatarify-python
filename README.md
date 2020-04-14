@@ -20,14 +20,15 @@ Avatars for Skype and Zoom. Democratized.
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 ## Performance:
-- Linux (with 1080 Ti GPU): **33 fps**
-- Mac OSX (MacBook Pro 2018; no GPU): **~1 fps**
+- 1080 Ti GPU: **33 fps**
+- 1070 GPU: **15 fps**
+- Mac OSX (MacBook Pro 2018; no GPU): **very slow** **~1 fps**
 
 ## Install
 
-#### Download
+#### Download network weights
 1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) or [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) [716 MB]
-2. Place `vox-adv-cpk.pth.tar` file in the root directory
+2. Place `vox-adv-cpk.pth.tar` file in the `avatarify` root directory
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
@@ -61,7 +62,7 @@ git clone https://github.com/alievk/avatarify
 cd avatarify
 scripts\install_windows.bat
 ```
-4. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable.
+4. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
 5. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
 6. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
 7. Run OBS Studio.
@@ -100,7 +101,7 @@ bash run_mac.sh
 
 #### Windows
 
-If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable.
+If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
 
 1. In Anaconda Prompt:
 ```
@@ -173,6 +174,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 * *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1`, `2`, ...
 * `pipe:0: Invalid data found when processing input`: Make sure `CAMID` in `scripts/settings.sh` is correct. Use `v4l2-ctl --list-devices` to query available devices.
 * `ASSERT: "false" in file qasciikey.cpp, line 501`. If you have several keyboard layouts, switch to English layout.
+* `No such file or directory: 'vox-adv-cpk.pth.tar'`. Please follow instructions [Download network weights](#Download_network_weights)
 
 
 ## Credits
