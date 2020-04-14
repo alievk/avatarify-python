@@ -174,7 +174,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 * *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1`, `2`, ...
 * `pipe:0: Invalid data found when processing input`: Make sure `CAMID` in `scripts/settings.sh` is correct. Use `v4l2-ctl --list-devices` to query available devices.
 * `ASSERT: "false" in file qasciikey.cpp, line 501`. If you have several keyboard layouts, switch to English layout.
-* `No such file or directory: 'vox-adv-cpk.pth.tar'`. Please follow instructions [Download network weights](#Download_network_weights)
+* `No such file or directory: 'vox-adv-cpk.pth.tar'`. Please follow instructions [Download network weights](#download-network-weights)
 
 
 ## Credits
