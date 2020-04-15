@@ -184,7 +184,8 @@ if __name__ == "__main__":
     parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
     parser.add_argument("--virt-cam", type=int, default=0, help="Virtualcam device ID")
     parser.add_argument("--no-stream", action="store_true", help="On Linux, force no streaming")
-    parser.add_argument("--debug", action="store_true", help="Print debug information")
+
+    parser.add_argument("--verbose", action="store_true", help="Print additional information")
 
     parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
  
@@ -247,7 +248,13 @@ if __name__ == "__main__":
     output_flip = False
     find_keyframe = False
 
+    fps_hist = []
+    fps = 0
+    show_fps = False
+
     while True:
+        t_start = time.time()
+
         green_overlay = False
         
         ret, frame = cap.read()
@@ -273,7 +280,7 @@ if __name__ == "__main__":
             pred = predict(frame, avatar, opt.relative, opt.adapt_scale, fa, device=device)
             out = pred
             pred_time = (time.time() - pred_start) * 1000
-            if opt.debug:
+            if opt.verbose:
                 log(f'PRED: {pred_time:.3f}ms')
 
         if not opt.no_pad:
@@ -324,6 +331,8 @@ if __name__ == "__main__":
                 change_avatar(fa, avatar)
             except:
                 log('Failed to load StyleGAN avatar')
+        elif key == ord('i'):
+            show_fps = not show_fps
         elif 48 < key < 58:
             cur_ava = min(key - 49, len(avatars) - 1)
             passthrough = False
@@ -353,8 +362,17 @@ if __name__ == "__main__":
         if find_keyframe:
             preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5, (255, 255, 255), 1)
 
+        if show_fps:
+            fps_string = f'FPS: {fps:.2f}'
+            preview_frame = cv2.putText(preview_frame, fps_string, (10, 240), 0, 0.5, (255, 255, 255), 1)
+
         cv2.imshow('cam', preview_frame)
         cv2.imshow('avatarify', out)
+
+        fps_hist.append(time.time() - t_start)
+        if len(fps_hist) == 10:
+            fps = 10 / sum(fps_hist)
+            fps_hist = []
 
     cap.release()
     cv2.destroyAllWindows()
