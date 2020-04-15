@@ -8,6 +8,7 @@ import requests
 import imageio
 import numpy as np
 from skimage.transform import resize
+import cv2
 
 import torch
 from sync_batchnorm import DataParallelWithCallback
@@ -19,7 +20,7 @@ from scipy.spatial import ConvexHull
 
 import face_alignment
 
-import cv2
+from videocaptureasync import VideoCaptureAsync
 
 from sys import platform as _platform
 _streaming = False
@@ -218,7 +219,9 @@ if __name__ == "__main__":
     
     fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True, device=device)
 
-    cap = cv2.VideoCapture(opt.cam)
+    # cap = cv2.VideoCapture(opt.cam)
+    cap = VideoCaptureAsync(opt.cam)
+    cap.start()
     if not cap.isOpened():
         log("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
         exit()
@@ -273,6 +276,10 @@ if __name__ == "__main__":
                 green_overlay = True
                 kp_driving_initial = None
 
+        if opt.verbose:
+            preproc_time = (time.time() - t_start) * 1000
+            log(f'PREPROC: {preproc_time:.3f}ms')
+
         if passthrough:
             out = frame
         else:
@@ -282,6 +289,8 @@ if __name__ == "__main__":
             pred_time = (time.time() - pred_start) * 1000
             if opt.verbose:
                 log(f'PRED: {pred_time:.3f}ms')
+
+        postproc_start = time.time()
 
         if not opt.no_pad:
             out = pad_img(out, frame_orig)
@@ -369,10 +378,15 @@ if __name__ == "__main__":
         cv2.imshow('cam', preview_frame)
         cv2.imshow('avatarify', out)
 
+        if opt.verbose:
+            postproc_time = (time.time() - postproc_start) * 1000
+            log(f'POSTPROC: {postproc_time:.3f}ms')
+
         fps_hist.append(time.time() - t_start)
         if len(fps_hist) == 10:
             fps = 10 / sum(fps_hist)
             fps_hist = []
 
-    cap.release()
+    #cap.release()
+    cap.stop()
     cv2.destroyAllWindows()
