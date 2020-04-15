@@ -58,7 +58,7 @@ This guide is tested for Windows 10.
 2. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
 3. In the prompt, run the following commands:
 ```bash
-git clone https://github.com/alievk/avatarify
+git clone https://github.com/alievk/avatarify.git
 cd avatarify
 scripts\install_windows.bat
 ```
