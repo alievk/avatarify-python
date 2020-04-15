@@ -11,7 +11,7 @@ Avatars for Skype and Zoom. Democratized.
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
-- **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
+- **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
 ## Requirements
@@ -118,7 +118,7 @@ To reduce video latency, in OBS Studio right click on the preview window and unc
 Keys | Controls
 --- | ---
 1-9 | These will immediately switch between the first 9 avatars.
-q | Turns on StyleGAN-generated avatar. Every time you push the button – new avatar is sampled.
+Q | Turns on StyleGAN-generated avatar. Every time you push the button – new avatar is sampled.
 0 | Toggles avatar display on and off.
 A/D | Previous/next avatar in folder.
 W/S | Zoom camera in/out.
