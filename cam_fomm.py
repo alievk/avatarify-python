@@ -221,10 +221,10 @@ if __name__ == "__main__":
 
     # cap = cv2.VideoCapture(opt.cam)
     cap = VideoCaptureAsync(opt.cam)
-    cap.start()
     if not cap.isOpened():
         log("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
         exit()
+    cap.start()
 
     ret, frame = cap.read()
     if not ret:

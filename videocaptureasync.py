@@ -24,7 +24,7 @@ class VideoCaptureAsync:
             print('[!] Asynchroneous video capturing has already been started.')
             return None
         self.started = True
-        self.thread = threading.Thread(target=self.update, args=())
+        self.thread = threading.Thread(target=self.update, args=(), daemon=True)
         self.thread.start()
         return self
 
