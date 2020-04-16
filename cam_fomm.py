@@ -139,7 +139,6 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, dev
         out = generator(source, kp_source=kp_source, kp_driving=kp_norm)
 
         out = np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
-        out = out[..., ::-1]
         out = (np.clip(out, 0, 1) * 255).astype(np.uint8)
 
         return out
@@ -330,7 +329,7 @@ if __name__ == "__main__":
             preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5, (255, 255, 255), 1)
 
         cv2.imshow('cam', preview_frame)
-        cv2.imshow('avatarify', out)
+        cv2.imshow('avatarify', out[..., ::-1])
 
     cap.release()
     cv2.destroyAllWindows()
