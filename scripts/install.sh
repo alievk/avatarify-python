@@ -14,3 +14,4 @@ pip install face-alignment pyfakewebcam
 # FOMM
 git clone https://github.com/alievk/first-order-model.git fomm
 pip install -r fomm/requirements.txt
+pip install requests

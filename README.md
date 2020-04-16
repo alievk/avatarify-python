@@ -11,8 +11,8 @@ Avatars for Skype and Zoom. Democratized.
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
-
-* 13 April 2020. Added Windows support (kudos to [9of9](https://github.com/9of9)) 
+- **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
+- **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
 ## Requirements
 
@@ -27,8 +27,8 @@ Avatars for Skype and Zoom. Democratized.
 ## Install
 
 #### Download network weights
-1. Download model's weights from [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) or [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) [716 MB]
-2. Place `vox-adv-cpk.pth.tar` file in the `avatarify` root directory
+1. Download model's weights from [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) or [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
+2. Place `vox-adv-cpk.pth.tar` file in the `avatarify` root directory (don't unpack it)
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
@@ -118,6 +118,7 @@ To reduce video latency, in OBS Studio right click on the preview window and unc
 Keys | Controls
 --- | ---
 1-9 | These will immediately switch between the first 9 avatars.
+Q | Turns on StyleGAN-generated avatar. Every time you push the button – new avatar is sampled.
 0 | Toggles avatar display on and off.
 A/D | Previous/next avatar in folder.
 W/S | Zoom camera in/out.
