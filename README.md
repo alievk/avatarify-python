@@ -55,8 +55,8 @@ source scripts/install_mac.sh
 This guide is tested for Windows 10.
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Windows.
-2. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-3. Install [Git](https://git-scm.com/download/win).
+2. Install [Git](https://git-scm.com/download/win).
+3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
 4. In the prompt, run the following commands:
 ```bash
 git clone https://github.com/alievk/avatarify.git
