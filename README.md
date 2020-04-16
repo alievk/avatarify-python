@@ -28,7 +28,7 @@ Avatars for Skype and Zoom. Democratized.
 
 #### Download network weights
 1. Download model's weights from [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) or [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
-2. Place `vox-adv-cpk.pth.tar` file in the `avatarify` root directory
+2. Place `vox-adv-cpk.pth.tar` file in the `avatarify` root directory (don't unpack it)
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
