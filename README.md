@@ -56,21 +56,22 @@ This guide is tested for Windows 10.
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Windows.
 2. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-3. In the prompt, run the following commands:
+3. Install [Git](https://git-scm.com/download/win).
+4. In the prompt, run the following commands:
 ```bash
 git clone https://github.com/alievk/avatarify.git
 cd avatarify
 scripts\install_windows.bat
 ```
-4. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
-5. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
-6. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
-7. Run OBS Studio.
-8. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
-9. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
-10. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
+5. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+6. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
+7. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
+8. Run OBS Studio.
+9. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
+10. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
+11. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
 
-The steps 8-9 are required only once during setup.
+The steps 9-10 are required only once during setup.
 
 ## Setup avatars
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
