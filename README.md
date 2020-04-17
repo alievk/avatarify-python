@@ -33,11 +33,12 @@ Avatars for Skype and Zoom. Democratized.
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
 
-Install `avatarify` dependencies (sudo privelege is required):
+1. Install `avatarify` dependencies (sudo privelege is required):
 
 ```bash
 bash scripts/install.sh
 ```
+2. [Download network weights](#download-network-weights)
 
 #### Mac
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on both Mac and Windows. Please, install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras.
@@ -49,6 +50,7 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 ```bash
 source scripts/install_mac.sh
 ```
+3. [Download network weights](#download-network-weights)
 
 #### Windows
 
@@ -65,15 +67,16 @@ git clone https://github.com/alievk/avatarify.git
 cd avatarify
 scripts\install_windows.bat
 ```
-5. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
-6. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
-7. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
-8. Run OBS Studio.
-9. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
-10. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
-11. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
+5. [Download network weights](#download-network-weights)
+6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
+8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
+9. Run OBS Studio.
+10. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
+11. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
+12. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
 
-The steps 9-10 are required only once during setup.
+The steps 10-11 are required only once during setup.
 
 ## Setup avatars
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
