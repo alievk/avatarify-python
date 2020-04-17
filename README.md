@@ -1,5 +1,8 @@
 ![](docs/mona.gif)
 
+
+[<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
+
 :arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs) 
 
 :arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
@@ -11,6 +14,7 @@ Avatars for Skype and Zoom. Democratized.
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
+- **17 April 2020.** Created Slack community. Please join via [invitation link](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg).
 - **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
