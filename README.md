@@ -57,7 +57,7 @@ This guide is tested for Windows 10.
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Windows.
 2. Install [Git](https://git-scm.com/download/win).
 3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-4. In the prompt, run the following commands:
+4. Download and install Avatarify (please copy-paste these commands and don't change them):
 ```bash
 git clone https://github.com/alievk/avatarify.git
 cd avatarify
