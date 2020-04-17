@@ -16,7 +16,7 @@ Avatars for Skype and Zoom. Democratized.
 
 ## Requirements
 
-* [conda](https://docs.conda.io/en/latest/miniconda.html)
+* [conda Python 3.7](https://docs.conda.io/en/latest/miniconda.html)
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 ## Performance:
