@@ -52,6 +52,8 @@ source scripts/install_mac.sh
 
 #### Windows
 
+*Video tutorial is coming!*
+
 This guide is tested for Windows 10.
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Windows.
