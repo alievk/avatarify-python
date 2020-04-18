@@ -74,16 +74,19 @@ bash scripts/install.sh
 * [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
 #### Mac
-*(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on both Mac and Windows. Please, install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras.
+*(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. Please, install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras.
 
-For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist](http://camtwiststudio.com) app:
+For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist](http://camtwiststudio.com) app.
 
-1. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
-2. Setup `avatarify` conda environment with all required dependencies:
+1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#macosx-installers).
+2. Clone `avatarify` and install its dependencies:
 ```bash
-source scripts/install_mac.sh
+git clone https://github.com/alievk/avatarify.git
+cd avatarify
+bash scripts/install_mac.sh
 ```
 3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+4. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
 
 #### Windows
 
