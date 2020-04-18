@@ -266,7 +266,7 @@ if __name__ == "__main__":
                 kp_driving_initial = None
 
         if passthrough:
-            out = frame
+            out = frame_orig[..., ::-1]
         else:
             pred_start = time.time()
             pred = predict(frame, avatar, opt.relative, opt.adapt_scale, fa, device=device)
