@@ -7,6 +7,6 @@ call conda install -y pytorch torchvision cudatoolkit=10.1 -c pytorch
 call conda install -y -c 1adrianb face_alignment
 
 REM ###FOMM###
-call git clone https://github.com/alievk/first-order-model.git fomm
+call git submodule update --init
 call pip install -r fomm/requirements.txt
 call pip install requests

@@ -12,6 +12,6 @@ conda activate $CONDA_ENV_NAME
 pip install face-alignment pyfakewebcam
 
 # FOMM
-git clone https://github.com/alievk/first-order-model.git fomm
+git submodule update --init
 pip install -r fomm/requirements.txt
 pip install requests
