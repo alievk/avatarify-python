@@ -1,5 +1,8 @@
 ![](docs/mona.gif)
 
+
+[<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
+
 :arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs) 
 
 :arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
@@ -11,12 +14,13 @@ Avatars for Skype and Zoom. Democratized.
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
+- **17 April 2020.** Created Slack community. Please join via [invitation link](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg).
 - **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
 ## Requirements
 
-* [conda](https://docs.conda.io/en/latest/miniconda.html)
+* [conda Python 3.7](https://docs.conda.io/en/latest/miniconda.html)
 * [CUDA](https://developer.nvidia.com/cuda-downloads)
 
 ## Performance:
@@ -33,11 +37,12 @@ Avatars for Skype and Zoom. Democratized.
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
 
-Install `avatarify` dependencies (sudo privelege is required):
+1. Install `avatarify` dependencies (sudo privelege is required):
 
 ```bash
 bash scripts/install.sh
 ```
+2. [Download network weights](#download-network-weights)
 
 #### Mac
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on both Mac and Windows. Please, install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras.
@@ -49,28 +54,33 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 ```bash
 source scripts/install_mac.sh
 ```
+3. [Download network weights](#download-network-weights)
 
 #### Windows
+
+*Video tutorial is coming!*
 
 This guide is tested for Windows 10.
 
 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Windows.
-2. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-3. In the prompt, run the following commands:
+2. Install [Git](https://git-scm.com/download/win).
+3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
+4. Download and install Avatarify (please copy-paste these commands and don't change them):
 ```bash
 git clone https://github.com/alievk/avatarify.git
 cd avatarify
 scripts\install_windows.bat
 ```
-4. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
-5. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
-6. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
-7. Run OBS Studio.
-8. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
-9. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
-10. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
+5. [Download network weights](#download-network-weights)
+6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
+8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
+9. Run OBS Studio.
+10. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
+11. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
+12. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
 
-The steps 8-9 are required only once during setup.
+The steps 10-11 are required only once during setup.
 
 ## Setup avatars
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
