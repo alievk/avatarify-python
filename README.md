@@ -117,7 +117,12 @@ scripts\install_windows.bat
 The steps 11-12 are required only once during setup.
 
 ## Setup avatars
-Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
+Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
+
+Follow these advices for better visual quality:
+* Make square crop of your avatar picture.
+* Crop avatar's face so that it's not too close not too far. Use standard avarars as reference.
+* Prefer pictures with uniform background. It will diminish visual artifacts.
 
 ## Run
 Your web cam must be plugged-in.
