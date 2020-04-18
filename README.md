@@ -18,31 +18,60 @@ Avatars for Skype and Zoom. Democratized.
 - **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
+## Table of Contents
+* [Requirements](#requirements)
+* [Install](#install)
+    * [Download network weights](#download-network-weights)
+    * [Linux](#linux)
+    * [Mac](#mac)
+    * [Windows](#windows)
+* [Setup avatars](#setup-avatars)
+* [Run](#run)
+    * [Linux](#linux-1)
+    * [Mac](#mac-1)
+    * [Windows](#windows-1)
+* [Controls](#controls)
+* [Driving your avatar](#driving-your-avatar)
+* [Configure video meeting app](#configure-video-meeting-app)
+    * [Skype](#skype)
+    * [Zoom](#zoom)
+    * [Slack](#slack)
+* [Contribution](#contribution)
+* [Troubleshooting](#troubleshooting)
+* [Credits](#credits)
+
 ## Requirements
 
-* [conda Python 3.7](https://docs.conda.io/en/latest/miniconda.html)
-* [CUDA](https://developer.nvidia.com/cuda-downloads)
+To run Avatarify smoothly you need a CUDA-enabled (NVIDIA) video card. Otherwise it will fallback to the central processor and run very slowly. These are performance metrics for some hardware:
 
-## Performance:
-- 1080 Ti GPU: **33 fps**
-- 1070 GPU: **15 fps**
+- GeForce GTX 1080 Ti: **33 fps**
+- GeForce GTX 1070: **15 fps**
 - Mac OSX (MacBook Pro 2018; no GPU): **very slow** **~1 fps**
+
+Of course, you also need a webcam!
+
+<!-- * [conda Python 3.7](https://docs.conda.io/en/latest/miniconda.html)
+* [CUDA](https://developer.nvidia.com/cuda-downloads) -->
 
 ## Install
 
 #### Download network weights
-1. Download model's weights from [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) or [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB]
-2. Place `vox-adv-cpk.pth.tar` file in the `avatarify` root directory (don't unpack it)
+Download model's weights from [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) or [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB, md5sum `46b26eabacbcf1533ac66dc5cf234c5e`]
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
 
-1. Install `avatarify` dependencies (sudo privelege is required):
-
+* Download [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#linux-installers) and install using command:
 ```bash
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+* Clone `avatarify` and install its dependencies (sudo privelege is required):
+```bash
+git clone https://github.com/alievk/avatarify.git
+cd avatarify
 bash scripts/install.sh
 ```
-2. [Download network weights](#download-network-weights)
+* [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
 #### Mac
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on both Mac and Windows. Please, install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras.
@@ -54,7 +83,7 @@ For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist]
 ```bash
 source scripts/install_mac.sh
 ```
-3. [Download network weights](#download-network-weights)
+3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
 #### Windows
 
@@ -71,8 +100,8 @@ git clone https://github.com/alievk/avatarify.git
 cd avatarify
 scripts\install_windows.bat
 ```
-5. [Download network weights](#download-network-weights)
-6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
 7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
 8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
 9. Run OBS Studio.
@@ -86,9 +115,9 @@ The steps 10-11 are required only once during setup.
 Copy your avatars into `avatars` folder. Crop pictures to make them square. Prefer pictures with uniform background.
 
 ## Run
-Your web cam must be plugged-in. You can choose your camera by changing `CAMID` in `scripts/settings.sh` script.
+Your web cam must be plugged-in.
 
-Run Skype or Zoom only when Avatarify is started.
+**Note:** run Skype or Zoom only after Avatarify is started.
 
 #### Linux
 It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
@@ -111,7 +140,7 @@ bash run_mac.sh
 
 #### Windows
 
-If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one in `scripts/settings_windows.bat` `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+If there are multiple cameras (including virtual ones) in your system, you may need to select the correct one in `scripts/settings_windows.bat`. Open this file and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
 
 1. In Anaconda Prompt:
 ```
@@ -120,7 +149,7 @@ run_windows.bat
 ```
 2. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
 
-To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
+**Note:** To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
 
 ## Controls
 
@@ -139,7 +168,7 @@ R | Mirror reference window.
 T | Mirror output window.
 ESC | Quit
 
-## Tips
+## Driving your avatar
 
 It is recommended to use the avatar overlay and the zoom in/out function to align your face in the preview window as closely as possible in proportion and position to the target avatar. When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation.
 
@@ -148,6 +177,8 @@ Alternatively, you can hit 'F' for the software to attempt to find a better refe
 You want to get the first number as small as possible - around 10 is usually a good alignment. When you are done, press 'F' again to exit reference frame search mode.
 
 You don't need to be exact, and some other configurations can yield better results still, but it's usually a good starting point.
+
+## Configure video meeting app
 
 ### Skype
 
