@@ -19,26 +19,29 @@ Avatars for Skype and Zoom. Democratized.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
 ## Table of Contents
-* [Requirements](#requirements)
-* [Install](#install)
-    * [Download network weights](#download-network-weights)
-    * [Linux](#linux)
-    * [Mac](#mac)
-    * [Windows](#windows)
-* [Setup avatars](#setup-avatars)
-* [Run](#run)
-    * [Linux](#linux-1)
-    * [Mac](#mac-1)
-    * [Windows](#windows-1)
-* [Controls](#controls)
-* [Driving your avatar](#driving-your-avatar)
-* [Configure video meeting app](#configure-video-meeting-app)
-    * [Skype](#skype)
-    * [Zoom](#zoom)
-    * [Slack](#slack)
-* [Contribution](#contribution)
-* [Troubleshooting](#troubleshooting)
-* [Credits](#credits)
+- [Avatarify](#avatarify)
+  - [News](#news)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+  - [Install](#install)
+      - [Download network weights](#download-network-weights)
+      - [Linux](#linux)
+      - [Mac](#mac)
+      - [Windows](#windows)
+  - [Setup avatars](#setup-avatars)
+  - [Run](#run)
+      - [Linux](#linux-1)
+      - [Mac](#mac-1)
+      - [Windows](#windows-1)
+  - [Controls](#controls)
+  - [Driving your avatar](#driving-your-avatar)
+  - [Configure video meeting app](#configure-video-meeting-app)
+    - [Skype](#skype)
+    - [Zoom](#zoom)
+    - [Slack](#slack)
+  - [Contribution](#contribution)
+  - [Troubleshooting](#troubleshooting)
+  - [Credits](#credits)
 
 ## Requirements
 
@@ -75,7 +78,12 @@ bash scripts/install.sh
 4. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
 #### Mac
-*(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. Please, install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras.
+*(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. To use Avatarify in Zoom you can choose from 2 options:
+- Install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras
+- Use latest version of Zoom, but disable library validation:
+```bash
+codesign --remove-signature /Applications/zoom.us.app
+```
 
 For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist](http://camtwiststudio.com) app.
 
