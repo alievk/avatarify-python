@@ -1,0 +1,3 @@
+[submodule "fomm"]
+	path = fomm
+	url = https://github.com/alievk/first-order-model
