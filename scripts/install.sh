@@ -9,7 +9,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda create -y -n $CONDA_ENV_NAME python=3.8
 conda activate $CONDA_ENV_NAME
 
-pip install face-alignment pyfakewebcam msgpack-numpy pyzmq
+pip install face-alignment pyfakewebcam msgpack-numpy pyzmq blosc
 
 # FOMM
 git submodule update --init

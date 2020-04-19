@@ -2,12 +2,27 @@ from predictor_local import PredictorLocal
 from arguments import opt
 
 import zmq
+import blosc
 import msgpack
 import msgpack_numpy as m
 m.patch()
 
 
 DEFAULT_PORT = 5556
+
+
+if opt.compress:
+    def pack_message(msg):
+        return blosc.compress(msgpack.packb(msg), typesize=8)
+    
+    def unpack_message(msg):
+        return msgpack.unpackb(blosc.decompress(msg))
+else:
+    def pack_message(msg):
+        return msgpack.packb(msg)
+    
+    def unpack_message(msg):
+        return msgpack.unpackb(msg)
 
 
 class PredictorRemote:
@@ -32,9 +47,9 @@ class PredictorRemote:
         return lambda *args, **kwargs: self._send_recv_msg((item, args, kwargs))
 
     def _send_recv_msg(self, msg):
-        self.socket.send(msgpack.packb(msg), copy=False)
+        self.socket.send(pack_message(msg), copy=False)
         response = self.socket.recv()
-        return msgpack.unpackb(response)
+        return unpack_message(response)
 
 
 def message_handler(port):
@@ -49,7 +64,7 @@ def message_handler(port):
     while True:
         msg_raw = socket.recv()
         try:
-            msg = msgpack.unpackb(msg_raw)
+            msg = unpack_message(msg_raw)
         except ValueError:
             print("Invalid Message")
             continue
@@ -66,7 +81,7 @@ def message_handler(port):
             result = True
         else:
             result = getattr(predictor, method)(*msg[1], **msg[2])
-        socket.send(msgpack.packb(result), copy=False)
+        socket.send(pack_message(result), copy=False)
 
 
 def run_worker(port):

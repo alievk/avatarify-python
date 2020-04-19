@@ -21,6 +21,7 @@ class PredictorLocal:
         self.checkpoint_path = checkpoint_path
         self.generator, self.kp_detector = self.load_checkpoints()
         self.fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True, device=self.device)
+        self.source = None
 
     def load_checkpoints(self):
         with open(self.config_path) as f:
@@ -49,9 +50,12 @@ class PredictorLocal:
     def reset_frames(self):
         self.kp_driving_initial = None
 
-    def predict(self, driving_frame, source_image):
+    def set_source_image(self, source_image):
+        self.source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
+
+    def predict(self, driving_frame):
         with torch.no_grad():
-            source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
+            source = self.source
             driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
             kp_source = self.kp_detector(source)
 

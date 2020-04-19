@@ -84,6 +84,7 @@ def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp
     avatar_kp = predictor.get_frame_kp(new_avatar)
     avatar = new_avatar
+    predictor.set_source_image(avatar)
 
 def log(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -190,7 +191,7 @@ if __name__ == "__main__":
             out = frame_orig[..., ::-1]
         else:
             pred_start = time.time()
-            pred = predictor.predict(frame, avatar)
+            pred = predictor.predict(frame)
             out = pred
             pred_time = (time.time() - pred_start) * 1000
             if opt.verbose:
