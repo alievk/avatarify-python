@@ -30,7 +30,7 @@ def is_new_frame_better(source, driving, precitor):
         display_string = "No face detected in avatar."
         return False
     
-    if predictor.start_frame is None:
+    if predictor.get_start_frame() is None:
         display_string = "No frame to compare to."
         return True
     
@@ -39,7 +39,7 @@ def is_new_frame_better(source, driving, precitor):
     
     if new_kp is not None:
         new_norm = (np.abs(avatar_kp - new_kp) ** 2).sum()
-        old_norm = (np.abs(avatar_kp - predictor.start_frame_kp) ** 2).sum()
+        old_norm = (np.abs(avatar_kp - predictor.get_start_frame_kp()) ** 2).sum()
         
         out_string = "{0} : {1}".format(int(new_norm * 100), int(old_norm * 100))
         display_string = out_string
@@ -180,7 +180,7 @@ if __name__ == "__main__":
             if is_new_frame_better(avatar, frame, predictor):
                 log("Taking new frame!")
                 green_overlay = True
-                predictor.kp_driving_initial = None
+                predictor.reset_frames()
 
         if opt.verbose:
             preproc_time = (time.time() - t_start) * 1000
@@ -227,7 +227,7 @@ if __name__ == "__main__":
             frame_proportion += 0.05
             frame_proportion = min(frame_proportion, 1.0)
         elif key == ord('x'):
-           predictor.kp_driving_initial = None
+           predictor.reset_frames()
         elif key == ord('z'):
             overlay_alpha = max(overlay_alpha - 0.1, 0.0)
         elif key == ord('c'):

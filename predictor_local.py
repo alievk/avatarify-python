@@ -46,11 +46,10 @@ class PredictorLocal:
         
         return generator, kp_detector
 
+    def reset_frames(self):
+        self.kp_driving_initial = None
 
     def predict(self, driving_frame, source_image):
-        return self._predict(driving_frame, source_image)
-    
-    def _predict(self, driving_frame, source_image):
         with torch.no_grad():
             source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
             driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
@@ -72,7 +71,7 @@ class PredictorLocal:
 
             return out
 
-    def _get_frame_kp(self, image):
+    def get_frame_kp(self, image):
         kp_landmarks = self.fa.get_landmarks(255 * image)
         if kp_landmarks:
             kp_image = kp_landmarks[0]
@@ -81,9 +80,6 @@ class PredictorLocal:
         else:
             return None
 
-    def get_frame_kp(self, image):
-        return self._get_frame_kp(image)
-    
     @staticmethod
     def normalize_alignment_kp(kp):
         kp = kp - kp.mean(axis=0, keepdims=True)
@@ -92,3 +88,8 @@ class PredictorLocal:
         kp[:, :2] = kp[:, :2] / area
         return kp
     
+    def get_start_frame(self):
+        return self.start_frame
+
+    def get_start_frame_kp(self):
+        return self.start_frame_kp
