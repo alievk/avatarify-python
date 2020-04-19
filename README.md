@@ -144,6 +144,8 @@ Run:
 bash run.sh
 ```
 
+`cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
+
 #### Mac
 1. Run:
 ```bash
@@ -152,6 +154,8 @@ bash run_mac.sh
 2. Go to [CamTwist](http://camtwiststudio.com).
 3. Choose `Desktop+` and press `Select`.
 4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
+
+`cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 #### Windows
 
@@ -163,6 +167,8 @@ cd C:\path\to\avatarify
 run_windows.bat
 ```
 2. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
+
+`cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 **Note:** To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
 
@@ -186,7 +192,10 @@ ESC | Quit
 
 ## Driving your avatar
 
-It is recommended to use the avatar overlay and the zoom in/out function to align your face in the preview window as closely as possible in proportion and position to the target avatar. When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation.
+These are the main principles for driving your avatar:
+
+* Align your face in the camera window as closely as possible in proportion and position to the target avatar. Use zoom in/out function (W/S keys). When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation
+* Use the overlay function (Z/C keys) to match your and avatar's face expressions as close as possible
 
 Alternatively, you can hit 'F' for the software to attempt to find a better reference frame itself. This will slow down the framerate, but while this is happening, you can keep moving your head around: the preview window will flash green when it finds your facial pose is a closer match to the avatar than the one it is currently using. You will see two numbers displayed as well: the first number is how closely you are currently aligned to the avatar, and the second number is how closely the reference frame is aligned.
 
