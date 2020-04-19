@@ -29,7 +29,6 @@ class PredictorRemote:
         return self._send_recv_msg(msg)
 
     def __getattr__(self, item):
-        print("getattr:", item)
         return lambda *args, **kwargs: self._send_recv_msg((item, args, kwargs))
 
     def _send_recv_msg(self, msg):
@@ -55,7 +54,6 @@ def message_handler(port):
             print("Invalid Message")
             continue
         method = msg[0]
-        print("Got message for:", method)
         if method == "__init__":
             predictor_args_new = msg[1:]
             if predictor_args_new == predictor_args:
@@ -68,7 +66,6 @@ def message_handler(port):
             result = True
         else:
             result = getattr(predictor, method)(*msg[1], **msg[2])
-        print(f"Sending result of {method}")
         socket.send(msgpack.packb(result), copy=False)
 
 
