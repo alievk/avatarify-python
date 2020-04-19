@@ -2,7 +2,6 @@ import os, sys
 import glob
 import yaml
 import time
-from argparse import ArgumentParser
 import requests
 
 import imageio
@@ -12,7 +11,9 @@ import cv2
 
 
 from videocaptureasync import VideoCaptureAsync
-from precitor_local import PredictorLocal
+import predictor_local
+import predictor_remote
+from arguments import opt
 
 from sys import platform as _platform
 _streaming = False
@@ -93,35 +94,25 @@ if __name__ == "__main__":
     global display_string
     display_string = ""
 
-    parser = ArgumentParser()
-    parser.add_argument("--config", required=True, help="path to config")
-    parser.add_argument("--checkpoint", default='vox-cpk.pth.tar', help="path to checkpoint to restore")
-
-    parser.add_argument("--relative", dest="relative", action="store_true", help="use relative or absolute keypoint coordinates")
-    parser.add_argument("--adapt_scale", dest="adapt_scale", action="store_true", help="adapt movement scale based on convex hull of keypoints")
-    parser.add_argument("--no-pad", dest="no_pad", action="store_true", help="don't pad output image")
-
-    parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
-    parser.add_argument("--virt-cam", type=int, default=0, help="Virtualcam device ID")
-    parser.add_argument("--no-stream", action="store_true", help="On Linux, force no streaming")
-
-    parser.add_argument("--verbose", action="store_true", help="Print additional information")
-
-    parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
- 
-    parser.set_defaults(relative=False)
-    parser.set_defaults(adapt_scale=False)
-    parser.set_defaults(no_pad=False)
-
-    opt = parser.parse_args()
-
     if opt.no_stream:
         log('Force no streaming')
         _streaming = False
 
     log('Loading Predictor')
-    predictor = PredictorLocal(config_path=opt.config, checkpoint_path=opt.checkpoint,
-                               relative=opt.relative, adapt_movement_scale=opt.adapt_scale)
+    if opt.is_worker:
+        predictor_remote.run_worker(opt.worker_port)
+        sys.exit(0)
+    elif opt.worker_host:
+        predictor = predictor_remote.PredictorRemote(
+            worker_host=opt.worker_host, worker_port=opt.worker_port,
+            config_path=opt.config, checkpoint_path=opt.checkpoint,
+            relative=opt.relative, adapt_movement_scale=opt.adapt_scale
+        )
+    else:
+        predictor = predictor_local.PredictorLocal(
+            config_path=opt.config, checkpoint_path=opt.checkpoint,
+            relative=opt.relative, adapt_movement_scale=opt.adapt_scale
+        )
 
     avatars=[]
     images_list = sorted(glob.glob(f'{opt.avatars}/*'))
