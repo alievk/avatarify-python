@@ -236,6 +236,7 @@ Please make pull requests if you have any improvements or bug-fixes.
 
 ## Troubleshooting
 
+* *My avatar is distorted*: Please follow these [recommendation](#driving-your-avatar) for avatar driving.
 * *Zoom/Skype doesn't see `avatarify` camera*. Restart Zoom/Skype and try again.
 * *Avatar image is frozen*: In Zoom, try Stop and Start Video.
 * *`bash run_mac.sh` crashes with "Cannot open camera"*: Try to change CAMID in `run_mac.sh` from `0` to `1`, `2`, ...
