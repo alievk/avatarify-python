@@ -2,11 +2,10 @@
 
 source scripts/settings.sh
 
-# v4l2loopback
-#sudo apt install v4l2loopback-dkms
-#sudo apt install v4l-utils
+git submodule update --init
 
-git clone https://github.com/alievk/v4l2loopback.git
+# v4l2loopback
+echo "--- Installing v4l2loopback (sudo privelege required)"
 cd v4l2loopback
 make && sudo make install
 sudo depmod -a
@@ -19,6 +18,5 @@ conda activate $CONDA_ENV_NAME
 pip install face-alignment pyfakewebcam
 
 # FOMM
-git submodule update --init
 pip install -r fomm/requirements.txt
 pip install requests
