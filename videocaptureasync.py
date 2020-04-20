@@ -11,7 +11,11 @@ WARMUP_TIMEOUT = 10.0
 class VideoCaptureAsync:
     def __init__(self, src=0, width=640, height=480):
         self.src = src
+
         self.cap = cv2.VideoCapture(self.src)
+        if not self.cap.isOpened():
+            raise RuntimeError("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
+        
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         self.grabbed, self.frame = self.cap.read()
