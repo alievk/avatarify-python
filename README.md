@@ -48,7 +48,8 @@ To run Avatarify smoothly you need a CUDA-enabled (NVIDIA) video card. Otherwise
 - GeForce GTX 1070: **15 fps**
 - Mac OSX (MacBook Pro 2018; no GPU): **very slow** **~1 fps**
 
-Of course, you also need a webcam!
+Of course, you also need a webcam! If you don't have webcam in your PC, you can use this Android App: [dev47apps](https://www.dev47apps.com/)
+
 
 <!-- * [conda Python 3.7](https://docs.conda.io/en/latest/miniconda.html)
 * [CUDA](https://developer.nvidia.com/cuda-downloads) -->
