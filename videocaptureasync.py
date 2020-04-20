@@ -2,6 +2,11 @@
 
 import threading
 import cv2
+import time
+
+
+WARMUP_TIMEOUT = 10.0
+
 
 class VideoCaptureAsync:
     def __init__(self, src=0, width=640, height=480):
@@ -21,11 +26,21 @@ class VideoCaptureAsync:
 
     def start(self):
         if self.started:
-            print('[!] Asynchroneous video capturing has already been started.')
+            print('[!] Asynchronous video capturing has already been started.')
             return None
         self.started = True
         self.thread = threading.Thread(target=self.update, args=(), daemon=True)
         self.thread.start()
+
+        # (warmup) wait for the first successfully grabbed frame 
+        warmup_start_time = time.time()
+        while not self.grabbed:
+            warmup_elapsed_time = (time.time() - warmup_start_time)
+            if warmup_elapsed_time > WARMUP_TIMEOUT:
+                raise RuntimeError(f"Failed to succesfully grab frame from the camera (timeout={WARMUP_TIMEOUT}s). Try to restart.")
+
+            time.sleep(0.5)
+    
         return self
 
     def update(self):
