@@ -9,7 +9,11 @@
 
 # Avatarify
 
-Avatars for Skype and Zoom. Democratized.
+Photorealistic avatars for Skype and Zoom. Democratized.
+
+Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model).
+
+Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://github.com/karfly).
 
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
@@ -243,8 +247,3 @@ Please make pull requests if you have any improvements or bug-fixes.
 * `pipe:0: Invalid data found when processing input`: Make sure `CAMID` in `scripts/settings.sh` is correct. Use `v4l2-ctl --list-devices` to query available devices.
 * `ASSERT: "false" in file qasciikey.cpp, line 501`. If you have several keyboard layouts, switch to English layout.
 * `No such file or directory: 'vox-adv-cpk.pth.tar'`. Please follow instructions [Download network weights](#download-network-weights)
-
-
-## Credits
-
-- Avatrify uses [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model) for generating avatars.

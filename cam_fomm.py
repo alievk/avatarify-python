@@ -32,7 +32,7 @@ if _platform == 'linux' or _platform == 'linux2':
 def load_checkpoints(config_path, checkpoint_path, device='cuda'):
 
     with open(config_path) as f:
-        config = yaml.load(f)
+        config = yaml.load(f, Loader=yaml.FullLoader)
 
     generator = OcclusionAwareGenerator(**config['model_params']['generator_params'],
                                         **config['model_params']['common_params'])
@@ -218,19 +218,11 @@ if __name__ == "__main__":
     
     fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True, device=device)
 
-    # cap = cv2.VideoCapture(opt.cam)
     cap = VideoCaptureAsync(opt.cam)
-    if not cap.isOpened():
-        log("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
-        exit()
     cap.start()
 
-    ret, frame = cap.read()
-    if not ret:
-        log("Cannot read from camera")
-        exit()
-
     if _streaming:
+        ret, frame = cap.read()
         stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', frame.shape[1], frame.shape[0])
 
     cur_ava = 0    
@@ -386,6 +378,5 @@ if __name__ == "__main__":
             fps = 10 / sum(fps_hist)
             fps_hist = []
 
-    #cap.release()
     cap.stop()
     cv2.destroyAllWindows()
