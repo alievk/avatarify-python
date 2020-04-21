@@ -127,7 +127,6 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, dev
     with torch.no_grad():
         source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
         driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
-        kp_source = kp_detector(source)
 
         if kp_driving_initial is None:
             kp_driving_initial = kp_detector(driving)
@@ -159,8 +158,9 @@ def load_stylegan_avatar():
     return image
 
 def change_avatar(fa, new_avatar):
-    global avatar, avatar_kp
+    global avatar, avatar_kp, kp_source
     avatar_kp = get_frame_kp(fa, new_avatar)
+    kp_source = kp_detector(torch.tensor(new_avatar[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device))
     avatar = new_avatar
 
 def log(*args, **kwargs):
@@ -172,6 +172,8 @@ if __name__ == "__main__":
     display_string = ""
     global kp_driving_initial
     kp_driving_initial = None
+    global kp_source
+    kp_source = None
 
     parser = ArgumentParser()
     parser.add_argument("--config", required=True, help="path to config")
