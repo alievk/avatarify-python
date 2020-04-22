@@ -6,6 +6,7 @@ call conda activate %CONDA_ENV_NAME%
 call conda install -y pytorch==1.0.0 torchvision==0.2.1 cuda100 -c pytorch
 
 REM ###FOMM###
+call rmdir fomm /s /q
 call git clone https://github.com/alievk/first-order-model.git fomm
 
 call pip install -r requirements.txt
