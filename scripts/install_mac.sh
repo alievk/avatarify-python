@@ -8,9 +8,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate $ENV_NAME
 
 # FOMM
-git submodule update --init
-pip install -r fomm/requirements.txt
+rm -rf fomm 2> /dev/null
+git clone https://github.com/alievk/first-order-model.git fomm
 
-pip install pyyaml
-pip install face-alignment
-pip install requests
+pip install -r requirements.txt
