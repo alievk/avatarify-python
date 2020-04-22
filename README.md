@@ -65,18 +65,18 @@ Download model's weights from [Dropbox](https://www.dropbox.com/s/c2mya1j07ittax
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
 
-1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64).
-2. Download [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#linux-installers) and install using command:
+<!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64). --->
+1. Download [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#linux-installers) and install using command:
 ```bash
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
-3. Clone `avatarify` and install its dependencies (sudo privelege is required):
+2. Clone `avatarify` and install its dependencies (sudo privelege is required):
 ```bash
 git clone https://github.com/alievk/avatarify.git
 cd avatarify
 bash scripts/install.sh
 ```
-4. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
 #### Mac
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. To use Avatarify in Zoom you can choose from 2 options:
@@ -104,26 +104,26 @@ bash scripts/install_mac.sh
 
 This guide is tested for Windows 10.
 
-1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exenetwork).
-2. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
-3. Install [Git](https://git-scm.com/download/win).
-4. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-5. Download and install Avatarify (please copy-paste these commands and don't change them):
+<!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exenetwork). -->
+1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
+2. Install [Git](https://git-scm.com/download/win).
+3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
+4. Download and install Avatarify (please copy-paste these commands and don't change them):
 ```bash
 git clone https://github.com/alievk/avatarify.git
 cd avatarify
 scripts\install_windows.bat
 ```
-6. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
-7. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
-8. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
-9. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
-10. Run OBS Studio.
-11. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
-12. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
-13. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
+5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
+8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
+9. Run OBS Studio.
+10. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
+11. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
+12. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
 
-The steps 11-12 are required only once during setup.
+The steps 10-11 are required only once during setup.
 
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
