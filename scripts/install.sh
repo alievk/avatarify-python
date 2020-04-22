@@ -12,7 +12,7 @@ sudo depmod -a
 cd ..
 
 source $(conda info --base)/etc/profile.d/conda.sh
-conda create -y -n $CONDA_ENV_NAME python=3.8
+conda create -y -n $CONDA_ENV_NAME python=3.7
 conda activate $CONDA_ENV_NAME
 
 pip install face-alignment pyfakewebcam

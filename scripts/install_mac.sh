@@ -2,7 +2,7 @@
 
 ENV_NAME=avatarify
 
-conda create -y -n $ENV_NAME python=3.8
+conda create -y -n $ENV_NAME python=3.7
 
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate $ENV_NAME
