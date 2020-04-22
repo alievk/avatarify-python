@@ -7,7 +7,7 @@ import requests
 
 import imageio
 import numpy as np
-from skimage.transform import resize
+import skimage.transform
 import cv2
 
 import torch
@@ -117,6 +117,13 @@ def pad_img(img, orig):
     out = np.pad(img, [[0,0], [pad//2, pad//2], [0,0]], 'constant')
     out = cv2.resize(out, (w, h))
     return out
+
+
+def resize(img, size, version='cv'):
+    if version == 'cv':
+        return cv2.resize(img, size) / 255
+    else:
+        return skimage.transform.resize(img, size)
 
 
 def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, device='cuda'):
@@ -251,6 +258,12 @@ if __name__ == "__main__":
     show_fps = False
 
     while True:
+        timing = {
+            'preproc': 0,
+            'predict': 0,
+            'postproc': 0
+        }
+
         t_start = time.time()
 
         green_overlay = False
@@ -271,9 +284,7 @@ if __name__ == "__main__":
                 green_overlay = True
                 kp_driving_initial = None
 
-        if opt.verbose:
-            preproc_time = (time.time() - t_start) * 1000
-            log(f'PREPROC: {preproc_time:.3f}ms')
+        timing['preproc'] = (time.time() - t_start) * 1000
 
         if passthrough:
             out = frame_orig[..., ::-1]
@@ -281,9 +292,7 @@ if __name__ == "__main__":
             pred_start = time.time()
             pred = predict(frame, avatar, opt.relative, opt.adapt_scale, fa, device=device)
             out = pred
-            pred_time = (time.time() - pred_start) * 1000
-            if opt.verbose:
-                log(f'PRED: {pred_time:.3f}ms')
+            timing['predict'] = (time.time() - pred_start) * 1000
 
         postproc_start = time.time()
 
@@ -362,20 +371,18 @@ if __name__ == "__main__":
             overlay = preview_frame.copy()
             overlay[:] = (0, 255, 0)
             preview_frame = cv2.addWeighted( preview_frame, green_alpha, overlay, 1.0 - green_alpha, 0.0)
+
+        timing['postproc'] = (time.time() - postproc_start) * 1000
             
         if find_keyframe:
             preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
 
         if show_fps:
-            fps_string = f'FPS: {fps:.2f}'
-            preview_frame = cv2.putText(preview_frame, fps_string, (10, 240), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+            timing_string = f"FPS/Model/Pre/Post: {fps:.1f} / {timing['predict']:.1f} / {timing['preproc']:.1f} / {timing['postproc']:.1f}"
+            preview_frame = cv2.putText(preview_frame, timing_string, (10, 240), 0, 0.3 * IMG_SIZE / 256, (255, 255, 255), 1)
 
         cv2.imshow('cam', preview_frame)
         cv2.imshow('avatarify', out[..., ::-1])
-
-        if opt.verbose:
-            postproc_time = (time.time() - postproc_start) * 1000
-            log(f'POSTPROC: {postproc_time:.3f}ms')
 
         fps_hist.append(time.time() - t_start)
         if len(fps_hist) == 10:
