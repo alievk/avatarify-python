@@ -18,6 +18,7 @@ Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://g
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
+- **24 April 2020.** Added Windows installation [tutorial](https://www.youtube.com/watch?v=lym9ANVb120).
 - **17 April 2020.** Created Slack community. Please join via [invitation link](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg).
 - **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
@@ -100,7 +101,7 @@ bash scripts/install_mac.sh
 
 #### Windows
 
-*Video tutorial is coming!*
+:arrow_forward: [Video tutorial](https://youtu.be/lym9ANVb120)
 
 This guide is tested for Windows 10.
 
