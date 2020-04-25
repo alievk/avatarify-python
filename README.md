@@ -42,8 +42,8 @@ Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://g
   - [Zoom](#zoom)
   - [Slack](#slack)
 - [Contribution](#contribution)
+- [FAQ](#faq)
 - [Troubleshooting](#troubleshooting)
-- [Credits](#credits)
 
 ## Requirements
 
@@ -237,6 +237,42 @@ Our goal is to democratize deepfake avatars. To make the technology even more ac
 2. Optimize neural network run-time. Running network real-time on CPU is of high priority.
 
 Please make pull requests if you have any improvements or bug-fixes.
+
+
+## FAQ
+
+Q: **Do I need any knowledge of programming to run Avatarify?**  
+A: Not really, but you need some beginner-level knowledge of the command line. For Windows we recorded a video [tutorial](https://www.youtube.com/watch?v=lym9ANVb120), so it’ll be easy to install.
+
+Q: **Why does it work so slow on my Macbook?**  
+A: The model used in Avatarify requires a CUDA-enabled NVIDIA GPU to perform heavy computations. Macbooks don’t have such GPUs,  and for processing use CPU, which has much less computing power to run Avatarify smoothly.
+
+Q: **I don’t have a NVIDIA GPU, can I run it?**  
+A: You still can run it without a NVIDIA GPU, but with drastically reduced performance (<1fps).
+
+Q: **I have an ATI GPU (e.g. Radeon). Why does it work so slow?**  
+A: To run the neural network Avatarify uses PyTorch library, which is optimized for CUDA. If PyTorch can’t find a CUDA-enabled GPU in your system it will fallback to CPU. The performance on the CPU will be much worse.
+
+Q: **How to add a new avatar?**  
+A: It’s easy. All you need is to find a picture of your avatar and put it in the `avatars` folder. [More](https://github.com/alievk/avatarify#setup-avatars).
+
+Q: **My avatar looks distorted.**  
+A: You need to calibrate your face position. Please follow the [tips](https://github.com/alievk/avatarify#driving-your-avatar) or watch the video [tutorial](https://youtu.be/lym9ANVb120?t=662).
+
+Q: **Can I use a cloud GPU?**  
+A: This is work in progress. See the relevant [discussion](https://github.com/alievk/avatarify/issues/115).
+
+Q: **Avatarify crashed, what to do?**  
+A: First, try to find your error in the [troubleshooting](https://github.com/alievk/avatarify#troubleshooting) section. If it is not there, try to find it in the [issues](https://github.com/alievk/avatarify/issues). If you couldn’t find your issue there, please open a new one using the issue template.
+
+Q: **Can I use Avatarify for commercial purposes?**  
+A: No. Avatarify and First Order Motion Model are licensed under Creative Commons Non-Commercial license, which prohibits commercial use.
+
+Q: **What video conferencing apps does Avatarify support?**  
+A: Avatarify creates a virtual camera which can be plugged into any app where video input source can be changed (Zoom, Skype, Hangouts, Slack, ...). 
+
+Q: **Where can I discuss Avatarify-related topics with the community?**  
+A: We have Slack. Please join: [<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
 
 
 ## Troubleshooting
