@@ -111,11 +111,15 @@ def crop(img, p=0.7):
     return img[u:d, l:r], (l,r,u,d)
 
 
-def pad_img(img, orig):
-    h, w = orig.shape[:2]
-    pad = int(IMG_SIZE * (w / h) - IMG_SIZE)
-    out = np.pad(img, [[0,0], [pad//2, pad//2], [0,0]], 'constant')
-    out = cv2.resize(out, (w, h))
+def pad_img(img, target_size, default_pad=0):
+    sh, sw = img.shape[:2]
+    w, h = target_size
+    pad_w, pad_h = default_pad, default_pad
+    if w / h > 1:
+        pad_w += int(sw * (w / h) - sw) // 2
+    else:
+        pad_h += int(sh * (h / w) - sh) // 2
+    out = np.pad(img, [[pad_h, pad_h], [pad_w, pad_w], [0,0]], 'constant')
     return out
 
 
@@ -234,7 +238,8 @@ if __name__ == "__main__":
 
     if _streaming:
         ret, frame = cap.read()
-        stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', frame.shape[1], frame.shape[0])
+        stream_img_size = frame.shape[1], frame.shape[0]
+        stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', *stream_img_size)
 
     cur_ava = 0    
     avatar = None
@@ -297,7 +302,7 @@ if __name__ == "__main__":
         postproc_start = time.time()
 
         if not opt.no_pad:
-            out = pad_img(out, frame_orig)
+            out = pad_img(out, stream_img_size)
 
         if out.dtype != np.uint8:
             out = (out * 255).astype(np.uint8)
@@ -356,6 +361,7 @@ if __name__ == "__main__":
             log(key)
 
         if _streaming:
+            out = cv2.resize(out, stream_img_size)
             stream.schedule_frame(out)
 
         preview_frame = cv2.addWeighted( avatars[cur_ava][:,:,::-1], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
