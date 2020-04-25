@@ -139,6 +139,8 @@ Your web cam must be plugged-in.
 
 **Note:** run Skype or Zoom only after Avatarify is started.
 
+**Note:** On Mac's with a built-in FaceTime camera, the CAMID in settings.sh should be set to 2 (tested on 2019 Macbook Pro 15").
+
 #### Linux
 It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
 
