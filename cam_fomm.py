@@ -11,7 +11,6 @@ import skimage.transform
 import cv2
 
 import torch
-from sync_batchnorm import DataParallelWithCallback
 
 from modules.generator import OcclusionAwareGenerator
 from modules.keypoint_detector import KPDetector
@@ -45,9 +44,6 @@ def load_checkpoints(config_path, checkpoint_path, device='cuda'):
     checkpoint = torch.load(checkpoint_path, map_location=device)
     generator.load_state_dict(checkpoint['generator'])
     kp_detector.load_state_dict(checkpoint['kp_detector'])
-
-    generator = DataParallelWithCallback(generator)
-    kp_detector = DataParallelWithCallback(kp_detector)
 
     generator.eval()
     kp_detector.eval()
