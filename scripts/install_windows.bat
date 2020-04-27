@@ -1,3 +1,9 @@
+@echo off
+
+REM Check prerequisites
+call conda --version >nul 2>&1 && ( echo conda found ) || ( echo conda not found. Please refer to the README and install Miniconda. && exit /B 1)
+call git --version >nul 2>&1 && ( echo git found ) || ( echo git not found. Please refer to the README and install Git. && exit /B 1)
+
 call scripts/settings_windows.bat
 
 call conda create -y -n %CONDA_ENV_NAME% python=3.7
