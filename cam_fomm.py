@@ -340,10 +340,10 @@ if __name__ == "__main__":
         elif key == ord('H'):
             if frame_lrudwh[0] - 5 > 0:
                 frame_offset_x -= 5
-        elif key == ord('l'):
+        elif key == ord('k'):
             if frame_lrudwh[1] + 1 < frame_lrudwh[4]:
                 frame_offset_x += 1
-        elif key == ord('L'):
+        elif key == ord('K'):
             if frame_lrudwh[1] + 5 < frame_lrudwh[4]:
                 frame_offset_x += 5
         elif key == ord('j'):
@@ -352,10 +352,10 @@ if __name__ == "__main__":
         elif key == ord('J'):
             if frame_lrudwh[2] - 5 > 0:
                 frame_offset_y -= 5
-        elif key == ord('k'):
+        elif key == ord('u'):
             if frame_lrudwh[3] + 1 < frame_lrudwh[5]:
                 frame_offset_y += 1
-        elif key == ord('K'):
+        elif key == ord('U'):
             if frame_lrudwh[3] + 5 < frame_lrudwh[5]:
                 frame_offset_y += 5
         elif key == ord('Z'):

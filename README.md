@@ -187,7 +187,7 @@ Q | Turns on StyleGAN-generated avatar. Every time you push the button – new a
 0 | Toggles avatar display on and off.
 A/D | Previous/next avatar in folder.
 W/S | Zoom camera in/out.
-HJKL | Translate camera. Left, Up, Down, Right by 1 pixel. Use `Shift` to adjust by 5 pixels.
+U/H/J/K | Translate camera. `H` - left, `K` - right, `U` - up, `J` - Down by 1 pixel. Add `Shift` to adjust by 5 pixels.
 Shift-Z | Reset camera zoom and translation
 Z/C | Adjust avatar target overlay opacity.
 X | Reset reference frame.
@@ -201,7 +201,7 @@ ESC | Quit
 
 These are the main principles for driving your avatar:
 
-* Align your face in the camera window as closely as possible in proportion and position to the target avatar. Use zoom in/out function (W/S keys) and camera left, up, down, right translation (HJKL keys). When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation
+* Align your face in the camera window as closely as possible in proportion and position to the target avatar. Use zoom in/out function (W/S keys) and camera left, right, up, down translation (U/H/J/K keys). When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation
 * Use the overlay function (Z/C keys) to match your and avatar's face expressions as close as possible
 
 Alternatively, you can hit 'F' for the software to attempt to find a better reference frame itself. This will slow down the framerate, but while this is happening, you can keep moving your head around: the preview window will flash green when it finds your facial pose is a closer match to the avatar than the one it is currently using. You will see two numbers displayed as well: the first number is how closely you are currently aligned to the avatar, and the second number is how closely the reference frame is aligned.
