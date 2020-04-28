@@ -135,6 +135,7 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, dev
     global start_frame
     global start_frame_kp
     global kp_driving_initial
+    global kp_source
 
     with torch.no_grad():
         source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
@@ -145,11 +146,21 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, dev
             start_frame = driving_frame.copy()
             start_frame_kp = get_frame_kp(fa, driving_frame)
 
+        if kp_source is None:
+            kp_source = kp_detector(source)
+
         kp_driving = kp_detector(driving)
         kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
                             kp_driving_initial=kp_driving_initial, use_relative_movement=relative,
                             use_relative_jacobian=relative, adapt_movement_scale=adapt_movement_scale)
-        out = generator(source, kp_source=kp_source, kp_driving=kp_norm)
+
+        if opt.enc_downscale > 1:
+            h, w = int(source.shape[2] / opt.enc_downscale), int(source.shape[3] / opt.enc_downscale)
+            source_enc = torch.nn.functional.interpolate(source, size=(h, w), mode='bilinear')
+        else:
+            source_enc = None
+
+        out = generator(source, kp_source=kp_source, kp_driving=kp_norm, source_image_enc=source_enc, optim_ret=True)
 
         out = np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
         out = (np.clip(out, 0, 1) * 255).astype(np.uint8)
@@ -172,7 +183,7 @@ def load_stylegan_avatar():
 def change_avatar(fa, new_avatar):
     global avatar, avatar_kp, kp_source
     avatar_kp = get_frame_kp(fa, new_avatar)
-    kp_source = kp_detector(torch.tensor(new_avatar[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device))
+    kp_source = None
     avatar = new_avatar
 
 def log(*args, **kwargs):
@@ -202,6 +213,8 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true", help="Print additional information")
 
     parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
+
+    parser.add_argument("--enc_downscale", default=1, type=float, help="Downscale factor for encoder input. Improves performance with cost of quality.")
  
     parser.set_defaults(relative=False)
     parser.set_defaults(adapt_scale=False)
