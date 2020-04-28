@@ -97,14 +97,19 @@ def is_new_frame_better(fa, source, driving, device):
         display_string = "No face found!"
         return False
 
-def crop(img, p=0.7):
+def crop(img, p=0.7, offset_x=0, offset_y=0):
     h, w = img.shape[:2]
     x = int(min(w, h) * p)
     l = (w - x) // 2
     r = w - l
     u = (h - x) // 2
     d = h - u
-    return img[u:d, l:r], (l,r,u,d)
+    l+=offset_x
+    r+=offset_x
+    u+=offset_y
+    d+=offset_y
+
+    return img[u:d, l:r], (l,r,u,d,w,h)
 
 
 def pad_img(img, target_size, default_pad=0):
@@ -248,6 +253,9 @@ if __name__ == "__main__":
     cv2.moveWindow('avatarify', 600, 0)
 
     frame_proportion = 0.9
+    frame_offset_x = 0
+    frame_offset_y = 0
+    frame_lrud  = ()
 
     overlay_alpha = 0.0
     preview_flip = False
@@ -276,7 +284,8 @@ if __name__ == "__main__":
 
         frame_orig = frame.copy()
 
-        frame, lrud = crop(frame, p=frame_proportion)
+        frame, lrudwh = crop(frame, p=frame_proportion, offset_x=frame_offset_x, offset_y=frame_offset_y)
+        frame_lrudwh = lrudwh
         frame = resize(frame, (IMG_SIZE, IMG_SIZE))[..., :3]
 
         if find_keyframe:
@@ -325,6 +334,34 @@ if __name__ == "__main__":
         elif key == ord('s'):
             frame_proportion += 0.05
             frame_proportion = min(frame_proportion, 1.0)
+        elif key == ord('h'):
+            if frame_lrudwh[0] - 1 > 0:
+                frame_offset_x -= 1
+        elif key == ord('H'):
+            if frame_lrudwh[0] - 5 > 0:
+                frame_offset_x -= 5
+        elif key == ord('k'):
+            if frame_lrudwh[1] + 1 < frame_lrudwh[4]:
+                frame_offset_x += 1
+        elif key == ord('K'):
+            if frame_lrudwh[1] + 5 < frame_lrudwh[4]:
+                frame_offset_x += 5
+        elif key == ord('j'):
+            if frame_lrudwh[2] - 1 > 0:
+                frame_offset_y -= 1
+        elif key == ord('J'):
+            if frame_lrudwh[2] - 5 > 0:
+                frame_offset_y -= 5
+        elif key == ord('u'):
+            if frame_lrudwh[3] + 1 < frame_lrudwh[5]:
+                frame_offset_y += 1
+        elif key == ord('U'):
+            if frame_lrudwh[3] + 5 < frame_lrudwh[5]:
+                frame_offset_y += 5
+        elif key == ord('Z'):
+            frame_offset_x = 0
+            frame_offset_y = 0
+            frame_proportion = 0.9
         elif key == ord('x'):
            kp_driving_initial = None
         elif key == ord('z'):
