@@ -255,7 +255,6 @@ if __name__ == "__main__":
     frame_proportion = 0.9
     frame_offset_x = 0
     frame_offset_y = 0
-    frame_lrud  = ()
 
     overlay_alpha = 0.0
     preview_flip = False
@@ -334,28 +333,28 @@ if __name__ == "__main__":
         elif key == ord('s'):
             frame_proportion += 0.05
             frame_proportion = min(frame_proportion, 1.0)
-        elif key == ord('h'):
+        elif key == ord('H'):
             if frame_lrudwh[0] - 1 > 0:
                 frame_offset_x -= 1
-        elif key == ord('H'):
+        elif key == ord('h'):
             if frame_lrudwh[0] - 5 > 0:
                 frame_offset_x -= 5
-        elif key == ord('k'):
+        elif key == ord('K'):
             if frame_lrudwh[1] + 1 < frame_lrudwh[4]:
                 frame_offset_x += 1
-        elif key == ord('K'):
+        elif key == ord('k'):
             if frame_lrudwh[1] + 5 < frame_lrudwh[4]:
                 frame_offset_x += 5
-        elif key == ord('j'):
+        elif key == ord('J'):
             if frame_lrudwh[2] - 1 > 0:
                 frame_offset_y -= 1
-        elif key == ord('J'):
+        elif key == ord('j'):
             if frame_lrudwh[2] - 5 > 0:
                 frame_offset_y -= 5
-        elif key == ord('u'):
+        elif key == ord('U'):
             if frame_lrudwh[3] + 1 < frame_lrudwh[5]:
                 frame_offset_y += 1
-        elif key == ord('U'):
+        elif key == ord('u'):
             if frame_lrudwh[3] + 5 < frame_lrudwh[5]:
                 frame_offset_y += 5
         elif key == ord('Z'):

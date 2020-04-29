@@ -188,7 +188,7 @@ Q | Turns on StyleGAN-generated avatar. Every time you push the button – new a
 0 | Toggles avatar display on and off.
 A/D | Previous/next avatar in folder.
 W/S | Zoom camera in/out.
-U/H/J/K | Translate camera. `H` - left, `K` - right, `U` - up, `J` - Down by 1 pixel. Add `Shift` to adjust by 5 pixels.
+U/H/J/K | Translate camera. `H` - left, `K` - right, `U` - up, `J` - Down by 5 pixels. Add `Shift` to adjust by 1 pixel.
 Shift-Z | Reset camera zoom and translation
 Z/C | Adjust avatar target overlay opacity.
 X | Reset reference frame.
