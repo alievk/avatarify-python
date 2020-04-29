@@ -41,6 +41,7 @@ Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://g
   - [Skype](#skype)
   - [Zoom](#zoom)
   - [Slack](#slack)
+- [Uninstall](#uninstall)
 - [Contribution](#contribution)
 - [FAQ](#faq)
 - [Troubleshooting](#troubleshooting)
@@ -229,6 +230,10 @@ Go to Settings -> Video and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS
 Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) in Video settings drop-down menu.
 
 <img src=docs/slack.jpg width=600>
+
+
+## Uninstall
+To remove Avatarify and its related programs follow the [instructions](https://github.com/alievk/avatarify/wiki/Removing-Avatarify) in the Wiki.
 
 
 ## Contribution
