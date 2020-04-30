@@ -9,7 +9,7 @@
 
 # Avatarify
 
-Photorealistic avatars for Skype and Zoom. Democratized.
+Photorealistic avatars for video-conferencing [apps](#configure-video-meeting-app). Democratized.
 
 Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model).
 
@@ -212,6 +212,8 @@ You want to get the first number as small as possible - around 10 is usually a g
 You don't need to be exact, and some other configurations can yield better results still, but it's usually a good starting point.
 
 ## Configure video meeting app
+
+Avatarify supports any video-conferencing app where video input source can be changed (Zoom, Skype, Hangouts, Slack, ...). Here are a few examples how to configure particular app to use Avatarify.
 
 ### Skype
 
