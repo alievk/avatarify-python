@@ -247,7 +247,8 @@ if __name__ == "__main__":
     images_list = sorted(glob.glob(f'{opt.avatars}/*'))
     for i, f in enumerate(images_list):
         if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
-            log(f'{i}: {f}')
+            key = len(avatars) + 1
+            log(f'Key {key}: {f}')
             img = imageio.imread(f)
             if img.ndim == 2:
                 img = np.tile(img[..., None], [1, 1, 3])
