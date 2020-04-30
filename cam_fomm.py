@@ -28,6 +28,15 @@ if _platform == 'linux' or _platform == 'linux2':
     _streaming = True
 
 
+class Once():
+    _id = []
+
+    def __init__(self, what):
+        if what not in Once._id:
+            log(what)
+            Once._id.append(what)
+
+
 def load_checkpoints(config_path, checkpoint_path, device='cuda'):
 
     with open(config_path) as f:
@@ -160,7 +169,11 @@ def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, dev
         else:
             source_enc = None
 
-        out = generator(source, kp_source=kp_source, kp_driving=kp_norm, source_image_enc=source_enc, optim_ret=True)
+        try:
+            out = generator(source, kp_source=kp_source, kp_driving=kp_norm, source_image_enc=source_enc, optim_ret=True)
+        except TypeError:
+            Once('\n*** Please update FOMM:\ncd fomm\ngit pull\n')
+            out = generator(source, kp_source=kp_source, kp_driving=kp_norm)
 
         out = np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
         out = (np.clip(out, 0, 1) * 255).astype(np.uint8)
