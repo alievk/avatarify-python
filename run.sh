@@ -14,4 +14,4 @@ CKPT=vox-adv-cpk.pth.tar
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)/fomm
 
-python cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --virt-cam $CAMID_VIRT --relative --adapt_scale $@
+python afy/cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --virt-cam $CAMID_VIRT --relative --adapt_scale $@

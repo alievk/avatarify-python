@@ -2,24 +2,18 @@ import os, sys
 import glob
 import yaml
 import time
-from argparse import ArgumentParser
 import requests
 
-import imageio
+import imageio # TODO: use cv2
 import numpy as np
-import skimage.transform
 import cv2
 
-import torch
+from afy.videocaptureasync import VideoCaptureAsync
+from afy.arguments import opt
+from afy.utils import Once, log, crop, pad_img, resize
+from afy import predictor_local
+from afy import predictor_remote
 
-from modules.generator import OcclusionAwareGenerator
-from modules.keypoint_detector import KPDetector
-from animate import normalize_kp
-from scipy.spatial import ConvexHull
-
-import face_alignment
-
-from videocaptureasync import VideoCaptureAsync
 
 from sys import platform as _platform
 _streaming = False
@@ -28,57 +22,7 @@ if _platform == 'linux' or _platform == 'linux2':
     _streaming = True
 
 
-class Once():
-    _id = []
-
-    def __init__(self, what):
-        if what not in Once._id:
-            log(what)
-            Once._id.append(what)
-
-
-def load_checkpoints(config_path, checkpoint_path, device='cuda'):
-
-    with open(config_path) as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
-
-    generator = OcclusionAwareGenerator(**config['model_params']['generator_params'],
-                                        **config['model_params']['common_params'])
-    generator.to(device)
-
-    kp_detector = KPDetector(**config['model_params']['kp_detector_params'],
-                             **config['model_params']['common_params'])
-    kp_detector.to(device)
-
-    checkpoint = torch.load(checkpoint_path, map_location=device)
-    generator.load_state_dict(checkpoint['generator'])
-    kp_detector.load_state_dict(checkpoint['kp_detector'])
-
-    generator.eval()
-    kp_detector.eval()
-    
-    return generator, kp_detector
-
-def normalize_alignment_kp(kp):
-    kp = kp - kp.mean(axis=0, keepdims=True)
-    area = ConvexHull(kp[:, :2]).volume
-    area = np.sqrt(area)
-    kp[:, :2] = kp[:, :2] / area
-    return kp
-    
-def get_frame_kp(fa, image):
-    kp_landmarks = fa.get_landmarks(255 * image)
-    if kp_landmarks:
-        kp_image = kp_landmarks[0]
-        kp_image = normalize_alignment_kp(kp_image)
-        
-        return kp_image
-    else:
-        return None
-
-def is_new_frame_better(fa, source, driving, device):
-    global start_frame
-    global start_frame_kp
+def is_new_frame_better(source, driving, precitor):
     global avatar_kp
     global display_string
     
@@ -86,16 +30,16 @@ def is_new_frame_better(fa, source, driving, device):
         display_string = "No face detected in avatar."
         return False
     
-    if start_frame is None:
+    if predictor.get_start_frame() is None:
         display_string = "No frame to compare to."
         return True
     
     driving_smaller = resize(driving, (128, 128))[..., :3]
-    new_kp = get_frame_kp(fa, driving)
+    new_kp = predictor.get_frame_kp(driving)
     
     if new_kp is not None:
         new_norm = (np.abs(avatar_kp - new_kp) ** 2).sum()
-        old_norm = (np.abs(avatar_kp - start_frame_kp) ** 2).sum()
+        old_norm = (np.abs(avatar_kp - predictor.get_start_frame_kp()) ** 2).sum()
         
         out_string = "{0} : {1}".format(int(new_norm * 100), int(old_norm * 100))
         display_string = out_string
@@ -105,80 +49,6 @@ def is_new_frame_better(fa, source, driving, device):
     else:
         display_string = "No face found!"
         return False
-
-def crop(img, p=0.7, offset_x=0, offset_y=0):
-    h, w = img.shape[:2]
-    x = int(min(w, h) * p)
-    l = (w - x) // 2
-    r = w - l
-    u = (h - x) // 2
-    d = h - u
-    l+=offset_x
-    r+=offset_x
-    u+=offset_y
-    d+=offset_y
-
-    return img[u:d, l:r], (l,r,u,d,w,h)
-
-
-def pad_img(img, target_size, default_pad=0):
-    sh, sw = img.shape[:2]
-    w, h = target_size
-    pad_w, pad_h = default_pad, default_pad
-    if w / h > 1:
-        pad_w += int(sw * (w / h) - sw) // 2
-    else:
-        pad_h += int(sh * (h / w) - sh) // 2
-    out = np.pad(img, [[pad_h, pad_h], [pad_w, pad_w], [0,0]], 'constant')
-    return out
-
-
-def resize(img, size, version='cv'):
-    if version == 'cv':
-        return cv2.resize(img, size) / 255
-    else:
-        return skimage.transform.resize(img, size)
-
-
-def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, device='cuda'):
-    global start_frame
-    global start_frame_kp
-    global kp_driving_initial
-    global kp_source
-
-    with torch.no_grad():
-        source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
-        driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(device)
-
-        if kp_driving_initial is None:
-            kp_driving_initial = kp_detector(driving)
-            start_frame = driving_frame.copy()
-            start_frame_kp = get_frame_kp(fa, driving_frame)
-
-        if kp_source is None:
-            kp_source = kp_detector(source)
-
-        kp_driving = kp_detector(driving)
-        kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
-                            kp_driving_initial=kp_driving_initial, use_relative_movement=relative,
-                            use_relative_jacobian=relative, adapt_movement_scale=adapt_movement_scale)
-
-        if opt.enc_downscale > 1:
-            h, w = int(source.shape[2] / opt.enc_downscale), int(source.shape[3] / opt.enc_downscale)
-            source_enc = torch.nn.functional.interpolate(source, size=(h, w), mode='bilinear')
-        else:
-            source_enc = None
-
-        try:
-            out = generator(source, kp_source=kp_source, kp_driving=kp_norm, source_image_enc=source_enc, optim_ret=True)
-        except TypeError:
-            Once('\n*** Please update FOMM:\ncd fomm\ngit pull\n')
-            out = generator(source, kp_source=kp_source, kp_driving=kp_norm)
-
-        out = np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
-        out = (np.clip(out, 0, 1) * 255).astype(np.uint8)
-
-        return out
 
 
 def load_stylegan_avatar():
@@ -193,47 +63,19 @@ def load_stylegan_avatar():
 
     return image
 
-def change_avatar(fa, new_avatar):
+
+def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp, kp_source
-    avatar_kp = get_frame_kp(fa, new_avatar)
+    avatar_kp = predictor.get_frame_kp(new_avatar)
     kp_source = None
     avatar = new_avatar
+    predictor.set_source_image(avatar)
 
-def log(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
 
 if __name__ == "__main__":
 
     global display_string
     display_string = ""
-    global kp_driving_initial
-    kp_driving_initial = None
-    global kp_source
-    kp_source = None
-
-    parser = ArgumentParser()
-    parser.add_argument("--config", required=True, help="path to config")
-    parser.add_argument("--checkpoint", default='vox-cpk.pth.tar', help="path to checkpoint to restore")
-
-    parser.add_argument("--relative", dest="relative", action="store_true", help="use relative or absolute keypoint coordinates")
-    parser.add_argument("--adapt_scale", dest="adapt_scale", action="store_true", help="adapt movement scale based on convex hull of keypoints")
-    parser.add_argument("--no-pad", dest="no_pad", action="store_true", help="don't pad output image")
-
-    parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
-    parser.add_argument("--virt-cam", type=int, default=0, help="Virtualcam device ID")
-    parser.add_argument("--no-stream", action="store_true", help="On Linux, force no streaming")
-
-    parser.add_argument("--verbose", action="store_true", help="Print additional information")
-
-    parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
-
-    parser.add_argument("--enc_downscale", default=1, type=float, help="Downscale factor for encoder input. Improves performance with cost of quality.")
- 
-    parser.set_defaults(relative=False)
-    parser.set_defaults(adapt_scale=False)
-    parser.set_defaults(no_pad=False)
-
-    opt = parser.parse_args()
 
     IMG_SIZE = 256
 
@@ -241,7 +83,26 @@ if __name__ == "__main__":
         log('Force no streaming')
         _streaming = False
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu' 
+    log('Loading Predictor')
+    predictor_args = {
+        'config_path': opt.config,
+        'checkpoint_path': opt.checkpoint,
+        'relative': opt.relative,
+        'adapt_movement_scale': opt.adapt_scale,
+        'enc_downscale': opt.enc_downscale
+    }
+    if opt.is_worker:
+        predictor_remote.run_worker(opt.worker_port)
+        sys.exit(0)
+    elif opt.worker_host:
+        predictor = predictor_remote.PredictorRemote(
+            worker_host=opt.worker_host, worker_port=opt.worker_port,
+            **predictor_args
+        )
+    else:
+        predictor = predictor_local.PredictorLocal(
+            **predictor_args
+        )
 
     avatars=[]
     images_list = sorted(glob.glob(f'{opt.avatars}/*'))
@@ -254,12 +115,7 @@ if __name__ == "__main__":
                 img = np.tile(img[..., None], [1, 1, 3])
             img = resize(img, (IMG_SIZE, IMG_SIZE))[..., :3]
             avatars.append(img)
-    
-    log('load checkpoints..')
-    
-    generator, kp_detector = load_checkpoints(config_path=opt.config, checkpoint_path=opt.checkpoint, device=device)
-    
-    fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True, device=device)
+
 
     cap = VideoCaptureAsync(opt.cam)
     cap.start()
@@ -271,7 +127,7 @@ if __name__ == "__main__":
 
     cur_ava = 0    
     avatar = None
-    change_avatar(fa, avatars[cur_ava])
+    change_avatar(predictor, avatars[cur_ava])
     passthrough = False
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
@@ -315,10 +171,10 @@ if __name__ == "__main__":
         frame = resize(frame, (IMG_SIZE, IMG_SIZE))[..., :3]
 
         if find_keyframe:
-            if is_new_frame_better(fa, avatar, frame, device):
+            if is_new_frame_better(avatar, frame, predictor):
                 log("Taking new frame!")
                 green_overlay = True
-                kp_driving_initial = None
+                predictor.reset_frames()
 
         timing['preproc'] = (time.time() - t_start) * 1000
 
@@ -326,7 +182,7 @@ if __name__ == "__main__":
             out = frame_orig[..., ::-1]
         else:
             pred_start = time.time()
-            pred = predict(frame, avatar, opt.relative, opt.adapt_scale, fa, device=device)
+            pred = predictor.predict(frame)
             out = pred
             timing['predict'] = (time.time() - pred_start) * 1000
 
@@ -347,13 +203,13 @@ if __name__ == "__main__":
             if cur_ava >= len(avatars):
                 cur_ava = 0
             passthrough = False
-            change_avatar(fa, avatars[cur_ava])
+            change_avatar(predictor, avatars[cur_ava])
         elif key == ord('a'):
             cur_ava -= 1
             if cur_ava < 0:
                 cur_ava = len(avatars) - 1
             passthrough = False
-            change_avatar(fa, avatars[cur_ava])
+            change_avatar(predictor, avatars[cur_ava])
         elif key == ord('w'):
             frame_proportion -= 0.05
             frame_proportion = max(frame_proportion, 0.1)
@@ -389,7 +245,7 @@ if __name__ == "__main__":
             frame_offset_y = 0
             frame_proportion = 0.9
         elif key == ord('x'):
-           kp_driving_initial = None
+           predictor.reset_frames()
         elif key == ord('z'):
             overlay_alpha = max(overlay_alpha - 0.1, 0.0)
         elif key == ord('c'):
@@ -405,7 +261,7 @@ if __name__ == "__main__":
                 log('Loading StyleGAN avatar...')
                 avatar = load_stylegan_avatar()
                 passthrough = False
-                change_avatar(fa, avatar)
+                change_avatar(predictor, avatar)
             except:
                 log('Failed to load StyleGAN avatar')
         elif key == ord('i'):
@@ -413,7 +269,7 @@ if __name__ == "__main__":
         elif 48 < key < 58:
             cur_ava = min(key - 49, len(avatars) - 1)
             passthrough = False
-            change_avatar(fa, avatars[cur_ava])
+            change_avatar(predictor, avatars[cur_ava])
         elif key == 48:
             passthrough = not passthrough
         elif key != -1:
