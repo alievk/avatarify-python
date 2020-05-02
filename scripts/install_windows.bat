@@ -10,6 +10,7 @@ call conda create -y -n %CONDA_ENV_NAME% python=3.7
 call conda activate %CONDA_ENV_NAME%
 
 call conda install -y pytorch==1.0.0 torchvision==0.2.1 cuda100 -c pytorch
+call conda install -y python-blosc -c conda-forge
 
 REM ###FOMM###
 call rmdir fomm /s /q
