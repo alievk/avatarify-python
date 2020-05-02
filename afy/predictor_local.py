@@ -56,33 +56,6 @@ class PredictorLocal:
         self.source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
         self.kp_source = self.kp_detector(self.source)
 
-    # def predict(self, driving_frame):
-    #     with torch.no_grad():
-    #         source = self.source
-    #         driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
-    #         kp_source = self.kp_detector(source)
-
-    #         if self.kp_driving_initial is None:
-    #             self.kp_driving_initial = self.kp_detector(driving)
-    #             self.start_frame = driving_frame.copy()
-    #             self.start_frame_kp = self.get_frame_kp(driving_frame)
-
-    #         kp_driving = self.kp_detector(driving)
-    #         kp_norm = normalize_kp(kp_source=kp_source, kp_driving=kp_driving,
-    #                                kp_driving_initial=self.kp_driving_initial, use_relative_movement=self.relative,
-    #                                use_relative_jacobian=self.relative, adapt_movement_scale=self.adapt_movement_scale)
-    #         out = self.generator(source, kp_source=kp_source, kp_driving=kp_norm)
-
-    #         out = np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
-    #         out = (np.clip(out, 0, 1) * 255).astype(np.uint8)
-
-    #         return out
-
-    # def predict(driving_frame, source_image, relative, adapt_movement_scale, fa, device='cuda'):
-        # global start_frame
-        # global start_frame_kp
-        # global kp_driving_initial
-        # global kp_source
     def predict(self, driving_frame):
         with torch.no_grad():
             driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
