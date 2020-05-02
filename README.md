@@ -9,7 +9,7 @@
 
 # Avatarify
 
-Photorealistic avatars for Skype and Zoom. Democratized.
+Photorealistic avatars for video-conferencing [apps](#configure-video-meeting-app). Democratized.
 
 Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model).
 
@@ -123,7 +123,7 @@ scripts\install_windows.bat
 9. Run OBS Studio.
 10. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
 11. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
-12. Now `OSB-Camera` camera should be available in Zoom (or other videoconferencing software).
+12. Now `OBS-Camera` camera should be available in Zoom (or other videoconferencing software).
 
 The steps 10-11 are required only once during setup.
 
@@ -138,7 +138,7 @@ Follow these advices for better visual quality:
 ## Run
 Your web cam must be plugged-in.
 
-**Note:** run Skype or Zoom only after Avatarify is started.
+**Note:** run your video-conferencing app only after Avatarify is started.
 
 #### Linux
 It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
@@ -213,6 +213,8 @@ You don't need to be exact, and some other configurations can yield better resul
 
 ## Configure video meeting app
 
+Avatarify supports any video-conferencing app where video input source can be changed (Zoom, Skype, Hangouts, Slack, ...). Here are a few examples how to configure particular app to use Avatarify.
+
 ### Skype
 
 Go to Settings -> Audio & Video, choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) camera.
@@ -224,6 +226,12 @@ Go to Settings -> Audio & Video, choose `avatarify` (Linux), `CamTwist` (Mac) or
 Go to Settings -> Video and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) from Camera drop-down menu.
 
 <img src=docs/zoom.jpg width=600>
+
+### Teams
+
+Go to your profile picture -> Settings -> Devices and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) from Camera drop-down menu.
+
+<img src=docs/teams.jpg width=600>
 
 ### Slack
 
