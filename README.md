@@ -153,8 +153,11 @@ bash run.sh
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 #### Mac
-1. Run:
+Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
+
+1. Open terminal and run:
 ```bash
+cd /path/to/avatarify
 bash run_mac.sh
 ```
 2. Go to [CamTwist](http://camtwiststudio.com).
