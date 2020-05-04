@@ -24,27 +24,31 @@ Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://g
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
 ## Table of Contents
-- [Requirements](#requirements)
-- [Install](#install)
-    - [Download network weights](#download-network-weights)
-    - [Linux](#linux)
-    - [Mac](#mac)
-    - [Windows](#windows)
-- [Setup avatars](#setup-avatars)
-- [Run](#run)
-    - [Linux](#linux-1)
-    - [Mac](#mac-1)
-    - [Windows](#windows-1)
-- [Controls](#controls)
-- [Driving your avatar](#driving-your-avatar)
-- [Configure video meeting app](#configure-video-meeting-app)
-  - [Skype](#skype)
-  - [Zoom](#zoom)
-  - [Slack](#slack)
-- [Uninstall](#uninstall)
-- [Contribution](#contribution)
-- [FAQ](#faq)
-- [Troubleshooting](#troubleshooting)
+- [Avatarify](#avatarify)
+  - [News](#news)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+  - [Install](#install)
+      - [Download network weights](#download-network-weights)
+      - [Linux](#linux)
+      - [Mac](#mac)
+      - [Windows](#windows)
+  - [Setup avatars](#setup-avatars)
+  - [Run](#run)
+      - [Linux](#linux-1)
+      - [Mac](#mac-1)
+      - [Windows](#windows-1)
+  - [Controls](#controls)
+  - [Driving your avatar](#driving-your-avatar)
+  - [Configure video meeting app](#configure-video-meeting-app)
+    - [Skype](#skype)
+    - [Zoom](#zoom)
+    - [Teams](#teams)
+    - [Slack](#slack)
+  - [Uninstall](#uninstall)
+  - [Contribution](#contribution)
+  - [FAQ](#faq)
+  - [Troubleshooting](#troubleshooting)
 
 ## Requirements
 
@@ -62,7 +66,7 @@ Of course, you also need a webcam!
 ## Install
 
 #### Download network weights
-Download model's weights from [Dropbox](https://www.dropbox.com/s/c2mya1j07ittax6/vox-adv-cpk.pth.tar?dl=0), [Mega](https://mega.nz/file/R8kxQKLD#036S-bobZ9IW-kNNcSlgpfJWBKSi5nkhouCYAsxz3qI), [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) or [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB, md5sum `46b26eabacbcf1533ac66dc5cf234c5e`]
+Download model's weights from [Dropbox](https://www.dropbox.com/s/t7h24l6wx9vreto/vox-adv-cpk.pth.tar?dl=0), [Yandex.Disk](https://yadi.sk/d/M0FWpz2ExBfgAA) or [Google Drive](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`]
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
