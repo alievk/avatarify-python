@@ -22,7 +22,7 @@ if _platform == 'linux' or _platform == 'linux2':
     _streaming = True
 
 
-def is_new_frame_better(source, driving, precitor):
+def is_new_frame_better(source, driving, predictor):
     global avatar_kp
     global display_string
     
