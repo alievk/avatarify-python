@@ -1,6 +1,8 @@
 from predictor_local import PredictorLocal
 from arguments import opt
 
+from time import time
+
 import zmq
 import imagezmq
 import blosc
@@ -48,9 +50,19 @@ class PredictorRemote:
         return lambda *args, **kwargs: self._send_recv_msg((item, args, kwargs))
 
     def _send_recv_msg(self, msg):
-        self.socket.send(pack_message(msg), copy=False)
+        s = time()
+        msg_pack = pack_message(msg)
+        print('PACK ', int((time() - s)*1000))
+        s = time()
+        self.socket.send(msg_pack, copy=True)
+        print('SEND ', int((time() - s)*1000))
+        s = time()
         response = self.socket.recv()
-        return unpack_message(response)
+        print('RECV ', int((time() - s)*1000))
+        s = time()
+        msg_recv = unpack_message(response)
+        print('UNPACK ', int((time() - s)*1000))
+        return msg_recv
 
 from time import time
 
