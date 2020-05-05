@@ -2,6 +2,7 @@ from predictor_local import PredictorLocal
 from arguments import opt
 
 import zmq
+import imagezmq
 import blosc
 import msgpack
 import msgpack_numpy as m
@@ -51,6 +52,7 @@ class PredictorRemote:
         response = self.socket.recv()
         return unpack_message(response)
 
+from time import time
 
 def message_handler(port):
     print("Creating socket")
@@ -62,9 +64,14 @@ def message_handler(port):
 
     print("Listening for messages on port:", port)
     while True:
+        s = time()
+        ss = time()
         msg_raw = socket.recv()
+        print('RECV ', int((time() - ss)*1000))
         try:
+            ss = time()
             msg = unpack_message(msg_raw)
+            print('UNPACK ', int((time() - ss)*1000))
         except ValueError:
             print("Invalid Message")
             continue
@@ -80,8 +87,13 @@ def message_handler(port):
                 print("Initialized predictor with:", predictor_args)
             result = True
         else:
+            ss = time()
             result = getattr(predictor, method)(*msg[1], **msg[2])
-        socket.send(pack_message(result), copy=False)
+            print('CALL ', int((time() - ss)*1000))
+        ss = time()
+        socket.send(pack_message(result), copy=True)
+        print('SEND ', int((time() - ss)*1000))
+        print('CYCLE ', int((time() - s)*1000))
 
 
 def run_worker(port):
