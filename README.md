@@ -66,7 +66,7 @@ Of course, you also need a webcam!
 ## Install
 
 #### Download network weights
-Download model's weights from [Dropbox](https://www.dropbox.com/s/t7h24l6wx9vreto/vox-adv-cpk.pth.tar?dl=0), [Yandex.Disk](https://yadi.sk/d/M0FWpz2ExBfgAA) or [Google Drive](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`]
+Download model's weights from [Dropbox](https://www.dropbox.com/s/t7h24l6wx9vreto/vox-adv-cpk.pth.tar?dl=0), [Yandex.Disk](https://yadi.sk/d/M0FWpz2ExBfgAA) or [Google Drive](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`].
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
@@ -307,3 +307,4 @@ A: We have Slack. Please join: [<img src="https://img.shields.io/badge/slack-joi
 * `pipe:0: Invalid data found when processing input`: Make sure `CAMID` in `scripts/settings.sh` is correct. Use `v4l2-ctl --list-devices` to query available devices.
 * `ASSERT: "false" in file qasciikey.cpp, line 501`. If you have several keyboard layouts, switch to English layout.
 * `No such file or directory: 'vox-adv-cpk.pth.tar'`. Please follow instructions [Download network weights](#download-network-weights)
+* 
