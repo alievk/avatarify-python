@@ -88,7 +88,7 @@ bash scripts/install.sh
 codesign --remove-signature /Applications/zoom.us.app
 ```
 
-For Mac it's quite difficult to create a virtual camera, so we'll use [CamTwist](http://camtwiststudio.com) app.
+We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
 
 1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#macosx-installers) or use *Homebrew Cask*: `brew cask install miniconda`.
 2. Clone `avatarify` and install its dependencies:
