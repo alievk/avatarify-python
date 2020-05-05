@@ -9,6 +9,10 @@ import face_alignment
 from animate import normalize_kp
 
 
+def to_tensor(a):
+    return torch.tensor(a[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2) / 255
+
+
 class PredictorLocal:
     def __init__(self, config_path, checkpoint_path, relative=False, adapt_movement_scale=False, device=None, enc_downscale=1):
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
@@ -53,12 +57,12 @@ class PredictorLocal:
         self.kp_driving_initial = None
 
     def set_source_image(self, source_image):
-        self.source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
+        self.source = to_tensor(source_image).to(self.device)
         self.kp_source = self.kp_detector(self.source)
 
     def predict(self, driving_frame):
         with torch.no_grad():
-            driving = torch.tensor(driving_frame[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2).to(self.device)
+            driving = to_tensor(driving_frame).to(self.device)
 
             if self.kp_driving_initial is None:
                 self.kp_driving_initial = self.kp_detector(driving)
@@ -88,7 +92,7 @@ class PredictorLocal:
             return out
 
     def get_frame_kp(self, image):
-        kp_landmarks = self.fa.get_landmarks(255 * image)
+        kp_landmarks = self.fa.get_landmarks(image)
         if kp_landmarks:
             kp_image = kp_landmarks[0]
             kp_image = self.normalize_alignment_kp(kp_image)
