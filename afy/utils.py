@@ -28,17 +28,23 @@ class Once():
 
 class TicToc:
     def __init__(self):
-        self.tic_toc_tic = None
+        self.t = None
+        self.t_init = time.time()
 
     def tic(self):
-        self.tic_toc_tic = time.time()
+        self.t = time.time()
 
-    def toc(self):
-        assert self.tic_toc_tic, 'You forgot to call tic()'
-        return (time.time() - self.tic_toc_tic) * 1000
+    def toc(self, total=False):
+        if total:
+            return (time.time() - self.t_init) * 1000
+
+        assert self.t, 'You forgot to call tic()'
+        return (time.time() - self.t) * 1000
 
     def tocp(self, str):
-        log(f"{str} took {toc():.4f}ms")
+        t = self.toc()
+        log(f"{str} took {t:.4f}ms")
+        return t
 
     @staticmethod
     def print(name=''):
