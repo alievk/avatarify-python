@@ -310,8 +310,10 @@ if __name__ == "__main__":
                 out = resize(out, stream_img_size)
                 stream.schedule_frame(out)
 
-            # todo: optimize
-            preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
+            if overlay_alpha > 0:
+                preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
+            else:
+                preview_frame = frame
             
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
