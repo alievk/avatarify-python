@@ -155,7 +155,7 @@ if __name__ == "__main__":
     passthrough = False
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
-    cv2.moveWindow('cam', 1000, 500)
+    cv2.moveWindow('cam', 500, 250)
 
     frame_proportion = 0.9
     frame_offset_x = 0
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
                 if not is_calibrated:
                     cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
-                    cv2.moveWindow('avatarify', 1600, 500)
+                    cv2.moveWindow('avatarify', 600, 250)
                 
                 is_calibrated = True
             elif key == ord('z'):
