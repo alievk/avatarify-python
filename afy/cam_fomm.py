@@ -175,16 +175,18 @@ if __name__ == "__main__":
 
     try:
         while True:
+            tt = TicToc()
+
             timing = {
                 'preproc': 0,
                 'predict': 0,
                 'postproc': 0
             }
 
-            tt = TicToc()
-
             green_overlay = False
-            
+
+            tt.tic()
+
             ret, frame = cap.read()
             if not ret:
                 log("Can't receive frame (stream end?). Exiting ...")
@@ -351,9 +353,9 @@ if __name__ == "__main__":
             if is_calibrated:
                 cv2.imshow('avatarify', out[..., ::-1])
 
-            fps_hist.append(time.time() - t_start)
+            fps_hist.append(tt.toc(total=True))
             if len(fps_hist) == 10:
-                fps = 10 / sum(fps_hist)
+                fps = 10 / (sum(fps_hist) / 1000)
                 fps_hist = []
     except KeyboardInterrupt:
         pass
