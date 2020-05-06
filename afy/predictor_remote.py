@@ -11,15 +11,6 @@ m.patch()
 
 
 DEFAULT_PORT = 5556
-JPEG_QUALITY = 95
-
-
-def pack_message(msg):
-    return msgpack.packb(msg)
-
-
-def unpack_message(msg):
-    return msgpack.unpackb(msg)
 
 
 class PredictorRemote:
@@ -55,9 +46,9 @@ class PredictorRemote:
         if attr == 'predict':
             image = args[0]
             assert isinstance(image, np.ndarray), 'Expected image'
-            ret_code, data = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), JPEG_QUALITY])
+            ret_code, data = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
         else:
-            data = pack_message((args, kwargs))
+            data = msgpack.packb((args, kwargs))
         self.timing.add('PACK', tt.toc())
 
         tt.tic()
@@ -72,7 +63,7 @@ class PredictorRemote:
         if attr_recv == 'predict':
             result = cv2.imdecode(np.frombuffer(data_recv, dtype='uint8'), -1)
         else:
-            result = unpack_message(data_recv)
+            result = msgpack.unpackb(data_recv)
         self.timing.add('UNPACK', tt.toc())
 
         Once(self.timing, per=1)

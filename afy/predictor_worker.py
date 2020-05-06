@@ -6,6 +6,9 @@ from utils import log, TicToc, AccumDict, Once
 import cv2
 import numpy as np
 import zmq
+import msgpack
+import msgpack_numpy as m
+m.patch()
 
 
 def message_handler(port):
@@ -32,7 +35,7 @@ def message_handler(port):
                 if attr == 'predict':
                     image = cv2.imdecode(np.frombuffer(data, dtype='uint8'), -1)
                 else:
-                    args = unpack_message(data)
+                    args = msgpack.unpackb(data)
                 timing.add('UNPACK', tt.toc())
             except ValueError:
                 log("Invalid Message")
@@ -58,9 +61,9 @@ def message_handler(port):
             tt.tic()
             if attr == 'predict':
                 assert isinstance(result, np.ndarray), 'Expected image'
-                ret_code, data_send = cv2.imencode(".jpg", result, [int(cv2.IMWRITE_JPEG_QUALITY), JPEG_QUALITY])
+                ret_code, data_send = cv2.imencode(".jpg", result, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
             else:
-                data_send = pack_message(result)
+                data_send = msgpack.packb(result)
             timing.add('PACK', tt.toc())
 
             tt.tic()

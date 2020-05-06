@@ -20,7 +20,7 @@ parser.add_argument("--avatars", default="./avatars", help="path to avatars dire
 parser.add_argument("--is-worker", action="store_true", help="Whether to run this process as a remote GPU worker")
 parser.add_argument("--worker-port", type=int, default=5556, help="Which port to run the worker on")
 parser.add_argument("--worker-host", type=str, default=None, help="Hostname of the worker to connect to")
-parser.add_argument("--compress", action="store_true", help="Whether to compress messages to worker")
+parser.add_argument("--jpg_quality", type=int, default=95, help="Jpeg copression quality for image transmission")
 
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
