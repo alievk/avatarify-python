@@ -69,6 +69,29 @@ def change_avatar(predictor, new_avatar):
     predictor.set_source_image(avatar)
 
 
+def draw_rect(img, rw=0.6, rh=0.8, color=(255, 0, 0), thickness=2):
+    h, w = img.shape[:2]
+    l = w * (1 - rw) // 2
+    r = w - l
+    u = h * (1 - rh) // 2
+    d = h - u
+    img = cv2.rectangle(img, (int(l), int(u)), (int(r), int(d)), color, thickness)
+
+
+def print_help():
+    log('\n\n=== Control keys ===')
+    log('1-9: Change avatar')
+    log('W: Zoom camera in')
+    log('S: Zoom camera out')
+    log('A: Previous avatar in folder')
+    log('D: Next avatar in folder')
+    log('Q: Get random avatar')
+    log('X: Calibrate face pose')
+    log('I: Show FPS')
+    log('ESC: Quit')
+    log('\nFull key list: https://github.com/alievk/avatarify#controls')
+    log('\n\n')
+
 if __name__ == "__main__":
 
     global display_string
@@ -132,9 +155,7 @@ if __name__ == "__main__":
     passthrough = False
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
-    cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
-    cv2.moveWindow('cam', 0, 0)
-    cv2.moveWindow('avatarify', 600, 0)
+    cv2.moveWindow('cam', 1000, 500)
 
     frame_proportion = 0.9
     frame_offset_x = 0
@@ -144,10 +165,13 @@ if __name__ == "__main__":
     preview_flip = False
     output_flip = False
     find_keyframe = False
+    is_calibrated = False
 
     fps_hist = []
     fps = 0
     show_fps = False
+
+    print_help()
 
     try:
         while True:
@@ -179,6 +203,7 @@ if __name__ == "__main__":
                     green_overlay = True
                     predictor.reset_frames()
 
+            # todo: tictoc
             timing['preproc'] = (time.time() - t_start) * 1000
 
             if passthrough:
@@ -246,6 +271,12 @@ if __name__ == "__main__":
                 frame_proportion = 0.9
             elif key == ord('x'):
                 predictor.reset_frames()
+
+                if not is_calibrated:
+                    cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
+                    cv2.moveWindow('avatarify', 1600, 500)
+                
+                is_calibrated = True
             elif key == ord('z'):
                 overlay_alpha = max(overlay_alpha - 0.1, 0.0)
             elif key == ord('c'):
@@ -279,6 +310,7 @@ if __name__ == "__main__":
                 out = resize(out, stream_img_size)
                 stream.schedule_frame(out)
 
+            # todo: optimize
             preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             
             if preview_flip:
@@ -302,8 +334,21 @@ if __name__ == "__main__":
                 timing_string = f"FPS/Model/Pre/Post: {fps:.1f} / {timing['predict']:.1f} / {timing['preproc']:.1f} / {timing['postproc']:.1f}"
                 preview_frame = cv2.putText(preview_frame, timing_string, (10, 240), 0, 0.3 * IMG_SIZE / 256, (255, 255, 255), 1)
 
+            if not is_calibrated:
+                color = (0, 0, 255)
+                thk = 2
+                fontsz = 0.5
+                preview_frame = cv2.putText(preview_frame, "FIT FACE IN RECTANGLE", (40, 20), 0, fontsz * IMG_SIZE / 255, color, thk)
+                preview_frame = cv2.putText(preview_frame, "W - ZOOM IN", (60, 40), 0, fontsz * IMG_SIZE / 255, color, thk)
+                preview_frame = cv2.putText(preview_frame, "S - ZOOM OUT", (60, 60), 0, fontsz * IMG_SIZE / 255, color, thk)
+                preview_frame = cv2.putText(preview_frame, "THEN PRESS X", (60, 245), 0, fontsz * IMG_SIZE / 255, color, thk)
+
+            if not opt.hide_rect:
+                draw_rect(preview_frame)
+
             cv2.imshow('cam', preview_frame[..., ::-1])
-            cv2.imshow('avatarify', out[..., ::-1])
+            if is_calibrated:
+                cv2.imshow('avatarify', out[..., ::-1])
 
             fps_hist.append(time.time() - t_start)
             if len(fps_hist) == 10:

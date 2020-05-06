@@ -14,6 +14,7 @@ parser.add_argument("--virt-cam", type=int, default=0, help="Virtualcam device I
 parser.add_argument("--no-stream", action="store_true", help="On Linux, force no streaming")
 
 parser.add_argument("--verbose", action="store_true", help="Print additional information")
+parser.add_argument("--hide-rect", action="store_true", default=False, help="Hide the helper rectangle in preview window")
 
 parser.add_argument("--avatars", default="./avatars", help="path to avatars directory")
 
