@@ -4,14 +4,12 @@ import yaml
 import time
 import requests
 
-import imageio # TODO: use cv2
 import numpy as np
 import cv2
 
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
 from afy.utils import Once, log, crop, pad_img, resize
-from afy import predictor_local, predictor_remote, predictor_worker
 
 
 from sys import platform as _platform
@@ -91,14 +89,17 @@ if __name__ == "__main__":
         'enc_downscale': opt.enc_downscale
     }
     if opt.is_worker:
+        from afy import predictor_worker
         predictor_worker.run_worker(opt.worker_port)
         sys.exit(0)
     elif opt.worker_host:
+        from afy import predictor_remote
         predictor = predictor_remote.PredictorRemote(
             worker_host=opt.worker_host, worker_port=opt.worker_port,
             **predictor_args
         )
     else:
+        from afy import predictor_local
         predictor = predictor_local.PredictorLocal(
             **predictor_args
         )
