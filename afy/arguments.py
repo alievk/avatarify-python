@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument("--config", required=True, help="path to config")
+parser.add_argument("--config", help="path to config")
 parser.add_argument("--checkpoint", default='vox-cpk.pth.tar', help="path to checkpoint to restore")
 
 parser.add_argument("--relative", dest="relative", action="store_true", help="use relative or absolute keypoint coordinates")

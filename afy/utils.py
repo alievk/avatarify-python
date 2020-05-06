@@ -4,7 +4,6 @@ from collections import defaultdict
 
 import numpy as np
 import cv2
-import skimage.transform
 
 
 def log(*args, **kwargs):
@@ -108,7 +107,4 @@ def pad_img(img, target_size, default_pad=0):
 
 
 def resize(img, size, version='cv'):
-    if version == 'cv':
-        return cv2.resize(img, size)
-    else:
-        return skimage.transform.resize(img, size)
+    return cv2.resize(img, size)
