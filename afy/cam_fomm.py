@@ -9,7 +9,7 @@ import cv2
 
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
-from afy.utils import Once, log, crop, pad_img, resize
+from afy.utils import Once, log, crop, pad_img, resize, TicToc
 
 
 from sys import platform as _platform
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                 'postproc': 0
             }
 
-            t_start = time.time()
+            tt = TicToc()
 
             green_overlay = False
             
@@ -203,18 +203,17 @@ if __name__ == "__main__":
                     green_overlay = True
                     predictor.reset_frames()
 
-            # todo: tictoc
-            timing['preproc'] = (time.time() - t_start) * 1000
+            timing['preproc'] = tt.toc()
 
             if passthrough:
                 out = frame_orig
             else:
-                pred_start = time.time()
+                tt.tic()
                 pred = predictor.predict(frame)
                 out = pred
-                timing['predict'] = (time.time() - pred_start) * 1000
+                timing['predict'] = tt.toc()
 
-            postproc_start = time.time()
+            tt.tic()
 
             if not opt.no_pad:
                 out = pad_img(out, stream_img_size)
@@ -327,7 +326,7 @@ if __name__ == "__main__":
                 overlay[:] = (0, 255, 0)
                 preview_frame = cv2.addWeighted( preview_frame, green_alpha, overlay, 1.0 - green_alpha, 0.0)
 
-            timing['postproc'] = (time.time() - postproc_start) * 1000
+            timing['postproc'] = tt.toc()
                 
             if find_keyframe:
                 preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
