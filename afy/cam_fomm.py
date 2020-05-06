@@ -11,8 +11,7 @@ import cv2
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
 from afy.utils import Once, log, crop, pad_img, resize
-from afy import predictor_local
-from afy import predictor_remote
+from afy import predictor_local, predictor_remote, predictor_worker
 
 
 from sys import platform as _platform
@@ -92,7 +91,7 @@ if __name__ == "__main__":
         'enc_downscale': opt.enc_downscale
     }
     if opt.is_worker:
-        predictor_remote.run_worker(opt.worker_port)
+        predictor_worker.run_worker(opt.worker_port)
         sys.exit(0)
     elif opt.worker_host:
         predictor = predictor_remote.PredictorRemote(
