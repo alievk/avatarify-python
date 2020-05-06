@@ -83,22 +83,23 @@ bash scripts/install.sh
 #### Mac
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. To use Avatarify in Zoom you can choose from 2 options:
 - Install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras
-- Use latest version of Zoom, but disable library validation:
+- Use latest version of Zoom, but disable library validation by running this command in terminal:
 ```bash
 codesign --remove-signature /Applications/zoom.us.app
 ```
 
+*Note*: To run Avatarify on Mac a remote GPU connection is required. There will be update on how to use cloud GPU lately.
+
 We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
 
 1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#macosx-installers) or use *Homebrew Cask*: `brew cask install miniconda`.
-2. Clone `avatarify` and install its dependencies:
+2. Open terminal and run the following commands:
 ```bash
 git clone https://github.com/alievk/avatarify.git
 cd avatarify
 bash scripts/install_mac.sh
 ```
-3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
-4. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
+3. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
 
 #### Windows
 
@@ -153,12 +154,14 @@ bash run.sh
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 #### Mac
+*Note*: To run Avatarify on Mac a remote GPU connection is required. There will be update on how to use cloud GPU lately.
+
 Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
 
 1. Open terminal and run:
 ```bash
 cd /path/to/avatarify
-bash run_mac.sh
+bash run_mac.sh --worker-host gpu_server_address
 ```
 2. Go to [CamTwist](http://camtwiststudio.com).
 3. Choose `Desktop+` and press `Select`.
