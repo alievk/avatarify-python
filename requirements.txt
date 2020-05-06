@@ -28,3 +28,6 @@ tqdm==4.24.0
 requests==2.23
 face-alignment==1.0.0
 pyfakewebcam==0.1.0
+msgpack-numpy==0.4.5
+pyzmq==19.0.0
+#blosc==1.7.0
