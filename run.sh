@@ -4,18 +4,14 @@
 
 source scripts/settings.sh
 
-# hack
-if [[ ! $@ =~ "is-worker" ]]; then
-    bash scripts/create_virtual_camera.sh
-fi
+bash scripts/create_virtual_camera.sh
 
-source $(conda info --base)/etc/profile.d/conda.sh
-conda activate $CONDA_ENV_NAME
+#source $(conda info --base)/etc/profile.d/conda.sh
+#conda activate $CONDA_ENV_NAME
 
 CONFIG=fomm/config/vox-adv-256.yaml
 CKPT=vox-adv-cpk.pth.tar
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)/fomm
 
-python afy/cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --virt-cam $CAMID_VIRT --relative --adapt_scale $@
-
+python3 cam_fomm.py --config $CONFIG --checkpoint $CKPT --cam $CAMID --virt-cam $CAMID_VIRT --relative --adapt_scale $@

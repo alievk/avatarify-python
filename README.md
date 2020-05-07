@@ -1,5 +1,7 @@
 ![](docs/mona.gif)
 
+![](docs/mona.gif)
+
 
 [<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
 
@@ -7,7 +9,7 @@
 
 :arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
 
-# Avatarify
+# BETA Avatarify for Jetson TX2
 
 Photorealistic avatars for video-conferencing [apps](#configure-video-meeting-app). Democratized.
 
@@ -15,26 +17,20 @@ Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-
 
 Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://github.com/karfly).
 
+Ported by: [SVL] (https://github.com/SVL101)
+
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
-- **24 April 2020.** Added Windows installation [tutorial](https://www.youtube.com/watch?v=lym9ANVb120).
-- **17 April 2020.** Created Slack community. Please join via [invitation link](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg).
-- **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
-- **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
+- **07  May  2020.** Beta version run on Jetson TX2.
+- **29 April 2020.** Start porting.
 
 ## Table of Contents
 - [Requirements](#requirements)
+- [Download network weights](#download-network-weights)
 - [Install](#install)
-    - [Download network weights](#download-network-weights)
-    - [Linux](#linux)
-    - [Mac](#mac)
-    - [Windows](#windows)
 - [Setup avatars](#setup-avatars)
 - [Run](#run)
-    - [Linux](#linux-1)
-    - [Mac](#mac-1)
-    - [Windows](#windows-1)
 - [Controls](#controls)
 - [Driving your avatar](#driving-your-avatar)
 - [Configure video meeting app](#configure-video-meeting-app)
@@ -46,87 +42,35 @@ Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://g
 - [FAQ](#faq)
 - [Troubleshooting](#troubleshooting)
 
+
 ## Requirements
 
-To run Avatarify smoothly you need a CUDA-enabled (NVIDIA) video card. Otherwise it will fallback to the central processor and run very slowly. These are performance metrics for some hardware:
+To run Avatarify smoothly you need a CUDA-enabled (NVIDIA) device. Otherwise it will fallback to the central processor and run very slowly. These are performance metrics for some hardware:
 
-- GeForce GTX 1080 Ti: **33 fps**
-- GeForce GTX 1070: **15 fps**
-- Mac OSX (MacBook Pro 2018; no GPU): **very slow** **~1 fps**
+- Jetson TX2: **25 fps**
 
 Of course, you also need a webcam!
 
-<!-- * [conda Python 3.7](https://docs.conda.io/en/latest/miniconda.html)
-* [CUDA](https://developer.nvidia.com/cuda-downloads) -->
+
+#### Download network weights
+Download model's weights from [Dropbox](https://www.dropbox.com/s/c2mya1j07ittax6/vox-adv-cpk.pth.tar?dl=0), [Mega](https://mega.nz/file/R8kxQKLD#036S-bobZ9IW-kNNcSlgpfJWBKSi5nkhouCYAsxz3qI), [Yandex.Disk](https://yadi.sk/d/lEw8uRm140L_eQ/vox-adv-cpk.pth.tar) or [Google Drive](https://drive.google.com/file/d/1L8P-hpBhZi8Q_1vP2KlQ4N6dvlzpYBvZ/view) [716 MB, md5sum `46b26eabacbcf1533ac66dc5cf234c5e`]
+
 
 ## Install
 
-#### Download network weights
-Download model's weights from [Dropbox](https://www.dropbox.com/s/t7h24l6wx9vreto/vox-adv-cpk.pth.tar?dl=0), [Yandex.Disk](https://yadi.sk/d/M0FWpz2ExBfgAA) or [Google Drive](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`]
+-2. Build and install [MAGMA 2.5.3] (https://icl.utk.edu/magma/software/view.html?id=277)
 
-#### Linux
-Linux uses `v4l2loopback` to create virtual camera.
+-1. Build [PyTorch 1.4.0](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048) and install torchvision v0.5.0
 
-<!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64). --->
-1. Download [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#linux-installers) and install using command:
-```bash
-bash Miniconda3-latest-Linux-x86_64.sh
-```
+0. Build and install [OpenCV 3.4.1](https://github.com/jetsonhacks/buildOpenCVTX2)
+
 2. Clone `avatarify` and install its dependencies (sudo privelege is required):
 ```bash
-git clone https://github.com/alievk/avatarify.git
-cd avatarify
+git clone https://github.com/SVL101/avatarify_jetsontx2.git
+cd avatarify_jetsontx2
 bash scripts/install.sh
 ```
 3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
-
-#### Mac
-*(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. To use Avatarify in Zoom you can choose from 2 options:
-- Install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras
-- Use latest version of Zoom, but disable library validation by running this command in terminal:
-```bash
-codesign --remove-signature /Applications/zoom.us.app
-```
-
-*Note*: To run Avatarify on Mac a remote GPU connection is required. There will be update on how to use cloud GPU lately.
-
-We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
-
-1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#macosx-installers) or use *Homebrew Cask*: `brew cask install miniconda`.
-2. Open terminal and run the following commands:
-```bash
-git clone https://github.com/alievk/avatarify.git
-cd avatarify
-bash scripts/install_mac.sh
-```
-3. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
-
-#### Windows
-
-:arrow_forward: [Video tutorial](https://youtu.be/lym9ANVb120)
-
-This guide is tested for Windows 10.
-
-<!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exenetwork). -->
-1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
-2. Install [Git](https://git-scm.com/download/win).
-3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-4. Download and install Avatarify (please copy-paste these commands and don't change them):
-```bash
-git clone https://github.com/alievk/avatarify.git
-cd avatarify
-scripts\install_windows.bat
-```
-5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
-6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
-7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
-8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
-9. Run OBS Studio.
-10. In the Sources section, press on Add button ("+" sign), select Windows Capture and press OK. In the appeared window, choose "[python.exe]: avatarify" in Window drop-down menu and press OK. Then select Edit -> Transform -> Fit to screen.
-11. In OBS Studio, go to Tools -> VirtualCam. Check AutoStart, set Buffered Frames to 0 and press Start.
-12. Now `OBS-Camera` camera should be available in Zoom (or other videoconferencing software).
-
-The steps 10-11 are required only once during setup.
 
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
@@ -141,7 +85,6 @@ Your web cam must be plugged-in.
 
 **Note:** run your video-conferencing app only after Avatarify is started.
 
-#### Linux
 It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
 
 You can use command `v4l2-ctl --list-devices` to list all devices in your system. For example, if the web camera is `/dev/video1` then the device id is 1. 
@@ -152,37 +95,6 @@ bash run.sh
 ```
 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
-
-#### Mac
-*Note*: To run Avatarify on Mac a remote GPU connection is required. There will be update on how to use cloud GPU lately.
-
-Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
-
-1. Open terminal and run:
-```bash
-cd /path/to/avatarify
-bash run_mac.sh --worker-host gpu_server_address
-```
-2. Go to [CamTwist](http://camtwiststudio.com).
-3. Choose `Desktop+` and press `Select`.
-4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
-
-`cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
-
-#### Windows
-
-If there are multiple cameras (including virtual ones) in your system, you may need to select the correct one in `scripts/settings_windows.bat`. Open this file and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
-
-1. In Anaconda Prompt:
-```
-cd C:\path\to\avatarify
-run_windows.bat
-```
-2. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
-
-`cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
-
-**Note:** To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
 
 ## Controls
 
@@ -223,25 +135,25 @@ Avatarify supports any video-conferencing app where video input source can be ch
 
 ### Skype
 
-Go to Settings -> Audio & Video, choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) camera.
+Go to Settings -> Audio & Video, choose `avatarify` (Linux) camera.
 
 <img src=docs/skype.jpg width=600>
 
 ### Zoom
 
-Go to Settings -> Video and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) from Camera drop-down menu.
+Go to Settings -> Video and choose `avatarify` (Linux) from Camera drop-down menu.
 
 <img src=docs/zoom.jpg width=600>
 
 ### Teams
 
-Go to your profile picture -> Settings -> Devices and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) from Camera drop-down menu.
+Go to your profile picture -> Settings -> Devices and choose `avatarify` (Linux) from Camera drop-down menu.
 
 <img src=docs/teams.jpg width=600>
 
 ### Slack
 
-Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) in Video settings drop-down menu.
+Make a call, allow browser using cameras, click on Settings icon, choose `avatarify` (Linux) in Video settings drop-down menu.
 
 <img src=docs/slack.jpg width=600>
 
@@ -252,11 +164,10 @@ To remove Avatarify and its related programs follow the [instructions](https://g
 
 ## Contribution
 
-Our goal is to democratize photorealistic avatars for video-conferencing. To make the technology even more accessible, we have to tackle the following problems:
+Our goal is to democratize deepfake avatars. To make the technology even more accessible, we have to tackle two major problems:
 
-1. ~~Add support for more platforms (Linux and Mac are already supported).~~
-2. Remote GPU support. This is a work in progress.
-3. Porting to non-CUDA GPUs (Intel integrated GPUs, AMD GPUs, etc) and optimization. The goal is to run Avatarify real-time (at least 10FPS) on modern laptops.
+1. Add support for more platforms (Linux and Mac are already supported).
+2. Optimize neural network run-time. Running network real-time on CPU is of high priority.
 
 Please make pull requests if you have any improvements or bug-fixes.
 
@@ -264,25 +175,13 @@ Please make pull requests if you have any improvements or bug-fixes.
 ## FAQ
 
 Q: **Do I need any knowledge of programming to run Avatarify?**  
-A: Not really, but you need some beginner-level knowledge of the command line. For Windows we recorded a video [tutorial](https://www.youtube.com/watch?v=lym9ANVb120), so it’ll be easy to install.
-
-Q: **Why does it work so slow on my Macbook?**  
-A: The model used in Avatarify requires a CUDA-enabled NVIDIA GPU to perform heavy computations. Macbooks don’t have such GPUs,  and for processing use CPU, which has much less computing power to run Avatarify smoothly.
-
-Q: **I don’t have a NVIDIA GPU, can I run it?**  
-A: You still can run it without a NVIDIA GPU, but with drastically reduced performance (<1fps).
-
-Q: **I have an ATI GPU (e.g. Radeon). Why does it work so slow?**  
-A: To run the neural network Avatarify uses PyTorch library, which is optimized for CUDA. If PyTorch can’t find a CUDA-enabled GPU in your system it will fallback to CPU. The performance on the CPU will be much worse.
+A: Not really, but you need some beginner-level knowledge of the command line.
 
 Q: **How to add a new avatar?**  
 A: It’s easy. All you need is to find a picture of your avatar and put it in the `avatars` folder. [More](https://github.com/alievk/avatarify#setup-avatars).
 
 Q: **My avatar looks distorted.**  
 A: You need to calibrate your face position. Please follow the [tips](https://github.com/alievk/avatarify#driving-your-avatar) or watch the video [tutorial](https://youtu.be/lym9ANVb120?t=662).
-
-Q: **Can I use a cloud GPU?**  
-A: This is work in progress. See the relevant [discussion](https://github.com/alievk/avatarify/issues/115).
 
 Q: **Avatarify crashed, what to do?**  
 A: First, try to find your error in the [troubleshooting](https://github.com/alievk/avatarify#troubleshooting) section. If it is not there, try to find it in the [issues](https://github.com/alievk/avatarify/issues). If you couldn’t find your issue there, please open a new one using the issue template.
