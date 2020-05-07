@@ -17,6 +17,13 @@ _streaming = False
 if _platform == 'linux' or _platform == 'linux2':
     import pyfakewebcam
     _streaming = True
+    
+    
+if _platform == 'darwin':
+    if opt.worker_host is None:
+        log('\nOnly remote GPU mode is supported for Mac (use --worker-host option to connect to the server)')
+        log('Standalone version will be available lately!\n')
+        exit()
 
 
 def is_new_frame_better(source, driving, precitor):
