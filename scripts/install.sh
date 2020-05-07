@@ -7,13 +7,15 @@ command -v git >/dev/null 2>&1 || { echo >&2 "git not found. Please refer to the
 source scripts/settings.sh
 
 # v4l2loopback
-rm -rf v4l2loopback 2> /dev/null
-git clone https://github.com/alievk/v4l2loopback.git
-echo "--- Installing v4l2loopback (sudo privelege required)"
-cd v4l2loopback
-make && sudo make install
-sudo depmod -a
-cd ..
+if [[ ! $@ =~ "no-vcam" ]]; then
+    rm -rf v4l2loopback 2> /dev/null
+    git clone https://github.com/alievk/v4l2loopback.git
+    echo "--- Installing v4l2loopback (sudo privelege required)"
+    cd v4l2loopback
+    make && sudo make install
+    sudo depmod -a
+    cd ..
+fi
 
 source $(conda info --base)/etc/profile.d/conda.sh
 conda create -y -n $CONDA_ENV_NAME python=3.7
