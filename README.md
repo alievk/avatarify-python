@@ -1,4 +1,4 @@
-![](docs/mona.gif)
+![](docs/test.png)
 
 ![](docs/mona.gif)
 
