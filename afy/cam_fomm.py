@@ -208,7 +208,7 @@ if __name__ == "__main__":
             timing['preproc'] = tt.toc()
 
             if passthrough:
-                out = frame_orig
+                out = frame
             else:
                 tt.tic()
                 pred = predictor.predict(frame)
@@ -314,7 +314,7 @@ if __name__ == "__main__":
             if overlay_alpha > 0:
                 preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             else:
-                preview_frame = frame
+                preview_frame = frame.copy()
             
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
