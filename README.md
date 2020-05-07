@@ -17,7 +17,7 @@ Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-
 
 Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://github.com/karfly).
 
-Ported by: [SVL] (https://github.com/SVL101)
+Ported by: [SVL](https://github.com/SVL101)
 
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
@@ -58,9 +58,9 @@ Download model's weights from [Dropbox](https://www.dropbox.com/s/c2mya1j07ittax
 
 ## Install
 
--2. Build and install [MAGMA 2.5.3] (https://icl.utk.edu/magma/software/view.html?id=277)
+ -2. Build and install [MAGMA 2.5.3](https://icl.utk.edu/magma/software/view.html?id=277)
 
--1. Build [PyTorch 1.4.0](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048) and install torchvision v0.5.0
+ -1. Build [PyTorch 1.4.0](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048) and install torchvision v0.5.0
 
 0. Build and install [OpenCV 3.4.1](https://github.com/jetsonhacks/buildOpenCVTX2)
 
