@@ -3,15 +3,17 @@
 
 [<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
 
+:arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs)
+
+:arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
+
 # Avatarify
 
 Photorealistic avatars for video-conferencing [apps](#configure-video-meeting-app). Democratized.
 
 Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model).
 
-Created by: [Ali Aliev](https://github.com/alievk) and [Karim Iskakov](https://github.com/karfly).
-
-:arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs)
+Created by: GitHub community.
 
 ## News
 - **7 May 2020.** Added remote GPU support for all platforms (based on [mynameisfiber's](https://github.com/mynameisfiber) solution). [Demo](https://youtu.be/3Dz_bUIPYFM). Deployment [instructions](https://github.com/alievk/avatarify/wiki/Remote-GPU). 
