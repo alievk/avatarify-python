@@ -1,0 +1,17 @@
+gfortran                                   4:7.4.0-1ubuntu2.3                               arm64        GNU Fortran 95 compiler
+
+libopenblas-dev:arm64                      0.2.20+ds-4                                      arm64        Optimized BLAS (linear algebra) library (development files)
+libfreetype6-dev:arm64                     2.8.1-2ubuntu2                                   arm64        FreeType 2 font engine, development files
+
+libpng16-16:arm64                          1.6.34-1ubuntu0.18.04.2                          arm64        PNG library - runtime (version 1.6)
+libjpeg-dev:arm64                          8c-2ubuntu8                                      arm64        Independent JPEG Group's JPEG runtime library (dependency package)
+zlib1g-dev:arm64                           1:1.2.11.dfsg-0ubuntu2                           arm64        compression library - development
+
+qt5-default:arm64                          5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 development defaults package
+libqt5core5a:arm64                         5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 core module
+libqt5gui5:arm64                           5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 GUI module
+libqt5widgets5:arm64                       5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 widgets module
+libqt5test5:arm64                          5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 test module
+libqt5concurrent5:arm64                    5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 concurrent module
+qt5-qmake:arm64                            5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 qmake Makefile generator tool
+qt5-qmake-bin                              5.9.5+dfsg-0ubuntu2.5                            arm64        Qt 5 qmake Makefile generator tool — binary file
