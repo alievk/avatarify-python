@@ -15,19 +15,7 @@ cd v4l2loopback
 make && sudo make install
 sudo depmod -a
 cd ..
-#echo "--- conda create"
-#source $(conda info --base)/etc/profile.d/conda.sh
-#conda create -y -n $CONDA_ENV_NAME python=3.7
-#conda activate $CONDA_ENV_NAME
-#echo "--- conda install"
-#conda install -y pytorch==1.0.0 torchvision==0.2.1 cuda100 -c pytorch
-#pip install -U pip
-#pip install Pillow
-#pip install future
 
-
-#echo "--- pip install torch torchvision"
-# pip install torch torchvision
 echo "--- FOMM"
 # FOMM
 rm -rf fomm 2> /dev/null

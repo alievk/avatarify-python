@@ -9,7 +9,7 @@
 
 :arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
 
-# BETA Avatarify for Jetson TX2
+# Avatarify for Jetson TX2
 
 Photorealistic avatars for video-conferencing [apps](#configure-video-meeting-app). Democratized.
 
@@ -22,6 +22,7 @@ Ported by: [SVL](https://github.com/SVL101)
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
+- **09  May  2020.** Test run on Jetson TX2 for JetPack 4.4 and minimize requirements list.
 - **07  May  2020.** Beta version run on Jetson TX2.
 - **29 April 2020.** Start porting.
 

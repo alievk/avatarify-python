@@ -1,6 +1,6 @@
 # Web-camera device id
 # Call `v4l2-ctl --list-devices` and find your web-camera device, e.g. /dev/videoX, where X is camera id
-CAMID=1
+CAMID=0
 
 # ################################################
 # Normally you don't want to change settings below
