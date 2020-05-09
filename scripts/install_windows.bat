@@ -16,4 +16,5 @@ REM ###FOMM###
 call rmdir fomm /s /q
 call git clone https://github.com/alievk/first-order-model.git fomm
 
+call cd fomm
 call pip install -r requirements.txt
