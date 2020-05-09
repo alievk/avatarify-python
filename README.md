@@ -69,7 +69,7 @@ Download model's weights from [Dropbox](https://www.dropbox.com/s/c2mya1j07ittax
 ```bash
 git clone https://github.com/SVL101/avatarify_jetsontx2.git
 cd avatarify_jetsontx2
-bash scripts/install.sh
+bash scripts/install_jetson.sh
 ```
 3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
@@ -92,7 +92,7 @@ You can use command `v4l2-ctl --list-devices` to list all devices in your system
 
 Run:
 ```bash
-bash run.sh
+bash run_jetson.sh
 ```
 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
