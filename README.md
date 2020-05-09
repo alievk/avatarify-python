@@ -22,7 +22,7 @@ Ported by: [SVL](https://github.com/SVL101)
 **Disclaimer**: This project is unrelated to Samsung AI Center.
 
 ## News
-- **09  May  2020.** Test run on Jetson TX2 for JetPack 4.4 and minimize requirements list.
+- **09  May  2020.** Release, test run on Jetson TX2 for JetPack 4.4 and minimize requirements list.
 - **07  May  2020.** Beta version run on Jetson TX2.
 - **29 April 2020.** Start porting.
 
@@ -61,7 +61,7 @@ Download model's weights from [Dropbox](https://www.dropbox.com/s/c2mya1j07ittax
 
 -2. Build and install [MAGMA 2.5.3](https://icl.utk.edu/magma/software/view.html?id=277) (use openblas)
 
--1. Build [PyTorch 1.4.0](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048) and install torchvision v0.5.0
+-1. Build [PyTorch 1.4.0](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048) and install torchvision v0.5.0 or download torch wheel [Google Drive](https://drive.google.com/file/d/1ZfEEuInRrYiwlAZXWIsfwSi0M1CtKus2/view?usp=sharing) and install torchvision v0.5.0
 
 0. Build and install [OpenCV 3.4.1](https://github.com/SVL101/buildOpenCVTX2)
 
