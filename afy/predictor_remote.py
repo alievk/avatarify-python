@@ -18,15 +18,38 @@ class PredictorRemote:
         self.worker_host = worker_host
         self.worker_port = worker_port
         self.predictor_args = (args, kwargs)
-
-        self.context = SerializingContext()
-        self.socket = self.context.socket(zmq.PAIR)
-        self.socket.connect(f"tcp://{worker_host}:{worker_port}")
-        log(f"Connected to {worker_host}:{worker_port}")
-
         self.timing = AccumDict()
 
+        self.address = f"tcp://{worker_host}:{worker_port}"
+        self.context = SerializingContext()
+        self.socket = self.context.socket(zmq.PAIR)
+        self.socket.connect(self.address)
+
+        if not self.check_connection():
+            self.socket.disconnect(self.address)
+            # TODO: this hangs, as well as context.__del__
+            # self.context.destroy()
+            raise ConnectionError(f"Could not connect to {worker_host}:{worker_port}")
+
+        log(f"Connected to {self.address}")
+
         self.init_worker()
+
+    def check_connection(self, timeout=1000):
+        msg = (
+            'hello',
+            [], {}
+        )
+
+        try:
+            old_rcvtimeo = self.socket.RCVTIMEO
+            self.socket.RCVTIMEO = timeout
+            response = self._send_recv_msg(msg)
+            self.socket.RCVTIMEO = old_rcvtimeo
+        except zmq.error.Again:
+            return False
+
+        return response == 'OK'
 
     def init_worker(self):
         msg = (

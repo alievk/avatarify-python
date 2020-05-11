@@ -42,7 +42,9 @@ def message_handler(port):
                 continue
 
             tt.tic()
-            if attr == "__init__":
+            if attr == "hello":
+                result = "OK"
+            elif attr == "__init__":
                 if args == predictor_args:
                     log("Same config as before... reusing previous predictor")
                 else:

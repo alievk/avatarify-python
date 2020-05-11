@@ -124,10 +124,14 @@ if __name__ == "__main__":
         sys.exit(0)
     elif opt.worker_host:
         from afy import predictor_remote
-        predictor = predictor_remote.PredictorRemote(
-            worker_host=opt.worker_host, worker_port=opt.worker_port,
-            **predictor_args
-        )
+        try:
+            predictor = predictor_remote.PredictorRemote(
+                worker_host=opt.worker_host, worker_port=opt.worker_port,
+                **predictor_args
+            )
+        except ConnectionError as err:
+            log(err)
+            sys.exit(1)
     else:
         from afy import predictor_local
         predictor = predictor_local.PredictorLocal(
