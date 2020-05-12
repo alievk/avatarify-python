@@ -8,10 +8,14 @@ import numpy as np
 import face_alignment
 from animate import normalize_kp
 
+from arguments import opt
+
 
 def to_tensor(a):
-    return torch.tensor(a[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2) / 255
-
+    t = torch.tensor(a[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2) / 255
+    if opt.fp16:
+        return t.half()
+    return t
 
 class PredictorLocal:
     def __init__(self, config_path, checkpoint_path, relative=False, adapt_movement_scale=False, device=None, enc_downscale=1):
@@ -47,6 +51,10 @@ class PredictorLocal:
     
         generator.eval()
         kp_detector.eval()
+
+        if opt.fp16:
+            generator.half()
+            kp_detector.half()
         
         return generator, kp_detector
 

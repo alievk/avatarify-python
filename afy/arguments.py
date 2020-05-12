@@ -8,6 +8,7 @@ parser.add_argument("--relative", dest="relative", action="store_true", help="us
 parser.add_argument("--adapt_scale", dest="adapt_scale", action="store_true", help="adapt movement scale based on convex hull of keypoints")
 parser.add_argument("--no-pad", dest="no_pad", action="store_true", help="don't pad output image")
 parser.add_argument("--enc_downscale", default=1, type=float, help="Downscale factor for encoder input. Improves performance with cost of quality.")
+parser.add_argument("--fp16", action="store_true", help="Use FP16 precision (can boost on GPUs with tensor core, e.g. 2080Ti)")
 
 parser.add_argument("--cam", type=int, default=0, help="Webcam device ID")
 parser.add_argument("--virt-cam", type=int, default=0, help="Virtualcam device ID")
