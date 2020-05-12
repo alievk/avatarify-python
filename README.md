@@ -39,6 +39,7 @@ Created by: GitHub community.
 - [Configure video meeting app](#configure-video-meeting-app)
   - [Skype](#skype)
   - [Zoom](#zoom)
+  - [Teams](#teams)
   - [Slack](#slack)
 - [Uninstall](#uninstall)
 - [Contribution](#contribution)
@@ -87,7 +88,7 @@ bash scripts/install.sh
 codesign --remove-signature /Applications/zoom.us.app
 ```
 
-*Note*: To run Avatarify on Mac a remote GPU connection is required. There will be update on how to use cloud GPU lately.
+*(!) Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) connection is required.
 
 We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
 
@@ -153,7 +154,7 @@ bash run.sh
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 #### Mac
-*Note*: To run Avatarify on Mac a remote GPU connection is required. There will be update on how to use cloud GPU lately.
+*Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) connection is required.
 
 Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
 
