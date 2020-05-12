@@ -67,6 +67,20 @@ def load_stylegan_avatar():
 
     return image
 
+def load_images(IMG_SIZE = 256):
+    avatars=[]
+    images_list = sorted(glob.glob(f'{opt.avatars}/*'))
+    for i, f in enumerate(images_list):
+        if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
+            key = len(avatars) + 1
+            log(f'Key {key}: {f}')
+            img = cv2.imread(f)
+            if img.ndim == 2:
+                img = np.tile(img[..., None], [1, 1, 3])
+            img = img[..., :3][..., ::-1]
+            img = resize(img, (IMG_SIZE, IMG_SIZE))
+            avatars.append(img)
+    return avatars
 
 def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp, kp_source
@@ -138,18 +152,7 @@ if __name__ == "__main__":
             **predictor_args
         )
 
-    avatars=[]
-    images_list = sorted(glob.glob(f'{opt.avatars}/*'))
-    for i, f in enumerate(images_list):
-        if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
-            key = len(avatars) + 1
-            log(f'Key {key}: {f}')
-            img = cv2.imread(f)
-            if img.ndim == 2:
-                img = np.tile(img[..., None], [1, 1, 3])
-            img = img[..., :3][..., ::-1]
-            img = resize(img, (IMG_SIZE, IMG_SIZE))
-            avatars.append(img)
+    avatars = load_images()
 
 
     cap = VideoCaptureAsync(opt.cam)
@@ -307,6 +310,14 @@ if __name__ == "__main__":
                     change_avatar(predictor, avatar)
                 except:
                     log('Failed to load StyleGAN avatar')
+            elif key == ord('l'):
+                try:
+                    log('Reloading avatars...')
+                    avatars = load_images()
+                    passthrough = False
+                    log("Images reloaded")
+                except:
+                    log('Image reload failed')
             elif key == ord('i'):
                 show_fps = not show_fps
             elif 48 < key < 58:
