@@ -206,6 +206,7 @@ X | Reset reference frame.
 F | Toggle reference frame search mode.
 R | Mirror reference window.
 T | Mirror output window.
+L | Reload avatars.
 I | Show FPS
 ESC | Quit
 
