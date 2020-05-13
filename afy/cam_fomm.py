@@ -17,6 +17,13 @@ _streaming = False
 if _platform == 'linux' or _platform == 'linux2':
     import pyfakewebcam
     _streaming = True
+    
+    
+if _platform == 'darwin':
+    if opt.worker_host is None:
+        log('\nOnly remote GPU mode is supported for Mac (use --worker-host option to connect to the server)')
+        log('Standalone version will be available lately!\n')
+        exit()
 
 
 def is_new_frame_better(source, driving, precitor):
@@ -117,10 +124,14 @@ if __name__ == "__main__":
         sys.exit(0)
     elif opt.worker_host:
         from afy import predictor_remote
-        predictor = predictor_remote.PredictorRemote(
-            worker_host=opt.worker_host, worker_port=opt.worker_port,
-            **predictor_args
-        )
+        try:
+            predictor = predictor_remote.PredictorRemote(
+                worker_host=opt.worker_host, worker_port=opt.worker_port,
+                **predictor_args
+            )
+        except ConnectionError as err:
+            log(err)
+            sys.exit(1)
     else:
         from afy import predictor_local
         predictor = predictor_local.PredictorLocal(
@@ -208,7 +219,7 @@ if __name__ == "__main__":
             timing['preproc'] = tt.toc()
 
             if passthrough:
-                out = frame_orig
+                out = frame
             else:
                 tt.tic()
                 pred = predictor.predict(frame)
@@ -314,7 +325,7 @@ if __name__ == "__main__":
             if overlay_alpha > 0:
                 preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             else:
-                preview_frame = frame
+                preview_frame = frame.copy()
             
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)

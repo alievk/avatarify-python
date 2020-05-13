@@ -21,4 +21,4 @@ echo "--- FOMM"
 rm -rf fomm 2> /dev/null
 git clone https://github.com/alievk/first-order-model.git fomm
 echo "--- pip install"
-pip3 install -r requirements.txt
+pip3 install -r requirements_jetson.txt

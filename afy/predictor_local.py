@@ -2,7 +2,7 @@ from scipy.spatial import ConvexHull
 import torch
 import yaml
 from modules.keypoint_detector import KPDetector
-from modules.generator import OcclusionAwareGenerator
+from modules.generator_optim import OcclusionAwareGenerator
 from sync_batchnorm import DataParallelWithCallback
 import numpy as np
 import face_alignment
@@ -45,9 +45,6 @@ class PredictorLocal:
         generator.load_state_dict(checkpoint['generator'])
         kp_detector.load_state_dict(checkpoint['kp_detector'])
     
-        generator = DataParallelWithCallback(generator)
-        kp_detector = DataParallelWithCallback(kp_detector)
-    
         generator.eval()
         kp_detector.eval()
         
@@ -59,6 +56,14 @@ class PredictorLocal:
     def set_source_image(self, source_image):
         self.source = to_tensor(source_image).to(self.device)
         self.kp_source = self.kp_detector(self.source)
+
+        if self.enc_downscale > 1:
+            h, w = int(self.source.shape[2] / self.enc_downscale), int(self.source.shape[3] / self.enc_downscale)
+            source_enc = torch.nn.functional.interpolate(self.source, size=(h, w), mode='bilinear')
+        else:
+            source_enc = self.source
+
+        self.generator.encode_source(source_enc)
 
     def predict(self, driving_frame):
         with torch.no_grad():
@@ -74,17 +79,7 @@ class PredictorLocal:
                                 kp_driving_initial=self.kp_driving_initial, use_relative_movement=self.relative,
                                 use_relative_jacobian=self.relative, adapt_movement_scale=self.adapt_movement_scale)
 
-            if self.enc_downscale > 1:
-                h, w = int(source.shape[2] / self.enc_downscale), int(source.shape[3] / self.enc_downscale)
-                source_enc = torch.nn.functional.interpolate(source, size=(h, w), mode='bilinear')
-            else:
-                source_enc = None
-
-            try:
-                out = self.generator(self.source, kp_source=self.kp_source, kp_driving=kp_norm, source_image_enc=source_enc, optim_ret=True)
-            except TypeError:
-                Once('\n*** Please update FOMM:\ncd fomm\ngit pull\n')
-                out = self.generator(self.source, kp_source=self.kp_source, kp_driving=kp_norm)
+            out = self.generator(self.source, kp_source=self.kp_source, kp_driving=kp_norm)
 
             out = np.transpose(out['prediction'].data.cpu().numpy(), [0, 2, 3, 1])[0]
             out = (np.clip(out, 0, 1) * 255).astype(np.uint8)

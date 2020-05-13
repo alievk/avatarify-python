@@ -5,7 +5,7 @@ import numpy as np
 class SerializingSocket(zmq.Socket):
     """Numpy array serialization methods.
 
-    Modelled on PyZMQ serialization examples.
+    Based on https://github.com/jeffbass/imagezmq/blob/master/imagezmq/imagezmq.py#L291
 
     Used for sending / receiving OpenCV images, which are Numpy arrays.
     Also used for sending / receiving jpg compressed OpenCV images.
