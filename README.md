@@ -29,6 +29,7 @@ Created by: GitHub community.
     - [Linux](#linux)
     - [Mac](#mac)
     - [Windows](#windows)
+    - [Remote GPU](#remote-gpu)
 - [Setup avatars](#setup-avatars)
 - [Run](#run)
     - [Linux](#linux-1)
@@ -127,6 +128,10 @@ scripts\install_windows.bat
 12. Now `OBS-Camera` camera should be available in Zoom (or other videoconferencing software).
 
 The steps 10-11 are required only once during setup.
+
+#### Remote GPU
+
+You can offload the heavy work to a server with a GPU and use your laptop just to retreive renderings from it. See the wiki page with installation [instructions](https://github.com/alievk/avatarify/wiki/Remote-GPU).
 
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
