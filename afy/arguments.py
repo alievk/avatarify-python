@@ -30,5 +30,5 @@ parser.set_defaults(no_pad=False)
 
 opt = parser.parse_args()
 
-if opt.bind_port is None and opt.connect is None and (opt.is_worker is not None or opt.is_client is not None):
+if opt.bind_port is None and opt.connect is None and (opt.is_worker is True or opt.is_client is True):
     raise ValueError("--bind-port or --connect must be specified if you use a remote connection")
