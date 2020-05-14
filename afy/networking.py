@@ -4,6 +4,8 @@ import msgpack
 import msgpack_numpy as m
 m.patch()
 
+from afy.utils import log
+
 
 def check_connection(socket, timeout=1000):
     old_rcvtimeo = socket.RCVTIMEO
@@ -19,6 +21,8 @@ def check_connection(socket, timeout=1000):
     finally:
         socket.RCVTIMEO = old_rcvtimeo
 
+    log(f"Response to hello is {response}"")
+  
     return response == 'OK'
 
 
