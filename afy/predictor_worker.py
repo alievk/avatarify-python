@@ -89,5 +89,5 @@ def message_handler(bind_port=None, connect_address=None):
     except KeyboardInterrupt:
         pass
 
-def run_worker(port):
-    message_handler(port)
+def run_worker(bind_port=None, connect_address=None):
+    message_handler(bind_port, connect_address)
