@@ -13,7 +13,7 @@ def check_connection(socket, timeout=1000):
         data = msgpack.packb(([], {}))
         socket.send_data('hello', data)
         attr_recv, data_recv = socket.recv_data()
-        result = msgpack.unpackb(data_recv)
+        response = msgpack.unpackb(data_recv)
     except zmq.error.Again:
         return False
     finally:
