@@ -1,5 +1,25 @@
 import zmq
 import numpy as np
+import msgpack
+import msgpack_numpy as m
+m.patch()
+
+
+def check_connection(socket, timeout=1000):
+    old_rcvtimeo = socket.RCVTIMEO
+    socket.RCVTIMEO = timeout
+
+    try:
+        data = msgpack.packb(([], {}))
+        socket.send_data('hello', data)
+        attr_recv, data_recv = socket.recv_data()
+        result = msgpack.unpackb(data_recv)
+    except zmq.error.Again:
+        return False
+    finally:
+        socket.RCVTIMEO = old_rcvtimeo
+
+    return response == 'OK'
 
 
 class SerializingSocket(zmq.Socket):

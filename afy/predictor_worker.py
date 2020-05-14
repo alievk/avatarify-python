@@ -1,6 +1,6 @@
 from predictor_local import PredictorLocal
 from arguments import opt
-from networking import SerializingContext
+from networking import SerializingContext, check_connection
 from utils import log, TicToc, AccumDict, Once
 
 import cv2
@@ -11,12 +11,25 @@ import msgpack_numpy as m
 m.patch()
 
 
-def message_handler(port):
+def message_handler(bind_port=None, connect_address=None):
     log("Creating socket")
     context = SerializingContext()
     socket = context.socket(zmq.PAIR)
-    socket.bind("tcp://*:%s" % port)
-    log("Listening for messages on port:", port)
+
+    if bind_port is None:
+        if not connect_address.startswith("tcp://"):
+            connect_address = "tcp://" + connect_address
+        log(f"Connecting to {connect_address}")
+        socket.connect(connect_address)
+
+        if not check_connection(socket):
+            self.socket.disconnect(connect_address)
+            raise ConnectionError(f"Could not connect to {connect_address}")
+
+        log(f"Connected to {connect_address}")
+    else:
+        socket.bind("tcp://*:%s" % bind_port)
+        log("Listening for messages on port:", bind_port)
 
     predictor = None
     predictor_args = ()

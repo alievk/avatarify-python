@@ -1,5 +1,5 @@
 from arguments import opt
-from networking import SerializingContext
+from networking import SerializingContext, check_connection
 from utils import log, TicToc, AccumDict, Once
 
 import cv2
@@ -10,46 +10,32 @@ import msgpack_numpy as m
 m.patch()
 
 
-DEFAULT_PORT = 5556
-
-
 class PredictorRemote:
-    def __init__(self, *args, worker_host='localhost', worker_port=DEFAULT_PORT, **kwargs):
-        self.worker_host = worker_host
-        self.worker_port = worker_port
+    def __init__(self, *args, bind_port=None, connect_address=None, **kwargs):
+        self.bind_port = bind_port
+        self.connect_address = connect_address
         self.predictor_args = (args, kwargs)
         self.timing = AccumDict()
 
-        self.address = f"tcp://{worker_host}:{worker_port}"
         self.context = SerializingContext()
         self.socket = self.context.socket(zmq.PAIR)
-        self.socket.connect(self.address)
 
-        if not self.check_connection():
-            self.socket.disconnect(self.address)
-            # TODO: this hangs, as well as context.__del__
-            # self.context.destroy()
-            raise ConnectionError(f"Could not connect to {worker_host}:{worker_port}")
+        if self.bind_port is None:
+            if not self.connect_address.startswith("tcp://"):
+                self.connect_address = "tcp://" + self.connect_address
+            log(f"Connecting to {self.connect_address}")
+            self.socket.connect(self.connect_address)
 
-        log(f"Connected to {self.address}")
+            if not check_connection(self.socket):
+                self.socket.disconnect(self.connect_address)
+                raise ConnectionError(f"Could not connect to {self.connect_address}")
+
+            log(f"Connected to {self.connect_address}")
+        else:
+            self.socket.bind(f"tcp://*:%s" % self.bind_port)
+            log(f"Listening on port {self.bind_port}")
 
         self.init_worker()
-
-    def check_connection(self, timeout=1000):
-        msg = (
-            'hello',
-            [], {}
-        )
-
-        try:
-            old_rcvtimeo = self.socket.RCVTIMEO
-            self.socket.RCVTIMEO = timeout
-            response = self._send_recv_msg(msg)
-            self.socket.RCVTIMEO = old_rcvtimeo
-        except zmq.error.Again:
-            return False
-
-        return response == 'OK'
 
     def init_worker(self):
         msg = (

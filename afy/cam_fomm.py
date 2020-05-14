@@ -20,8 +20,8 @@ if _platform == 'linux' or _platform == 'linux2':
     
     
 if _platform == 'darwin':
-    if opt.worker_host is None:
-        log('\nOnly remote GPU mode is supported for Mac (use --worker-host option to connect to the server)')
+    if opt.is_client is None:
+        log('\nOnly remote GPU mode is supported for Mac (use --is-client and --connect options to connect to the server)')
         log('Standalone version will be available lately!\n')
         exit()
 
@@ -134,13 +134,13 @@ if __name__ == "__main__":
     }
     if opt.is_worker:
         from afy import predictor_worker
-        predictor_worker.run_worker(opt.worker_port)
+        predictor_worker.run_worker(opt.bind_port, opt.connect)
         sys.exit(0)
-    elif opt.worker_host:
+    elif opt.is_client:
         from afy import predictor_remote
         try:
             predictor = predictor_remote.PredictorRemote(
-                worker_host=opt.worker_host, worker_port=opt.worker_port,
+                bind_port=opt.bind_port, connect_address=opt.connect,
                 **predictor_args
             )
         except ConnectionError as err:
