@@ -23,7 +23,7 @@ def message_handler(bind_port=None, connect_address=None):
         socket.connect(connect_address)
 
         if not check_connection(socket):
-            self.socket.disconnect(connect_address)
+            socket.disconnect(connect_address)
             raise ConnectionError(f"Could not connect to {connect_address}")
 
         log(f"Connected to {connect_address}")
