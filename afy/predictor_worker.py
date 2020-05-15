@@ -28,8 +28,8 @@ def message_handler(bind_port=None, connect_address=None):
 
         log(f"Connected to {connect_address}")
     else:
-        socket.bind("tcp://*:%s" % bind_port)
-        log("Listening for messages on port:", bind_port)
+        socket.bind(f"tcp://*:{bind_port}")
+        log(f"Listening for messages on port {bind_port}")
 
     predictor = None
     predictor_args = ()

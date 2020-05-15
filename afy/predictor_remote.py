@@ -32,7 +32,7 @@ class PredictorRemote:
 
             log(f"Connected to {self.connect_address}")
         else:
-            self.socket.bind(f"tcp://*:%s" % self.bind_port)
+            self.socket.bind(f"tcp://*:{self.bind_port}")
             log(f"Listening on port {self.bind_port}")
 
             # send OK to "hello" request from the peer 
