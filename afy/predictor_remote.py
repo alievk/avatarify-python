@@ -35,6 +35,10 @@ class PredictorRemote:
             self.socket.bind(f"tcp://*:%s" % self.bind_port)
             log(f"Listening on port {self.bind_port}")
 
+            # send OK to "hello" request from the peer 
+            ok_msg = msgpack.packb("OK")
+            self.socket.send_data("hello", ok_msg)
+
         self.init_worker()
 
     def init_worker(self):
