@@ -229,6 +229,10 @@ if __name__ == "__main__":
                 out = pred
                 timing['predict'] = tt.toc()
 
+            if out is None:
+                log('Got empty out')
+                continue
+
             tt.tic()
 
             if not opt.no_pad:
