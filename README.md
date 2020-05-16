@@ -29,12 +29,14 @@ Created by: GitHub community.
     - [Linux](#linux)
     - [Mac](#mac)
     - [Windows](#windows)
-    - [Remote GPU](#remote-gpu)
+    - [Jetson TX2](#jetson-tx2)
+    - [Remote GPU](#remote-gpu)    
 - [Setup avatars](#setup-avatars)
 - [Run](#run)
     - [Linux](#linux-1)
     - [Mac](#mac-1)
     - [Windows](#windows-1)
+    - [Jetson TX2](#jetson-tx2-1)  
 - [Controls](#controls)
 - [Driving your avatar](#driving-your-avatar)
 - [Configure video meeting app](#configure-video-meeting-app)
@@ -54,6 +56,7 @@ To run Avatarify smoothly you need a CUDA-enabled (NVIDIA) video card. Otherwise
 - GeForce GTX 1080 Ti: **33 fps**
 - GeForce GTX 1070: **15 fps**
 - Mac OSX (MacBook Pro 2018; no GPU): **very slow** **~1 fps**
+- Jetson TX2: **25 fps**
 
 Of course, you also need a webcam!
 
@@ -133,6 +136,24 @@ The steps 10-11 are required only once during setup.
 
 You can offload the heavy work to a server with a GPU and use your laptop just to retreive renderings from it. See the wiki page with installation [instructions](https://github.com/alievk/avatarify/wiki/Remote-GPU).
 
+#### Jetson TX2
+
+The list of packages you need to build is in the `docs/dpkg_list.txt` file
+
+1. Build and install [MAGMA 2.5.3](https://icl.utk.edu/magma/software/view.html?id=277) (use openblas).
+
+2. Build [PyTorch 1.4.0](https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048) and install `torchvision v0.5.0` or download torch wheel [Google Drive](https://drive.google.com/file/d/1ZfEEuInRrYiwlAZXWIsfwSi0M1CtKus2/view?usp=sharing) and install `torchvision v0.5.0`.
+
+3. Build and install [OpenCV 3.4.1](https://github.com/SVL101/buildOpenCVTX2).
+
+4. Clone `avatarify` and install its dependencies (sudo privelege is required):
+```bash
+git clone https://github.com/alievk/avatarify.git -b contrib/jetsontx2
+cd avatarify
+bash scripts/install_jetson.sh
+```
+5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
 
@@ -188,6 +209,19 @@ run_windows.bat
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 **Note:** To reduce video latency, in OBS Studio right click on the preview window and uncheck Enable Preview.
+
+#### Jetson TX2
+
+It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
+
+You can use command `v4l2-ctl --list-devices` to list all devices in your system. For example, if the web camera is `/dev/video1` then the device id is 1. 
+
+Run:
+```bash
+bash run_jetson.sh
+```
+
+`cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 ## Controls
 
