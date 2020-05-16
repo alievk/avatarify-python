@@ -260,9 +260,9 @@ To remove Avatarify and its related programs follow the [instructions](https://g
 
 Our goal is to democratize photorealistic avatars for video-conferencing. To make the technology even more accessible, we have to tackle the following problems:
 
-1. ~~Add support for more platforms (Linux and Mac are already supported).~~
-2. Remote GPU support. This is a work in progress.
-3. Porting to non-CUDA GPUs (Intel integrated GPUs, AMD GPUs, etc) and optimization. The goal is to run Avatarify real-time (at least 10FPS) on modern laptops.
+* ~~Add support for more platforms (Linux and Mac are already supported).~~
+* ~~Remote GPU support. This is a work in progress.~~
+* Porting to non-CUDA GPUs (Intel integrated GPUs, AMD GPUs, etc) and optimization. The goal is to run Avatarify real-time (at least 10FPS) on modern laptops.
 
 Please make pull requests if you have any improvements or bug-fixes.
 
