@@ -13,8 +13,9 @@ import msgpack_numpy as m
 m.patch()
 
 
-PUT_TIMEOUT = 1
-GET_TIMEOUT = 1
+PUT_TIMEOUT = 1 # s
+GET_TIMEOUT = 1 # s
+RECV_TIMEOUT = 1000 # ms
 QUEUE_SIZE = 100
 
 
@@ -28,11 +29,16 @@ class PredictorRemote:
         self.send_queue = mp.Queue(QUEUE_SIZE)
         self.recv_queue = mp.Queue(QUEUE_SIZE)
 
+        self.worker_alive = mp.Value('i', 1)
+
         # if not self.connect_address.startswith("tcp://"):
         #     self.connect_address = "tcp://" + self.connect_address
 
-        self.send_process = mp.Process(target=self.send_worker, args=(self.connect_address, self.send_queue,))
-        self.recv_process = mp.Process(target=self.recv_worker, args=(self.connect_address, self.connect_address, self.recv_queue,))
+        self.send_process = mp.Process(target=self.send_worker, args=(self.connect_address, self.send_queue, self.worker_alive))
+        self.recv_process = mp.Process(target=self.recv_worker, args=(self.connect_address, self.recv_queue, self.worker_alive))
+
+        self.send_process.start()
+        self.recv_process.start()
 
         # self.context = SerializingContext()
         # self.socket = self.context.socket(zmq.PAIR)
@@ -58,8 +64,13 @@ class PredictorRemote:
 
         self.init_worker()
 
+    def __del__(self):
+        log("join processes")
+        self.send_process.join()
+        self.recv_process.join()
+
     @staticmethod
-    def send_worker(host, send_queue):
+    def send_worker(host, send_queue, worker_alive):
         address = f"tcp://{host}:5557"
 
         ctx = SerializingContext()
@@ -68,28 +79,49 @@ class PredictorRemote:
 
         log(f"Sending to {address}")
 
-        while True:
-            msg = send_queue.get()
-            sender.send_data(*msg)
+        try:
+            while worker_alive.value:
+                try:
+                    msg = send_queue.get(timeout=GET_TIMEOUT)
+                except queue.Empty:
+                    continue
+
+                sender.send_data(*msg)
+        except KeyboardInterrupt:
+            worker_alive.value = 0
+            log("send_worker: user interrupt")
+
+        log("send_worker exit")
 
     @staticmethod
-    def recv_worker(host, recv_queue):
+    def recv_worker(host, recv_queue, worker_alive):
         address = f"tcp://{host}:5558"
 
         ctx = SerializingContext()
         receiver = ctx.socket(zmq.PULL)
         receiver.connect(address)
+        receiver.RCVTIMEO = RECV_TIMEOUT
 
         log(f"Receiving from {address}")
 
-        while True:
-            msg = receiver.recv_data()
-            
-            try:
-                recv_queue.put(msg, timeout=PUT_TIMEOUT)
-            except queue.Full:
-                continue
+        try:
+            while worker_alive.value:
+                try:
+                    msg = receiver.recv_data()
+                except zmq.error.Again:
+                    continue
+                
+                try:
+                    recv_queue.put(msg, timeout=PUT_TIMEOUT)
+                except queue.Full:
+                    continue
+        except KeyboardInterrupt:
+            worker_alive.value = 0
+            log("recv_worker: user interrupt")
 
+        log("recv_worker exit")
+
+    # TODO: rename init_remote_worker
     def init_worker(self):
         msg = (
             '__init__',
