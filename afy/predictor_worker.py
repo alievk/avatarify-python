@@ -160,10 +160,13 @@ class PredictorWorker():
                     data_send = msgpack.packb(result)
                 timing.add('PACK', tt.toc())
 
-                try:
-                    send_queue.put((method, data_send), timeout=PUT_TIMEOUT)
-                except queue.Full:
-                    send_queue.get()
+                if method['critical']:
+                    send_queue.put((method, data_send))
+                else:
+                    try:
+                        send_queue.put((method, data_send), timeout=PUT_TIMEOUT)
+                    except queue.Full:
+                        pass
 
                 Once(timing, per=1)
         except KeyboardInterrupt:
