@@ -66,6 +66,8 @@ class PredictorLocal:
         self.generator.encode_source(source_enc)
 
     def predict(self, driving_frame):
+        assert self.kp_source is not None, "call set_source_image()"
+        
         with torch.no_grad():
             driving = to_tensor(driving_frame).to(self.device)
 
