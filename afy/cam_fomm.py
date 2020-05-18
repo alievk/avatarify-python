@@ -146,6 +146,7 @@ if __name__ == "__main__":
         except ConnectionError as err:
             log(err)
             sys.exit(1)
+        predictor.start()
     else:
         from afy import predictor_local
         predictor = predictor_local.PredictorLocal(
@@ -229,14 +230,7 @@ if __name__ == "__main__":
                 out = pred
                 timing['predict'] = tt.toc()
 
-            if out is None:
-                log('Got empty out')
-                continue
-
             tt.tic()
-
-            if not opt.no_pad:
-                out = pad_img(out, stream_img_size)
             
             key = cv2.waitKey(1)
 
@@ -333,10 +327,6 @@ if __name__ == "__main__":
             elif key != -1:
                 log(key)
 
-            if _streaming:
-                out = resize(out, stream_img_size)
-                stream.schedule_frame(out)
-
             if overlay_alpha > 0:
                 preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             else:
@@ -344,9 +334,6 @@ if __name__ == "__main__":
             
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
-                
-            if output_flip:
-                out = cv2.flip(out, 1)
                 
             if green_overlay:
                 green_alpha = 0.8
@@ -376,7 +363,20 @@ if __name__ == "__main__":
                 draw_rect(preview_frame)
 
             cv2.imshow('cam', preview_frame[..., ::-1])
-            if is_calibrated:
+
+            if out is None:
+                log('Got empty out')
+            elif is_calibrated:
+                if not opt.no_pad:
+                    out = pad_img(out, stream_img_size)
+
+                if output_flip:
+                    out = cv2.flip(out, 1)
+
+                if _streaming:
+                    out = resize(out, stream_img_size)
+                    stream.schedule_frame(out)
+
                 cv2.imshow('avatarify', out[..., ::-1])
 
             fps_hist.append(tt.toc(total=True))
@@ -384,7 +384,15 @@ if __name__ == "__main__":
                 fps = 10 / (sum(fps_hist) / 1000)
                 fps_hist = []
     except KeyboardInterrupt:
-        pass
+        log("main: user interrupt")
 
+    log("stopping camera")
     cap.stop()
+
     cv2.destroyAllWindows()
+
+    if opt.is_client:
+        log("stopping remote predictor")
+        predictor.stop()
+
+    log("main: exit")

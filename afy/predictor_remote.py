@@ -29,16 +29,13 @@ class PredictorRemote:
         self.send_queue = mp.Queue(QUEUE_SIZE)
         self.recv_queue = mp.Queue(QUEUE_SIZE)
 
-        self.worker_alive = mp.Value('i', 1)
+        self.worker_alive = mp.Value('i', 0)
 
         # if not self.connect_address.startswith("tcp://"):
         #     self.connect_address = "tcp://" + self.connect_address
 
         self.send_process = mp.Process(target=self.send_worker, args=(self.connect_address, self.send_queue, self.worker_alive))
         self.recv_process = mp.Process(target=self.recv_worker, args=(self.connect_address, self.recv_queue, self.worker_alive))
-
-        self.send_process.start()
-        self.recv_process.start()
 
         # self.context = SerializingContext()
         # self.socket = self.context.socket(zmq.PAIR)
@@ -64,10 +61,16 @@ class PredictorRemote:
 
         self.init_worker()
 
-    def __del__(self):
-        log("join processes")
-        self.send_process.join()
-        self.recv_process.join()
+    def start(self):
+        self.worker_alive.value = 1
+        self.send_process.start()
+        self.recv_process.start()
+
+    def stop(self):
+        self.worker_alive.value = 0
+        log("join worker processes...")
+        self.send_process.join(timeout=5)
+        self.recv_process.join(timeout=5)
 
     @staticmethod
     def send_worker(host, send_queue, worker_alive):
@@ -88,9 +91,11 @@ class PredictorRemote:
 
                 sender.send_data(*msg)
         except KeyboardInterrupt:
-            worker_alive.value = 0
             log("send_worker: user interrupt")
+        finally:
+            worker_alive.value = 0
 
+        sender.disconnect(address)
         log("send_worker exit")
 
     @staticmethod
@@ -116,9 +121,11 @@ class PredictorRemote:
                 except queue.Full:
                     continue
         except KeyboardInterrupt:
-            worker_alive.value = 0
             log("recv_worker: user interrupt")
+        finally:
+            worker_alive.value = 0
 
+        receiver.disconnect(address)
         log("recv_worker exit")
 
     # TODO: rename init_remote_worker
@@ -151,13 +158,13 @@ class PredictorRemote:
         try:
             self.send_queue.put((attr, data), timeout=PUT_TIMEOUT)
         except queue.Full:
-            log('send_queue is fill')
+            log('send_queue is full')
 
         # tt.tic()
         # attr_recv, data_recv = self.socket.recv_data()
         # self.timing.add('RECV', tt.toc())
         try:
-            attr_recv, data_recv = self.recv_queue.get(timeout=GET_TIMEOUT)
+            attr_recv, data_recv = self.recv_queue.get(timeout=0.01)
         except queue.Empty:
             log('recv_queue is empty')
             return None
