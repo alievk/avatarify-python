@@ -15,10 +15,13 @@ from afy.utils import Once, log, crop, pad_img, resize, TicToc
 from sys import platform as _platform
 _streaming = False
 if _platform == 'linux' or _platform == 'linux2':
-    import pyfakewebcam
-    _streaming = True
-    
-    
+    try:
+        import pyfakewebcam
+        _streaming = True
+    except ImportError:
+        log("pyfakewebcam is not installed")
+
+
 if _platform == 'darwin':
     if opt.is_client is None:
         log('\nOnly remote GPU mode is supported for Mac (use --is-client and --connect options to connect to the server)')
