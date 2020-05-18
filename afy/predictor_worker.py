@@ -1,4 +1,4 @@
-#from predictor_local import PredictorLocal
+from predictor_local import PredictorLocal
 from arguments import opt
 from networking import SerializingContext, check_connection
 from utils import log, TicToc, AccumDict, Once
@@ -12,6 +12,8 @@ m.patch()
 
 import queue
 import multiprocessing as mp
+import traceback
+import time
 
 
 PUT_TIMEOUT = 1 # s
@@ -20,12 +22,12 @@ RECV_TIMEOUT = 1000 # ms
 QUEUE_SIZE = 100
 
 
-class PredictorLocal():
-    def __init__(self, *args, **kwargs):
-        pass
+# class PredictorLocal():
+#     def __init__(self, *args, **kwargs):
+#         pass
 
-    def __getattr__(self, *args, **kwargs):
-        return lambda *args, **kwargs: None
+#     def __getattr__(self, *args, **kwargs):
+#         return lambda *args, **kwargs: None
 
 
 class PredictorWorker():
@@ -76,18 +78,18 @@ class PredictorWorker():
                     log("recv timeout")
                     continue
 
-                log('recv', msg[0])
+                #log('recv', msg[0])
 
                 try:
-                    recv_queue.put(msg, timeout=PUT_TIMEOUT)
+                    recv_queue.put(msg, block=False)
                 except queue.Full:
                     log('recv_queue full')
 
                 Once(timing, per=1)
         except KeyboardInterrupt:
-            worker_alive.value = 0
             log("recv_worker: user interrupt")
 
+        worker_alive.value = 0
         log("recv_worker exit")
 
     @staticmethod
@@ -101,16 +103,15 @@ class PredictorWorker():
                 tt = TicToc()
 
                 try:
-                    msg = recv_queue.get(timeout=GET_TIMEOUT)
+                    attr, data = recv_queue.get(timeout=GET_TIMEOUT)
                 except queue.Empty:
                     continue
 
-                # get the latest msg from the queue
-                while not recv_queue.empty():
-                    msg = recv_queue.get()
-                    print('skip')
-
-                attr, data = msg
+                # get the latest predict request from the queue
+                # don't skip other request
+                while not recv_queue.empty() and attr == 'predict':
+                    log(f"skip {attr}")
+                    attr, data = recv_queue.get()
 
                 log("working on", attr)
 
@@ -139,14 +140,17 @@ class PredictorWorker():
                     result = True
                     tt.tic() # don't account for init
                 elif attr == 'predict':
+                    log(f"got image {image.shape}")
                     result = getattr(predictor, attr)(image)
                 else:
                     result = getattr(predictor, attr)(*args[0], **args[1])
                 timing.add('CALL', tt.toc())
 
+                log(f"result is {result.__class__}")
+
                 tt.tic()
                 if attr == 'predict':
-                    assert isinstance(result, np.ndarray), 'Expected image'
+                    assert isinstance(result, np.ndarray), f'Expected np.ndarray, got {result.__class__}'
                     ret_code, data_send = cv2.imencode(".jpg", result, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
                 else:
                     data_send = msgpack.packb(result)
@@ -159,9 +163,12 @@ class PredictorWorker():
 
                 Once(timing, per=1)
         except KeyboardInterrupt:
-            worker_alive.value = 0
             log("predictor_worker: user interrupt")
-
+        except Exception as e:
+            log("predictor_worker error")
+            traceback.print_exc()
+    
+        worker_alive.value = 0
         log("predictor_worker exit")
 
     @staticmethod
@@ -194,9 +201,9 @@ class PredictorWorker():
 
                 Once(timing, per=1)
         except KeyboardInterrupt:
-            worker_alive.value = 0
             log("predictor_worker: user interrupt")
 
+        worker_alive.value = 0
         log("send_worker exit")
 
 
