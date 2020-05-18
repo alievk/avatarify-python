@@ -14,8 +14,9 @@ import queue
 import multiprocessing as mp
 
 
-PUT_TIMEOUT = 1
-GET_TIMEOUT = 1
+PUT_TIMEOUT = 1 # s
+GET_TIMEOUT = 1 # s
+RECV_TIMEOUT = 1000 # ms
 QUEUE_SIZE = 100
 
 
@@ -23,8 +24,8 @@ class PredictorLocal():
     def __init__(self, *args, **kwargs):
         pass
 
-    def __getattr__(self, attr):
-        return None
+    def __getattr__(self, *args, **kwargs):
+        return lambda *args, **kwargs: None
 
 
 class PredictorWorker():
@@ -32,109 +33,139 @@ class PredictorWorker():
         self.recv_queue = mp.Queue(QUEUE_SIZE)
         self.send_queue = mp.Queue(QUEUE_SIZE)
 
-        self.recv_process = mp.Process(target=self.recv_worker, args=(port_recv, self.recv_queue))
-        self.predictor_process = mp.Process(target=self.predictor_worker, args=(self.recv_queue, self.send_queue))
-        self.send_process = mp.Process(target=self.send_worker, args=(port_send, self.send_queue))
+        self.worker_alive = mp.Value('i', 0)
+
+        self.recv_process = mp.Process(target=self.recv_worker, args=(port_recv, self.recv_queue, self.worker_alive))
+        self.predictor_process = mp.Process(target=self.predictor_worker, args=(self.recv_queue, self.send_queue, self.worker_alive))
+        self.send_process = mp.Process(target=self.send_worker, args=(port_send, self.send_queue, self.worker_alive))
     
     def run(self):
+        self.worker_alive.value = 1
+
         self.recv_process.start()
         self.predictor_process.start()
         self.send_process.start()
 
-        self.recv_process.join()
-        self.predictor_process.join()
-        self.send_process.join()
+        try:
+            self.recv_process.join()
+            self.predictor_process.join()
+            self.send_process.join()
+        except KeyboardInterrupt:
+            pass
 
     @staticmethod
-    def recv_worker(port, recv_queue):
+    def recv_worker(port, recv_queue, worker_alive):
         timing = AccumDict()
 
         ctx = SerializingContext()
         socket = ctx.socket(zmq.PULL)
         socket.bind(f"tcp://*:{port}")
+        socket.RCVTIMEO = RECV_TIMEOUT
 
         log(f'Receiving on port {port}')
 
-        while True:
-            tt = TicToc()
+        try:
+            while worker_alive.value:
+                tt = TicToc()
 
-            tt.tic()
-            msg = socket.recv_data()
-            timing.add('RECV', tt.toc())
+                try:
+                    tt.tic()
+                    msg = socket.recv_data()
+                    timing.add('RECV', tt.toc())
+                except zmq.error.Again:
+                    log("recv timeout")
+                    continue
 
-            try:
-                recv_queue.put(msg, timeout=PUT_TIMEOUT)
-            except queue.Full:
-                recv_queue.get()
+                log('recv', msg[0])
 
-            Once(timing, per=1)
+                try:
+                    recv_queue.put(msg, timeout=PUT_TIMEOUT)
+                except queue.Full:
+                    log('recv_queue full')
+
+                Once(timing, per=1)
+        except KeyboardInterrupt:
+            worker_alive.value = 0
+            log("recv_worker: user interrupt")
+
+        log("recv_worker exit")
 
     @staticmethod
-    def predictor_worker(recv_queue, send_queue):
+    def predictor_worker(recv_queue, send_queue, worker_alive):
         predictor = None
         predictor_args = ()
         timing = AccumDict()
         
-        while True:
-            try:
-                msg = recv_queue.get(timeout=GET_TIMEOUT)
-            except queue.Empty:
-                continue
+        try:
+            while worker_alive.value:
+                tt = TicToc()
 
-            # get the latest msg from the queue
-            while not recv_queue.empty():
-                msg = recv_queue.get()
-                print('skip')
+                try:
+                    msg = recv_queue.get(timeout=GET_TIMEOUT)
+                except queue.Empty:
+                    continue
 
-            attr, data = msg
+                # get the latest msg from the queue
+                while not recv_queue.empty():
+                    msg = recv_queue.get()
+                    print('skip')
 
-            try:
+                attr, data = msg
+
+                log("working on", attr)
+
+                try:
+                    tt.tic()
+                    if attr == 'predict':
+                        image = cv2.imdecode(np.frombuffer(data, dtype='uint8'), -1)
+                    else:
+                        args = msgpack.unpackb(data)
+                    timing.add('UNPACK', tt.toc())
+                except ValueError:
+                    log("Invalid Message")
+                    continue
+
+                tt.tic()
+                if attr == "hello":
+                    result = "OK"
+                elif attr == "__init__":
+                    if args == predictor_args:
+                        log("Same config as before... reusing previous predictor")
+                    else:
+                        del predictor
+                        predictor_args = args
+                        predictor = PredictorLocal(*predictor_args[0], **predictor_args[1])
+                        log("Initialized predictor with:", predictor_args)
+                    result = True
+                    tt.tic() # don't account for init
+                elif attr == 'predict':
+                    result = getattr(predictor, attr)(image)
+                else:
+                    result = getattr(predictor, attr)(*args[0], **args[1])
+                timing.add('CALL', tt.toc())
+
                 tt.tic()
                 if attr == 'predict':
-                    image = cv2.imdecode(np.frombuffer(data, dtype='uint8'), -1)
+                    assert isinstance(result, np.ndarray), 'Expected image'
+                    ret_code, data_send = cv2.imencode(".jpg", result, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
                 else:
-                    args = msgpack.unpackb(data)
-                timing.add('UNPACK', tt.toc())
-            except ValueError:
-                log("Invalid Message")
-                continue
+                    data_send = msgpack.packb(result)
+                timing.add('PACK', tt.toc())
 
-            tt.tic()
-            if attr == "hello":
-                result = "OK"
-            elif attr == "__init__":
-                if args == predictor_args:
-                    log("Same config as before... reusing previous predictor")
-                else:
-                    del predictor
-                    predictor_args = args
-                    predictor = PredictorLocal(*predictor_args[0], **predictor_args[1])
-                    log("Initialized predictor with:", predictor_args)
-                result = True
-                tt.tic() # don't account for init
-            elif attr == 'predict':
-                result = getattr(predictor, attr)(image)
-            else:
-                result = getattr(predictor, attr)(*args[0], **args[1])
-            timing.add('CALL', tt.toc())
+                try:
+                    send_queue.put((attr, data_send), timeout=PUT_TIMEOUT)
+                except queue.Full:
+                    send_queue.get()
 
-            tt.tic()
-            if attr == 'predict':
-                assert isinstance(result, np.ndarray), 'Expected image'
-                ret_code, data_send = cv2.imencode(".jpg", result, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
-            else:
-                data_send = msgpack.packb(result)
-            timing.add('PACK', tt.toc())
+                Once(timing, per=1)
+        except KeyboardInterrupt:
+            worker_alive.value = 0
+            log("predictor_worker: user interrupt")
 
-            try:
-                send_queue.put((attr, data_send), timeout=PUT_TIMEOUT)
-            except queue.Full:
-                send_queue.get()
-
-            Once(timing, per=1)
+        log("predictor_worker exit")
 
     @staticmethod
-    def send_worker(port, send_queue):
+    def send_worker(port, send_queue, worker_alive):
         timing = AccumDict()
 
         ctx = SerializingContext()
@@ -143,19 +174,30 @@ class PredictorWorker():
 
         log(f'Sending on port {port}')
 
-        while True:
-            try:
-                msg = send_queue.get(timeout=GET_TIMEOUT)
-            except queue.Empty:
-                continue
+        try:
+            while worker_alive.value:
+                tt = TicToc()
 
-            attr, data = msg
+                try:
+                    msg = send_queue.get(timeout=GET_TIMEOUT)
+                except queue.Empty:
+                    log("send queue empty")
+                    continue
 
-            tt.tic()
-            socket.send_data(attr, data)
-            timing.add('SEND', tt.toc())
+                attr, data = msg
 
-            Once(timing, per=1)
+                log("sending", attr)
+
+                tt.tic()
+                socket.send_data(attr, data)
+                timing.add('SEND', tt.toc())
+
+                Once(timing, per=1)
+        except KeyboardInterrupt:
+            worker_alive.value = 0
+            log("predictor_worker: user interrupt")
+
+        log("send_worker exit")
 
 
 # def message_handler(bind_port=None, connect_address=None):
