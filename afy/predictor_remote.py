@@ -59,7 +59,7 @@ class PredictorRemote:
         #     ok_msg = msgpack.packb("OK")
         #     self.socket.send_data("hello", ok_msg)
 
-        self.init_worker()
+        self.init_remote_worker()
 
     def start(self):
         self.worker_alive.value = 1
@@ -128,8 +128,7 @@ class PredictorRemote:
         receiver.disconnect(address)
         log("recv_worker exit")
 
-    # TODO: rename init_remote_worker
-    def init_worker(self):
+    def init_remote_worker(self):
         msg = (
             '__init__',
             *self.predictor_args,
