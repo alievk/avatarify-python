@@ -140,7 +140,7 @@ if __name__ == "__main__":
         from afy import predictor_remote
         try:
             predictor = predictor_remote.PredictorRemote(
-                bind_port=opt.bind_port, connect_address=opt.connect,
+                bind_port=opt.bind_port, remote_host=opt.connect,
                 **predictor_args
             )
         except ConnectionError as err:
