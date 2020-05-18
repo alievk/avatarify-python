@@ -80,10 +80,14 @@ class PredictorWorker():
 
                 #log('recv', msg[0])
 
-                try:
-                    recv_queue.put(msg, block=False)
-                except queue.Full:
-                    log('recv_queue full')
+                method, data = msg
+                if method['critical']:
+                    recv_queue.put(msg)
+                else:
+                    try:
+                        recv_queue.put(msg, block=False)
+                    except queue.Full:
+                        log('recv_queue full')
 
                 Once(timing, per=1)
         except KeyboardInterrupt:
@@ -103,21 +107,21 @@ class PredictorWorker():
                 tt = TicToc()
 
                 try:
-                    attr, data = recv_queue.get(timeout=GET_TIMEOUT)
+                    method, data = recv_queue.get(timeout=GET_TIMEOUT)
                 except queue.Empty:
                     continue
 
-                # get the latest predict request from the queue
-                # don't skip other request
-                while not recv_queue.empty() and attr == 'predict':
-                    log(f"skip {attr}")
-                    attr, data = recv_queue.get()
+                # get the latest non-critical request from the queue
+                # don't skip critical request
+                while not recv_queue.empty() and not method['critical']:
+                    log(f"skip {method}")
+                    method, data = recv_queue.get()
 
-                log("working on", attr)
+                log("working on", method)
 
                 try:
                     tt.tic()
-                    if attr == 'predict':
+                    if method['name'] == 'predict':
                         image = cv2.imdecode(np.frombuffer(data, dtype='uint8'), -1)
                     else:
                         args = msgpack.unpackb(data)
@@ -127,9 +131,9 @@ class PredictorWorker():
                     continue
 
                 tt.tic()
-                if attr == "hello":
+                if method['name'] == "hello":
                     result = "OK"
-                elif attr == "__init__":
+                elif method['name'] == "__init__":
                     if args == predictor_args:
                         log("Same config as before... reusing previous predictor")
                     else:
@@ -139,17 +143,17 @@ class PredictorWorker():
                         log("Initialized predictor with:", predictor_args)
                     result = True
                     tt.tic() # don't account for init
-                elif attr == 'predict':
+                elif method['name'] == 'predict':
                     log(f"got image {image.shape}")
-                    result = getattr(predictor, attr)(image)
+                    result = getattr(predictor, method['name'])(image)
                 else:
-                    result = getattr(predictor, attr)(*args[0], **args[1])
+                    result = getattr(predictor, method['name'])(*args[0], **args[1])
                 timing.add('CALL', tt.toc())
 
                 log(f"result is {result.__class__}")
 
                 tt.tic()
-                if attr == 'predict':
+                if method['name'] == 'predict':
                     assert isinstance(result, np.ndarray), f'Expected np.ndarray, got {result.__class__}'
                     ret_code, data_send = cv2.imencode(".jpg", result, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
                 else:
@@ -157,7 +161,7 @@ class PredictorWorker():
                 timing.add('PACK', tt.toc())
 
                 try:
-                    send_queue.put((attr, data_send), timeout=PUT_TIMEOUT)
+                    send_queue.put((method, data_send), timeout=PUT_TIMEOUT)
                 except queue.Full:
                     send_queue.get()
 
@@ -186,17 +190,15 @@ class PredictorWorker():
                 tt = TicToc()
 
                 try:
-                    msg = send_queue.get(timeout=GET_TIMEOUT)
+                    method, data = send_queue.get(timeout=GET_TIMEOUT)
                 except queue.Empty:
                     log("send queue empty")
                     continue
 
-                attr, data = msg
-
-                log("sending", attr)
+                log("sending", method)
 
                 tt.tic()
-                socket.send_data(attr, data)
+                socket.send_data(method, data)
                 timing.add('SEND', tt.toc())
 
                 Once(timing, per=1)

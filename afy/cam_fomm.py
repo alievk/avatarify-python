@@ -224,11 +224,14 @@ if __name__ == "__main__":
 
             if passthrough:
                 out = frame
-            else:
+            elif is_calibrated:
                 tt.tic()
-                pred = predictor.predict(frame)
-                out = pred
+                out = predictor.predict(frame)
+                if out is None:
+                    log('predict returned None')
                 timing['predict'] = tt.toc()
+            else:
+                out = None
 
             tt.tic()
             
@@ -364,9 +367,7 @@ if __name__ == "__main__":
 
             cv2.imshow('cam', preview_frame[..., ::-1])
 
-            if out is None:
-                log('Got empty out')
-            elif is_calibrated:
+            if out is not None:
                 if not opt.no_pad:
                     out = pad_img(out, stream_img_size)
 

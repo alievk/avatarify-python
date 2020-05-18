@@ -72,6 +72,81 @@ class PredictorRemote:
         self.send_process.join(timeout=5)
         self.recv_process.join(timeout=5)
 
+    def init_remote_worker(self):
+        return self._remote_call('__init__', self.predictor_args, critical=True)
+
+    def __getattr__(self, attr):
+        is_critical = attr != 'predict'
+        return lambda *args, **kwargs: self._remote_call(attr, (args, kwargs), critical=is_critical)
+
+    def _remote_call(self, method, args, critical=True):
+        msg = {
+            'method': {
+                'name': attr,
+                'critical': critical
+            },
+            'args': args
+        }
+
+        if critical:
+            return self._send_recv_sync(msg)
+        
+        return self._send_recv_async(msg)
+
+    def _send_recv_sync(self, msg):
+        method = msg['method']
+        data = msgpack.packb(msg['args'])
+        self.socket.send_data(method, data)
+
+        while True:
+            method_recv, data_recv = self.socket.recv_data()
+            if method_recv == method:
+                break
+
+        return msgpack.unpackb(data_recv)
+
+    def _send_recv_async(self, msg):
+        method = msg['method']
+        args, kwargs = msg['args']
+
+        tt = TicToc()
+        tt.tic()
+        if method['name'] == 'predict':
+            image = args[0]
+            assert isinstance(image, np.ndarray), 'Expected image'
+            ret_code, data = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
+        else:
+            data = msgpack.packb((args, kwargs))
+        self.timing.add('PACK', tt.toc())
+
+        # tt.tic()
+        # self.socket.send_data(attr, data)
+        # self.timing.add('SEND', tt.toc())
+        try:
+            self.send_queue.put((method, data), timeout=PUT_TIMEOUT)
+        except queue.Full:
+            log('send_queue is full')
+
+        # tt.tic()
+        # attr_recv, data_recv = self.socket.recv_data()
+        # self.timing.add('RECV', tt.toc())
+        try:
+            method_recv, data_recv = self.recv_queue.get(timeout=0.01)
+        except queue.Empty:
+            log('recv_queue is empty')
+            return None
+
+        tt.tic()
+        if method_recv['name'] == 'predict':
+            result = cv2.imdecode(np.frombuffer(data_recv, dtype='uint8'), -1)
+        else:
+            result = msgpack.unpackb(data_recv)
+        self.timing.add('UNPACK', tt.toc())
+
+        Once(self.timing, per=1)
+
+        return result
+
     @staticmethod
     def send_worker(host, send_queue, worker_alive):
         address = f"tcp://{host}:5557"
@@ -127,54 +202,3 @@ class PredictorRemote:
 
         receiver.disconnect(address)
         log("recv_worker exit")
-
-    def init_remote_worker(self):
-        msg = (
-            '__init__',
-            *self.predictor_args,
-        )
-        return self._send_recv_msg(msg)
-
-    def __getattr__(self, attr):
-        return lambda *args, **kwargs: self._send_recv_msg((attr, args, kwargs))
-
-    def _send_recv_msg(self, msg):
-        attr, args, kwargs = msg
-
-        tt = TicToc()
-        tt.tic()
-        if attr == 'predict':
-            image = args[0]
-            assert isinstance(image, np.ndarray), 'Expected image'
-            ret_code, data = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), opt.jpg_quality])
-        else:
-            data = msgpack.packb((args, kwargs))
-        self.timing.add('PACK', tt.toc())
-
-        # tt.tic()
-        # self.socket.send_data(attr, data)
-        # self.timing.add('SEND', tt.toc())
-        try:
-            self.send_queue.put((attr, data), timeout=PUT_TIMEOUT)
-        except queue.Full:
-            log('send_queue is full')
-
-        # tt.tic()
-        # attr_recv, data_recv = self.socket.recv_data()
-        # self.timing.add('RECV', tt.toc())
-        try:
-            attr_recv, data_recv = self.recv_queue.get(timeout=0.01)
-        except queue.Empty:
-            log('recv_queue is empty')
-            return None
-
-        tt.tic()
-        if attr_recv == 'predict':
-            result = cv2.imdecode(np.frombuffer(data_recv, dtype='uint8'), -1)
-        else:
-            result = msgpack.unpackb(data_recv)
-        self.timing.add('UNPACK', tt.toc())
-
-        Once(self.timing, per=1)
-
-        return result
