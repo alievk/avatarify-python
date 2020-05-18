@@ -37,12 +37,12 @@ class PredictorRemote:
         self.send_process = mp.Process(target=self.send_worker, args=(self.remote_host, self.send_queue, self.worker_alive))
         self.recv_process = mp.Process(target=self.recv_worker, args=(self.remote_host, self.recv_queue, self.worker_alive))
 
-        log("Connecting to remote host {self.remote_host}")
-        self.ctx = SerializingContext()
-        self.sender = self.ctx.socket(zmq.PUSH)
-        self.sender.connect(f"tcp://{remote_host}:5557")
-        self.receiver = self.ctx.socket(zmq.PULL)
-        self.receiver.connect(f"tcp://{remote_host}:5558")
+        # log("Connecting to remote host {self.remote_host}")
+        # self.ctx = SerializingContext()
+        # self.sender = self.ctx.socket(zmq.PUSH)
+        # self.sender.connect(f"tcp://{remote_host}:5557")
+        # self.receiver = self.ctx.socket(zmq.PULL)
+        # self.receiver.connect(f"tcp://{remote_host}:5558")
 
         # if self.bind_port is None:
         #     if not self.remote_host.startswith("tcp://"):
@@ -63,12 +63,12 @@ class PredictorRemote:
         #     ok_msg = msgpack.packb("OK")
         #     self.socket.send_data("hello", ok_msg)
 
-        self.init_remote_worker()
-
     def start(self):
         self.worker_alive.value = 1
         self.send_process.start()
         self.recv_process.start()
+
+        self.init_remote_worker()
 
     def stop(self):
         self.worker_alive.value = 0
