@@ -20,9 +20,10 @@ QUEUE_SIZE = 100
 
 
 class PredictorRemote:
-    def __init__(self, *args, bind_port=None, remote_host=None, **kwargs):
-        self.bind_port = bind_port
+    def __init__(self, *args, remote_host=None, in_port=None, out_port=None, **kwargs):
         self.remote_host = remote_host
+        self.in_port = in_port
+        self.out_port = out_port
         self.predictor_args = (args, kwargs)
         self.timing = AccumDict()
 
@@ -34,8 +35,14 @@ class PredictorRemote:
         # if not self.remote_host.startswith("tcp://"):
         #     self.remote_host = "tcp://" + self.remote_host
 
-        self.send_process = mp.Process(target=self.send_worker, args=(self.remote_host, self.send_queue, self.worker_alive))
-        self.recv_process = mp.Process(target=self.recv_worker, args=(self.remote_host, self.recv_queue, self.worker_alive))
+        self.send_process = mp.Process(
+            target=self.send_worker, 
+            args=(self.remote_host, self.in_port, self.send_queue, self.worker_alive)
+            )
+        self.recv_process = mp.Process(
+            target=self.recv_worker, 
+            args=(self.remote_host, self.out_port, self.recv_queue, self.worker_alive)
+            )
 
         # log("Connecting to remote host {self.remote_host}")
         # self.ctx = SerializingContext()
@@ -163,8 +170,8 @@ class PredictorRemote:
         return result
 
     @staticmethod
-    def send_worker(host, send_queue, worker_alive):
-        address = f"tcp://{host}:5557"
+    def send_worker(host, port, send_queue, worker_alive):
+        address = f"tcp://{host}:{port}"
 
         ctx = SerializingContext()
         sender = ctx.socket(zmq.PUSH)
@@ -189,8 +196,8 @@ class PredictorRemote:
         log("send_worker exit")
 
     @staticmethod
-    def recv_worker(host, recv_queue, worker_alive):
-        address = f"tcp://{host}:5558"
+    def recv_worker(host, port, recv_queue, worker_alive):
+        address = f"tcp://{host}:{port}"
 
         ctx = SerializingContext()
         receiver = ctx.socket(zmq.PULL)

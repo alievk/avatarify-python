@@ -31,15 +31,15 @@ QUEUE_SIZE = 100
 
 
 class PredictorWorker():
-    def __init__(self, port_recv=5557, port_send=5558):
+    def __init__(self, in_port=None, out_port=None):
         self.recv_queue = mp.Queue(QUEUE_SIZE)
         self.send_queue = mp.Queue(QUEUE_SIZE)
 
         self.worker_alive = mp.Value('i', 0)
 
-        self.recv_process = mp.Process(target=self.recv_worker, args=(port_recv, self.recv_queue, self.worker_alive))
+        self.recv_process = mp.Process(target=self.recv_worker, args=(in_port, self.recv_queue, self.worker_alive))
         self.predictor_process = mp.Process(target=self.predictor_worker, args=(self.recv_queue, self.send_queue, self.worker_alive))
-        self.send_process = mp.Process(target=self.send_worker, args=(port_send, self.send_queue, self.worker_alive))
+        self.send_process = mp.Process(target=self.send_worker, args=(out_port, self.send_queue, self.worker_alive))
     
     def run(self):
         self.worker_alive.value = 1
@@ -290,6 +290,6 @@ class PredictorWorker():
 #     except KeyboardInterrupt:
 #         pass
 
-def run_worker(bind_port=None, connect_address=None):
-    worker = PredictorWorker()
+def run_worker(in_port=None, out_port=None):
+    worker = PredictorWorker(in_port=in_port, out_port=out_port)
     worker.run()

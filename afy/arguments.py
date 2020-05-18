@@ -20,8 +20,9 @@ parser.add_argument("--avatars", default="./avatars", help="path to avatars dire
 
 parser.add_argument("--is-worker", action="store_true", help="Whether to run this process as a remote GPU worker")
 parser.add_argument("--is-client", action="store_true", help="Whether to run this process as a client")
-parser.add_argument("--bind-port", type=int, default=None, help="Bind to port")
-parser.add_argument("--connect", type=str, default=None, help="Address of type tcp://ip_or_hostname:port")
+parser.add_argument("--in-port", type=int, default=5557, help="Remote worker input port")
+parser.add_argument("--out-port", type=int, default=5558, help="Remote worker output port")
+parser.add_argument("--worker-host", type=str, default=None, help="Remote worker host name or IP address")
 parser.add_argument("--jpg_quality", type=int, default=95, help="Jpeg copression quality for image transmission")
 
 parser.set_defaults(relative=False)
@@ -30,5 +31,5 @@ parser.set_defaults(no_pad=False)
 
 opt = parser.parse_args()
 
-if opt.bind_port is None and opt.connect is None and (opt.is_worker is True or opt.is_client is True):
-    raise ValueError("--bind-port or --connect must be specified if you use a remote connection")
+if opt.is_client and opt.worker_host is None:
+    raise ValueError("You have to set --worker-host")

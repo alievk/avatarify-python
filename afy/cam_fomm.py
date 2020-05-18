@@ -137,13 +137,13 @@ if __name__ == "__main__":
     }
     if opt.is_worker:
         from afy import predictor_worker
-        predictor_worker.run_worker(opt.bind_port, opt.connect)
+        predictor_worker.run_worker(opt.in_port, opt.out_port)
         sys.exit(0)
     elif opt.is_client:
         from afy import predictor_remote
         try:
             predictor = predictor_remote.PredictorRemote(
-                bind_port=opt.bind_port, remote_host=opt.connect,
+                remote_host=opt.worker_host, in_port=opt.in_port, out_port=opt.out_port,
                 **predictor_args
             )
         except ConnectionError as err:
