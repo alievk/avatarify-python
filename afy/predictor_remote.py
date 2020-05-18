@@ -2,12 +2,20 @@ from arguments import opt
 from networking import SerializingContext, check_connection
 from utils import log, TicToc, AccumDict, Once
 
+import multiprocessing as mp
+import queue
+
 import cv2
 import numpy as np
 import zmq
 import msgpack
 import msgpack_numpy as m
 m.patch()
+
+
+PUT_TIMEOUT = 1
+GET_TIMEOUT = 1
+QUEUE_SIZE = 100
 
 
 class PredictorRemote:
@@ -17,29 +25,70 @@ class PredictorRemote:
         self.predictor_args = (args, kwargs)
         self.timing = AccumDict()
 
-        self.context = SerializingContext()
-        self.socket = self.context.socket(zmq.PAIR)
+        self.send_queue = mp.Queue(QUEUE_SIZE)
+        self.recv_queue = mp.Queue(QUEUE_SIZE)
 
-        if self.bind_port is None:
-            if not self.connect_address.startswith("tcp://"):
-                self.connect_address = "tcp://" + self.connect_address
-            log(f"Connecting to {self.connect_address}")
-            self.socket.connect(self.connect_address)
+        # if not self.connect_address.startswith("tcp://"):
+        #     self.connect_address = "tcp://" + self.connect_address
 
-            if not check_connection(self.socket):
-                self.socket.disconnect(self.connect_address)
-                raise ConnectionError(f"Could not connect to {self.connect_address}")
+        self.send_process = mp.Process(target=self.send_worker, args=(self.connect_address, self.send_queue,))
+        self.recv_process = mp.Process(target=self.recv_worker, args=(self.connect_address, self.connect_address, self.recv_queue,))
 
-            log(f"Connected to {self.connect_address}")
-        else:
-            self.socket.bind(f"tcp://*:{self.bind_port}")
-            log(f"Listening on port {self.bind_port}")
+        # self.context = SerializingContext()
+        # self.socket = self.context.socket(zmq.PAIR)
 
-            # send OK to "hello" request from the peer 
-            ok_msg = msgpack.packb("OK")
-            self.socket.send_data("hello", ok_msg)
+        # if self.bind_port is None:
+        #     if not self.connect_address.startswith("tcp://"):
+        #         self.connect_address = "tcp://" + self.connect_address
+        #     log(f"Connecting to {self.connect_address}")
+        #     self.socket.connect(self.connect_address)
+
+        #     if not check_connection(self.socket):
+        #         self.socket.disconnect(self.connect_address)
+        #         raise ConnectionError(f"Could not connect to {self.connect_address}")
+
+        #     log(f"Connected to {self.connect_address}")
+        # else:
+        #     self.socket.bind(f"tcp://*:{self.bind_port}")
+        #     log(f"Listening on port {self.bind_port}")
+
+        #     # send OK to "hello" request from the peer 
+        #     ok_msg = msgpack.packb("OK")
+        #     self.socket.send_data("hello", ok_msg)
 
         self.init_worker()
+
+    @staticmethod
+    def send_worker(host, send_queue):
+        address = f"tcp://{host}:5557"
+
+        ctx = SerializingContext()
+        sender = ctx.socket(zmq.PUSH)
+        sender.connect(address)
+
+        log(f"Sending to {address}")
+
+        while True:
+            msg = send_queue.get()
+            sender.send_data(*msg)
+
+    @staticmethod
+    def recv_worker(host, recv_queue):
+        address = f"tcp://{host}:5558"
+
+        ctx = SerializingContext()
+        receiver = ctx.socket(zmq.PULL)
+        receiver.connect(address)
+
+        log(f"Receiving from {address}")
+
+        while True:
+            msg = receiver.recv_data()
+            
+            try:
+                recv_queue.put(msg, timeout=PUT_TIMEOUT)
+            except queue.Full:
+                continue
 
     def init_worker(self):
         msg = (
@@ -64,13 +113,22 @@ class PredictorRemote:
             data = msgpack.packb((args, kwargs))
         self.timing.add('PACK', tt.toc())
 
-        tt.tic()
-        self.socket.send_data(attr, data)
-        self.timing.add('SEND', tt.toc())
+        # tt.tic()
+        # self.socket.send_data(attr, data)
+        # self.timing.add('SEND', tt.toc())
+        try:
+            self.send_queue.put((attr, data), timeout=PUT_TIMEOUT)
+        except queue.Full:
+            log('send_queue is fill')
 
-        tt.tic()
-        attr_recv, data_recv = self.socket.recv_data()
-        self.timing.add('RECV', tt.toc())
+        # tt.tic()
+        # attr_recv, data_recv = self.socket.recv_data()
+        # self.timing.add('RECV', tt.toc())
+        try:
+            attr_recv, data_recv = self.recv_queue.get(timeout=GET_TIMEOUT)
+        except queue.Empty:
+            log('recv_queue is empty')
+            return None
 
         tt.tic()
         if attr_recv == 'predict':
