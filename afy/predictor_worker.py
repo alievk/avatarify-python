@@ -90,7 +90,7 @@ class PredictorWorker():
                     except queue.Full:
                         log('recv_queue full')
 
-                Once(timing, per=1)
+                Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("recv_worker: user interrupt")
 
@@ -171,7 +171,7 @@ class PredictorWorker():
                         log("send_queue full")
                         pass
 
-                Once(timing, per=1)
+                Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("predictor_worker: user interrupt")
         except Exception as e:
@@ -214,7 +214,7 @@ class PredictorWorker():
                 socket.send_data(method, data)
                 timing.add('SEND', tt.toc())
 
-                Once(timing, per=1)
+                Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("predictor_worker: user interrupt")
 
