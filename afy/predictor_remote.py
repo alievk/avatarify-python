@@ -79,13 +79,10 @@ class PredictorRemote:
         }
 
         if critical:
-            log('send', meta)
             self.send_queue.put((meta, data))
 
             while True:
-                log('recv', meta)
                 meta_recv, data_recv = self.recv_queue.get()
-                log('recved', meta_recv)
                 if meta_recv == meta:
                     break
         else:

@@ -146,13 +146,10 @@ class PredictorWorker():
                     result = True
                     tt.tic() # don't account for init
                 elif method['name'] == 'predict':
-                    log(f"got image {image.shape}")
                     result = getattr(predictor, method['name'])(image)
                 else:
                     result = getattr(predictor, method['name'])(*args[0], **args[1])
                 timing.add('CALL', tt.toc())
-
-                log(f"result is {result.__class__}")
 
                 tt.tic()
                 if method['name'] == 'predict':
