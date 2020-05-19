@@ -22,7 +22,8 @@ parser.add_argument("--is-worker", action="store_true", help="Whether to run thi
 parser.add_argument("--is-client", action="store_true", help="Whether to run this process as a client")
 parser.add_argument("--in-port", type=int, default=5557, help="Remote worker input port")
 parser.add_argument("--out-port", type=int, default=5558, help="Remote worker output port")
-parser.add_argument("--worker-host", type=str, default=None, help="Remote worker host name or IP address")
+parser.add_argument("--in-addr", type=str, default=None, help="Socket address for incoming messages, like example.com:5557")
+parser.add_argument("--out-addr", type=str, default=None, help="Socker address for outcoming messages, like example.com:5558")
 parser.add_argument("--jpg_quality", type=int, default=95, help="Jpeg copression quality for image transmission")
 
 parser.set_defaults(relative=False)
@@ -31,5 +32,5 @@ parser.set_defaults(no_pad=False)
 
 opt = parser.parse_args()
 
-if opt.is_client and opt.worker_host is None:
-    raise ValueError("You have to set --worker-host")
+if opt.is_client and (opt.in_addr is None or opt.out_addr is None):
+    raise ValueError("You have to set --in-addr and --out-addr")

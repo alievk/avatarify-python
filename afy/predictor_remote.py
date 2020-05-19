@@ -20,10 +20,9 @@ QUEUE_SIZE = 100
 
 
 class PredictorRemote:
-    def __init__(self, *args, remote_host=None, in_port=None, out_port=None, **kwargs):
-        self.remote_host = remote_host
-        self.in_port = in_port
-        self.out_port = out_port
+    def __init__(self, *args, in_addr=None, out_addr=None, **kwargs):
+        self.in_addr = in_addr
+        self.out_addr = out_addr
         self.predictor_args = (args, kwargs)
         self.timing = AccumDict()
 
@@ -37,11 +36,11 @@ class PredictorRemote:
 
         self.send_process = mp.Process(
             target=self.send_worker, 
-            args=(self.remote_host, self.in_port, self.send_queue, self.worker_alive)
+            args=(self.in_addr, self.send_queue, self.worker_alive)
             )
         self.recv_process = mp.Process(
             target=self.recv_worker, 
-            args=(self.remote_host, self.out_port, self.recv_queue, self.worker_alive)
+            args=(self.out_addr, self.recv_queue, self.worker_alive)
             )
 
         # log("Connecting to remote host {self.remote_host}")
@@ -170,10 +169,10 @@ class PredictorRemote:
         return result
 
     @staticmethod
-    def send_worker(host, port, send_queue, worker_alive):
+    def send_worker(address, send_queue, worker_alive):
         log = Tee('send_worker.log')
 
-        address = f"tcp://{host}:{port}"
+        #address = f"tcp://{host}:{port}"
 
         ctx = SerializingContext()
         sender = ctx.socket(zmq.PUSH)
@@ -198,10 +197,10 @@ class PredictorRemote:
         log("send_worker exit")
 
     @staticmethod
-    def recv_worker(host, port, recv_queue, worker_alive):
+    def recv_worker(address, recv_queue, worker_alive):
         log = Tee('recv_worker.log')
 
-        address = f"tcp://{host}:{port}"
+        #address = f"tcp://{host}:{port}"
 
         ctx = SerializingContext()
         receiver = ctx.socket(zmq.PULL)

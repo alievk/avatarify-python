@@ -15,16 +15,13 @@ from afy.utils import Once, log, crop, pad_img, resize, TicToc
 from sys import platform as _platform
 _streaming = False
 if _platform == 'linux' or _platform == 'linux2':
-    try:
-        import pyfakewebcam
-        _streaming = True
-    except ImportError:
-        log("pyfakewebcam is not installed")
+    import pyfakewebcam
+    _streaming = True
 
 
 if _platform == 'darwin':
-    if opt.is_client is None:
-        log('\nOnly remote GPU mode is supported for Mac (use --is-client and --connect options to connect to the server)')
+    if opt.worker_host is None:
+        log('\nOnly remote GPU mode is supported for Mac (use --worker-host option to connect to the server)')
         log('Standalone version will be available lately!\n')
         exit()
 
@@ -70,20 +67,6 @@ def load_stylegan_avatar():
 
     return image
 
-def load_images(IMG_SIZE = 256):
-    avatars=[]
-    images_list = sorted(glob.glob(f'{opt.avatars}/*'))
-    for i, f in enumerate(images_list):
-        if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
-            key = len(avatars) + 1
-            log(f'Key {key}: {f}')
-            img = cv2.imread(f)
-            if img.ndim == 2:
-                img = np.tile(img[..., None], [1, 1, 3])
-            img = img[..., :3][..., ::-1]
-            img = resize(img, (IMG_SIZE, IMG_SIZE))
-            avatars.append(img)
-    return avatars
 
 def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp, kp_source
@@ -137,26 +120,32 @@ if __name__ == "__main__":
     }
     if opt.is_worker:
         from afy import predictor_worker
-        predictor_worker.run_worker(opt.in_port, opt.out_port)
+        predictor_worker.run_worker(opt.worker_port)
         sys.exit(0)
-    elif opt.is_client:
+    elif opt.worker_host:
         from afy import predictor_remote
-        try:
-            predictor = predictor_remote.PredictorRemote(
-                in_addr=opt.in_addr, out_addr=opt.out_addr,
-                **predictor_args
-            )
-        except ConnectionError as err:
-            log(err)
-            sys.exit(1)
-        predictor.start()
+        predictor = predictor_remote.PredictorRemote(
+            worker_host=opt.worker_host, worker_port=opt.worker_port,
+            **predictor_args
+        )
     else:
         from afy import predictor_local
         predictor = predictor_local.PredictorLocal(
             **predictor_args
         )
 
-    avatars = load_images()
+    avatars=[]
+    images_list = sorted(glob.glob(f'{opt.avatars}/*'))
+    for i, f in enumerate(images_list):
+        if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
+            key = len(avatars) + 1
+            log(f'Key {key}: {f}')
+            img = cv2.imread(f)
+            if img.ndim == 2:
+                img = np.tile(img[..., None], [1, 1, 3])
+            img = img[..., :3][..., ::-1]
+            img = resize(img, (IMG_SIZE, IMG_SIZE))
+            avatars.append(img)
 
 
     cap = VideoCaptureAsync(opt.cam)
@@ -227,16 +216,16 @@ if __name__ == "__main__":
 
             if passthrough:
                 out = frame
-            elif is_calibrated:
-                tt.tic()
-                out = predictor.predict(frame)
-                if out is None:
-                    log('predict returned None')
-                timing['predict'] = tt.toc()
             else:
-                out = None
+                tt.tic()
+                pred = predictor.predict(frame)
+                out = pred
+                timing['predict'] = tt.toc()
 
             tt.tic()
+
+            if not opt.no_pad:
+                out = pad_img(out, stream_img_size)
             
             key = cv2.waitKey(1)
 
@@ -314,14 +303,6 @@ if __name__ == "__main__":
                     change_avatar(predictor, avatar)
                 except:
                     log('Failed to load StyleGAN avatar')
-            elif key == ord('l'):
-                try:
-                    log('Reloading avatars...')
-                    avatars = load_images()
-                    passthrough = False
-                    log("Images reloaded")
-                except:
-                    log('Image reload failed')
             elif key == ord('i'):
                 show_fps = not show_fps
             elif 48 < key < 58:
@@ -333,6 +314,10 @@ if __name__ == "__main__":
             elif key != -1:
                 log(key)
 
+            if _streaming:
+                out = resize(out, stream_img_size)
+                stream.schedule_frame(out)
+
             if overlay_alpha > 0:
                 preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             else:
@@ -340,6 +325,9 @@ if __name__ == "__main__":
             
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
+                
+            if output_flip:
+                out = cv2.flip(out, 1)
                 
             if green_overlay:
                 green_alpha = 0.8
@@ -368,35 +356,19 @@ if __name__ == "__main__":
             if not opt.hide_rect:
                 draw_rect(preview_frame)
 
-            cv2.imshow('cam', preview_frame[..., ::-1])
-
-            if out is not None:
-                if not opt.no_pad:
-                    out = pad_img(out, stream_img_size)
-
-                if output_flip:
-                    out = cv2.flip(out, 1)
-
-                if _streaming:
-                    out = resize(out, stream_img_size)
-                    stream.schedule_frame(out)
-
+            # cv2.imshow('cam', preview_frame[..., ::-1])
+            if is_calibrated:
+                cv2.destroyWindow('cam')
                 cv2.imshow('avatarify', out[..., ::-1])
+            else:
+                cv2.imshow('cam', preview_frame[..., ::-1])
 
             fps_hist.append(tt.toc(total=True))
             if len(fps_hist) == 10:
                 fps = 10 / (sum(fps_hist) / 1000)
                 fps_hist = []
     except KeyboardInterrupt:
-        log("main: user interrupt")
+        pass
 
-    log("stopping camera")
     cap.stop()
-
     cv2.destroyAllWindows()
-
-    if opt.is_client:
-        log("stopping remote predictor")
-        predictor.stop()
-
-    log("main: exit")
