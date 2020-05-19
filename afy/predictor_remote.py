@@ -13,8 +13,8 @@ import msgpack_numpy as m
 m.patch()
 
 
-PUT_TIMEOUT = 1 # s
-GET_TIMEOUT = 1 # s
+PUT_TIMEOUT = 0.1 # s
+GET_TIMEOUT = 0.1 # s
 RECV_TIMEOUT = 1000 # ms
 QUEUE_SIZE = 100
 
@@ -93,7 +93,7 @@ class PredictorRemote:
                 log('send_queue is full')
 
             try:
-                meta_recv, data_recv = self.recv_queue.get(timeout=0.01)
+                meta_recv, data_recv = self.recv_queue.get(timeout=GET_TIMEOUT)
             except queue.Empty:
                 log('recv_queue is empty')
                 return None
@@ -156,6 +156,7 @@ class PredictorRemote:
                 try:
                     recv_queue.put(msg, timeout=PUT_TIMEOUT)
                 except queue.Full:
+                    log('recv_queue full')
                     continue
         except KeyboardInterrupt:
             log("recv_worker: user interrupt")
