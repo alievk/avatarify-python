@@ -6,8 +6,27 @@ import numpy as np
 import cv2
 
 
-def log(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+def log(*args, file=sys.stderr, **kwargs):
+    print(*args, file=file, **kwargs)
+
+
+class Tee(object):
+    def __init__(self, filename, mode='w', terminal=sys.stderr):
+        self.file = open(filename, mode, buffering=1)
+        self.terminal = terminal
+
+    def __del__(self):
+        self.file.close()
+
+    def write(self, *args, **kwargs):
+        self.file.write(*args)
+        self.terminal.write(*args)
+
+    def __call__(self, *args, **kwargs):
+        return self.write(*args, **kwargs)
+
+    def flush(self):
+        self.file.flush()
 
 
 class Once():

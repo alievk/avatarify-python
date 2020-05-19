@@ -1,7 +1,7 @@
 from predictor_local import PredictorLocal
 from arguments import opt
 from networking import SerializingContext, check_connection
-from utils import log, TicToc, AccumDict, Once
+from utils import log, Tee, TicToc, AccumDict, Once
 
 import cv2
 import numpy as np
@@ -58,6 +58,7 @@ class PredictorWorker():
     @staticmethod
     def recv_worker(port, recv_queue, worker_alive):
         timing = AccumDict()
+        log = Tee('recv_worker.log')
 
         ctx = SerializingContext()
         socket = ctx.socket(zmq.PULL)
@@ -101,6 +102,7 @@ class PredictorWorker():
         predictor = None
         predictor_args = ()
         timing = AccumDict()
+        log = Tee('predictor_worker.log')
         
         try:
             while worker_alive.value:
@@ -182,6 +184,7 @@ class PredictorWorker():
     @staticmethod
     def send_worker(port, send_queue, worker_alive):
         timing = AccumDict()
+        log = Tee('send_worker.log')
 
         ctx = SerializingContext()
         socket = ctx.socket(zmq.PUSH)

@@ -1,6 +1,6 @@
 from arguments import opt
 from networking import SerializingContext, check_connection
-from utils import log, TicToc, AccumDict, Once
+from utils import log, Tee, TicToc, AccumDict, Once
 
 import multiprocessing as mp
 import queue
@@ -171,6 +171,8 @@ class PredictorRemote:
 
     @staticmethod
     def send_worker(host, port, send_queue, worker_alive):
+        log = Tee('send_worker.log')
+
         address = f"tcp://{host}:{port}"
 
         ctx = SerializingContext()
@@ -197,6 +199,8 @@ class PredictorRemote:
 
     @staticmethod
     def recv_worker(host, port, recv_queue, worker_alive):
+        log = Tee('recv_worker.log')
+
         address = f"tcp://{host}:{port}"
 
         ctx = SerializingContext()
