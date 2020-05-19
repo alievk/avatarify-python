@@ -40,6 +40,8 @@ class PredictorRemote:
             args=(self.out_addr, self.recv_queue, self.worker_alive)
             )
 
+        self._i_msg = -1
+
     def start(self):
         self.worker_alive.value = 1
         self.send_process.start()
@@ -61,6 +63,8 @@ class PredictorRemote:
         return lambda *args, **kwargs: self._send_recv_async(attr, (args, kwargs), critical=is_critical)
 
     def _send_recv_async(self, method, args, critical):
+        self._i_msg += 1
+
         args, kwargs = args
 
         tt = TicToc()
@@ -75,7 +79,8 @@ class PredictorRemote:
 
         meta = {
             'name': method,
-            'critical': critical
+            'critical': critical,
+            'id': self._i_msg
         }
 
         if critical:
