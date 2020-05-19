@@ -202,6 +202,12 @@ class PredictorWorker():
                     log("send queue empty")
                     continue
 
+                # get the latest non-critical request from the queue
+                # don't skip critical request
+                while not send_queue.empty() and not method['critical']:
+                    log(f"skip {method}")
+                    method, data = send_queue.get()
+
                 log("sending", method)
 
                 tt.tic()
