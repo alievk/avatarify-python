@@ -19,8 +19,8 @@ class Tee(object):
         self.file.close()
 
     def write(self, *args, **kwargs):
-        self.file.write(*args)
-        self.terminal.write(*args)
+        log(*args, file=self.file, **kwargs)
+        log(*args, file=self.terminal, **kwargs)
 
     def __call__(self, *args, **kwargs):
         return self.write(*args, **kwargs)
