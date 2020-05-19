@@ -9,4 +9,4 @@ fi
 
 kill -9 $(ps aux | grep 'ngrok' | awk '{print $2}') 2> /dev/null
 
-ngrok start --all --config ngrok.conf
+./ngrok start --all --config ngrok.conf
