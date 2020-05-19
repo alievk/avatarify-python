@@ -2,6 +2,8 @@
 
 #set -x
 
+kill -9 $(ps aux | grep 'afy/cam_fomm.py' | awk '{print $2}') 2> /dev/null
+
 source scripts/settings.sh
 
 # hack
