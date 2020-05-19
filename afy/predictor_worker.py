@@ -166,7 +166,7 @@ class PredictorWorker():
                     send_queue.put((method, data_send))
                 else:
                     try:
-                        send_queue.put((method, data_send), timeout=PUT_TIMEOUT)
+                        send_queue.put((method, data_send), block=False)
                     except queue.Full:
                         log("send_queue full")
                         pass
