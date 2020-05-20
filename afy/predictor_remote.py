@@ -116,6 +116,7 @@ class PredictorRemote:
 
     @staticmethod
     def send_worker(address, send_queue, worker_alive):
+        timing = AccumDict()
         log = Tee('send_worker.log')
 
         ctx = SerializingContext()
@@ -126,12 +127,18 @@ class PredictorRemote:
 
         try:
             while worker_alive.value:
+                tt = TicToc()
+
                 try:
                     msg = send_queue.get(timeout=GET_TIMEOUT)
                 except queue.Empty:
                     continue
 
+                tt.tic()
                 sender.send_data(*msg)
+                timing.add('SEND', tt.toc())
+
+                Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("send_worker: user interrupt")
         finally:
@@ -142,6 +149,7 @@ class PredictorRemote:
 
     @staticmethod
     def recv_worker(address, recv_queue, worker_alive):
+        timing = AccumDict()
         log = Tee('recv_worker.log')
 
         ctx = SerializingContext()
@@ -153,8 +161,12 @@ class PredictorRemote:
 
         try:
             while worker_alive.value:
+                tt = TicToc()
+
                 try:
+                    tt.tic()
                     msg = receiver.recv_data()
+                    timing.add('RECV', tt.toc())
                 except zmq.error.Again:
                     continue
                 
@@ -163,6 +175,8 @@ class PredictorRemote:
                 except queue.Full:
                     log('recv_queue full')
                     continue
+
+                Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("recv_worker: user interrupt")
         finally:
