@@ -17,8 +17,8 @@ port_out=5558
 
 chmod 400 $KEY
 
-cmd_in="ssh -f -N -T -R $remote_port_in:localhost:$port_in -i $KEY $REMOTE_HOST"
-cmd_out="ssh -f -N -T -R $remote_port_out:localhost:$port_out -i $KEY $REMOTE_HOST"
+cmd_in="ssh -f -N -T -R $remote_port_in:localhost:$port_in -i $KEY -o StrictHostKeyChecking=no $REMOTE_HOST"
+cmd_out="ssh -f -N -T -R $remote_port_out:localhost:$port_out -i $KEY -o StrictHostKeyChecking=no $REMOTE_HOST"
 
 kill -9 $(ps aux | grep "$cmd_in" | awk '{print $2}') 2> /dev/null
 kill -9 $(ps aux | grep "$cmd_out" | awk '{print $2}') 2> /dev/null
