@@ -1,6 +1,6 @@
 ![](docs/mona.gif)
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]("https://colab.research.google.com/github/alievk/avatarify/blob/feat%2Fcolab-mode/avatarify.ipynb")
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/alievk/avatarify/blob/feat%2Fcolab-mode/avatarify.ipynb)
 
 [<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
 
