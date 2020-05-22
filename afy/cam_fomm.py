@@ -65,19 +65,19 @@ def load_stylegan_avatar():
     return image
 
 def load_images(IMG_SIZE = 256):
-    avatars=[]
+    avatars = []
+    filenames = []
     images_list = sorted(glob.glob(f'{opt.avatars}/*'))
     for i, f in enumerate(images_list):
         if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
-            key = len(avatars) + 1
-            info(f'Key {key}: {f}')
             img = cv2.imread(f)
             if img.ndim == 2:
                 img = np.tile(img[..., None], [1, 1, 3])
             img = img[..., :3][..., ::-1]
             img = resize(img, (IMG_SIZE, IMG_SIZE))
             avatars.append(img)
-    return avatars
+            filenames.append(f)
+    return avatars, filenames
 
 def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp, kp_source
@@ -99,6 +99,10 @@ def draw_rect(img, rw=0.6, rh=0.8, color=(255, 0, 0), thickness=2):
 def print_help():
     info('\n\n=== Control keys ===')
     info('1-9: Change avatar')
+    for i, fname in enumerate(avatar_names):
+        key = i + 1
+        name = fname.split('/')[-1]
+        info(f'{key}: {name}')
     info('W: Zoom camera in')
     info('S: Zoom camera out')
     info('A: Previous avatar in folder')
@@ -111,11 +115,13 @@ def print_help():
     info('\n\n')
 
 if __name__ == "__main__":
-
     global display_string
     display_string = ""
 
     IMG_SIZE = 256
+
+    cap = VideoCaptureAsync(opt.cam)
+    cap.start()
 
     log('Loading Predictor')
     predictor_args = {
@@ -146,11 +152,7 @@ if __name__ == "__main__":
             **predictor_args
         )
 
-    avatars = load_images()
-
-
-    cap = VideoCaptureAsync(opt.cam)
-    cap.start()
+    avatars, avatar_names = load_images()
 
     enable_vcam = not opt.no_stream
 
