@@ -9,7 +9,10 @@ import cv2
 
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
-from afy.utils import Once, log, crop, pad_img, resize, TicToc
+from afy.utils import Once, Tee, crop, pad_img, resize, TicToc
+
+
+log = Tee('./var/log/cam_fomm.log')
 
 
 from sys import platform as _platform
