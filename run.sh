@@ -48,7 +48,6 @@ export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/fomm
 python afy/cam_fomm.py \
     --config $FOMM_CONFIG \
     --checkpoint $FOMM_CKPT \
-    --cam $CAMID \
     --virt-cam $CAMID_VIRT \
     --relative \
     --adapt_scale \
