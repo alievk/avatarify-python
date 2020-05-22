@@ -124,7 +124,6 @@ if __name__ == "__main__":
     IMG_SIZE = 256
 
     if opt.no_stream:
-        log('Force no streaming')
         _streaming = False
 
     log('Loading Predictor')
