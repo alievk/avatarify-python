@@ -7,7 +7,8 @@ import cv2
 
 
 def log(*args, file=sys.stderr, **kwargs):
-    print(*args, file=file, **kwargs)
+    time_str = f'{time.time():.6f}'
+    print(f'[{time_str}]', *args, file=file, **kwargs)
 
 
 class Tee(object):
