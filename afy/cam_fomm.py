@@ -120,9 +120,6 @@ if __name__ == "__main__":
 
     IMG_SIZE = 256
 
-    cap = VideoCaptureAsync(opt.cam)
-    cap.start()
-
     log('Loading Predictor')
     predictor_args = {
         'config_path': opt.config,
@@ -151,6 +148,9 @@ if __name__ == "__main__":
         predictor = predictor_local.PredictorLocal(
             **predictor_args
         )
+
+    cap = VideoCaptureAsync(opt.cam)
+    cap.start()
 
     avatars, avatar_names = load_images()
 
