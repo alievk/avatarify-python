@@ -122,7 +122,7 @@ def select_camera(config):
 
     if os.path.isfile(cam_config):
         with open(cam_config, 'r') as f:
-            cam_config = yaml.load(f)
+            cam_config = yaml.load(f, Loader=yaml.FullLoader)
             cam_id = cam_config['cam_id']
     else:
         cam_frames = cam_selector.query_cameras(config['query_n_cams'])
