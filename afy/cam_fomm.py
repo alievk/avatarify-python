@@ -1,4 +1,5 @@
 import os, sys
+from sys import platform as _platform
 import glob
 import yaml
 import time
@@ -13,16 +14,6 @@ from afy.utils import info, Once, Tee, crop, pad_img, resize, TicToc
 
 
 log = Tee('./var/log/cam_fomm.log')
-
-
-from sys import platform as _platform
-_streaming = False
-if _platform == 'linux' or _platform == 'linux2':
-    try:
-        import pyfakewebcam
-        _streaming = True
-    except ImportError:
-        log("pyfakewebcam is not installed")
 
 
 if _platform == 'darwin':
@@ -126,9 +117,6 @@ if __name__ == "__main__":
 
     IMG_SIZE = 256
 
-    if opt.no_stream:
-        _streaming = False
-
     log('Loading Predictor')
     predictor_args = {
         'config_path': opt.config,
@@ -164,10 +152,25 @@ if __name__ == "__main__":
     cap = VideoCaptureAsync(opt.cam)
     cap.start()
 
-    if _streaming:
-        ret, frame = cap.read()
-        stream_img_size = frame.shape[1], frame.shape[0]
-        stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', *stream_img_size)
+    enable_vcam = not opt.no_stream
+
+    if enable_vcam:
+        if _platform in ['linux', 'linux2']:
+            try:
+                import pyfakewebcam
+            except ImportError:
+                log("pyfakewebcam is not installed.")
+                exit(1)
+
+            ret, frame = cap.read()
+            stream_img_size = frame.shape[1], frame.shape[0]
+            stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', *stream_img_size)
+        else:
+            enable_vcam = False
+            log("Virtual camera is supported only on Linux.")
+        
+        if not enable_vcam:
+            log("Virtual camera streaming will be disabled.")
 
     cur_ava = 0    
     avatar = None
@@ -379,7 +382,7 @@ if __name__ == "__main__":
                 if output_flip:
                     out = cv2.flip(out, 1)
 
-                if _streaming:
+                if enable_vcam:
                     out = resize(out, stream_img_size)
                     stream.schedule_frame(out)
 
