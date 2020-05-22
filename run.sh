@@ -21,6 +21,10 @@ while (( "$#" )); do
             ARGS="$ARGS --no-stream"
             shift
             ;;
+        --keep-ps)
+            KILL_PS=0
+            shift
+            ;;
         *|-*|--*)
             ARGS="$ARGS $1"
             shift
@@ -30,7 +34,9 @@ done
 
 eval set -- "$ARGS"
 
-kill -9 $(ps aux | grep 'afy/cam_fomm.py' | awk '{print $2}') 2> /dev/null
+if [[ $KILL_PS == 1 ]]; then
+    kill -9 $(ps aux | grep 'afy/cam_fomm.py' | awk '{print $2}') 2> /dev/null
+fi
 
 source scripts/settings.sh
 
