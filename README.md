@@ -17,6 +17,7 @@ Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-
 Created by: GitHub community.
 
 ## News
+- **22 May 2020.** Added [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) mode. Now you can running Avatarify on any computer without GPU!
 - **7 May 2020.** Added remote GPU support for all platforms (based on [mynameisfiber's](https://github.com/mynameisfiber) solution). [Demo](https://youtu.be/3Dz_bUIPYFM). Deployment [instructions](https://github.com/alievk/avatarify/wiki/Remote-GPU). 
 - **24 April 2020.** Added Windows installation [tutorial](https://www.youtube.com/watch?v=lym9ANVb120).
 - **17 April 2020.** Created Slack community. Please join via [invitation link](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg).
@@ -50,11 +51,15 @@ Created by: GitHub community.
 
 ## Requirements
 
-To run Avatarify smoothly you need a CUDA-enabled (NVIDIA) video card. Otherwise it will fallback to the central processor and run very slowly. These are performance metrics for some hardware:
+You can run Avatarify in two modes: *locally* and *remotely*.
 
-- GeForce GTX 1080 Ti: **33 fps**
-- GeForce GTX 1070: **15 fps**
-- Mac OSX (MacBook Pro 2018; no GPU): **very slow** **~1 fps**
+To run Avatarify *locally* you need a CUDA-enabled (NVIDIA) video card. Otherwise it will fallback to the central processor and run very slowly. These are performance metrics for some hardware:
+
+- GeForce GTX 1080 Ti: **33 frames per second**
+- GeForce GTX 1070: **15 frames per second**
+- GeForce GTX 950: **9 frames per second**
+
+You can also run Avatarify *remotely* on [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) (easy) or on a [dedicated server](https://github.com/alievk/avatarify/wiki/Remote-GPU) with a GPU (harder). There are no special PC requirements for this mode, only a stable internet connection.
 
 Of course, you also need a webcam!
 
@@ -90,7 +95,7 @@ bash scripts/install.sh
 codesign --remove-signature /Applications/zoom.us.app
 ```
 
-*(!) Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) connection is required.
+<!--*(!) Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) connection is required.-->
 
 We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
 
@@ -132,7 +137,7 @@ The steps 10-11 are required only once during setup.
 
 #### Remote GPU
 
-You can offload the heavy work to a server with a GPU and use your laptop just to retreive renderings from it. See the wiki page with installation [instructions](https://github.com/alievk/avatarify/wiki/Remote-GPU).
+You can offload the heavy work to [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [server with a GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) and use your laptop just to communicate the video stream.
 
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
@@ -148,9 +153,10 @@ Your web cam must be plugged-in.
 **Note:** run your video-conferencing app only after Avatarify is started.
 
 #### Linux
-It is supposed that there is only one web cam connected to the computer at `/dev/video0`. The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
+The run script will create virtual camera `/dev/video9`. You can change these settings in `scripts/settings.sh`.
 
-You can use command `v4l2-ctl --list-devices` to list all devices in your system. For example, if the web camera is `/dev/video1` then the device id is 1. 
+<!--It is supposed that there is only one web cam connected to the computer at `/dev/video0`.-->
+You can use command `v4l2-ctl --list-devices` to list all devices in your system.
 
 Run:
 ```bash
@@ -160,7 +166,7 @@ bash run.sh
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 #### Mac
-*Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) connection is required.
+*Note*: On Mac Avatarify runs only with [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [dedicated server](https://github.com/alievk/avatarify/wiki/Remote-GPU) with GPU.
 
 Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
 
@@ -177,7 +183,9 @@ bash run_mac.sh --worker-host gpu_server_address
 
 #### Windows
 
+<!--
 If there are multiple cameras (including virtual ones) in your system, you may need to select the correct one in `scripts/settings_windows.bat`. Open this file and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...
+-->
 
 1. In Anaconda Prompt:
 ```
