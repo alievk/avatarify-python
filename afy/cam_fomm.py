@@ -70,7 +70,7 @@ def load_images(IMG_SIZE = 256):
     for i, f in enumerate(images_list):
         if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
             key = len(avatars) + 1
-            log(f'Key {key}: {f}')
+            info(f'Key {key}: {f}')
             img = cv2.imread(f)
             if img.ndim == 2:
                 img = np.tile(img[..., None], [1, 1, 3])
