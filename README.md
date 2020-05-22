@@ -170,11 +170,12 @@ bash run.sh
 
 Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
 
-1. Open terminal and run:
+<!--1. Open terminal and run:
 ```bash
 cd /path/to/avatarify
 bash run_mac.sh --worker-host gpu_server_address
-```
+```-->
+1. To run Avatarify please follow instructions for [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [dedicated server](https://github.com/alievk/avatarify/wiki/Remote-GPU).
 2. Go to [CamTwist](http://camtwiststudio.com).
 3. Choose `Desktop+` and press `Select`.
 4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
