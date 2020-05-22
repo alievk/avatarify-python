@@ -146,8 +146,10 @@ class PredictorWorker():
                     result = True
                     tt.tic() # don't account for init
                 elif method['name'] == 'predict':
+                    assert predictor is not None, "Predictor was not initialized"
                     result = getattr(predictor, method['name'])(image)
                 else:
+                    assert predictor is not None, "Predictor was not initialized"
                     result = getattr(predictor, method['name'])(*args[0], **args[1])
                 timing.add('CALL', tt.toc())
 
