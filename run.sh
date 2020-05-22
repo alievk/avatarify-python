@@ -18,6 +18,7 @@ while (( "$#" )); do
             ;;
         --no-vcam)
             ENABLE_VCAM=0
+            ARGS="$ARGS --no-stream"
             shift
             ;;
         *|-*|--*)
