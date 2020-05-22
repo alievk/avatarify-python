@@ -83,6 +83,9 @@ class PredictorRemote:
             'id': self._i_msg
         }
 
+        if opt.verbose:
+            log("send", meta)
+
         if critical:
             self.send_queue.put((meta, data))
 
@@ -102,6 +105,9 @@ class PredictorRemote:
             except queue.Empty:
                 log('recv_queue is empty')
                 return None
+
+        if opt.verbose:
+            log("recv", meta_recv)
 
         tt.tic()
         if meta_recv['name'] == 'predict':
