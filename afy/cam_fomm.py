@@ -9,7 +9,7 @@ import cv2
 
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
-from afy.utils import Once, Tee, crop, pad_img, resize, TicToc
+from afy.utils import info, Once, Tee, crop, pad_img, resize, TicToc
 
 
 log = Tee('./var/log/cam_fomm.log')
@@ -26,9 +26,9 @@ if _platform == 'linux' or _platform == 'linux2':
 
 
 if _platform == 'darwin':
-    if opt.is_client is None:
-        log('\nOnly remote GPU mode is supported for Mac (use --is-client and --connect options to connect to the server)')
-        log('Standalone version will be available lately!\n')
+    if not opt.is_client:
+        info('\nOnly remote GPU mode is supported for Mac (use --is-client and --connect options to connect to the server)')
+        info('Standalone version will be available lately!\n')
         exit()
 
 
@@ -106,18 +106,18 @@ def draw_rect(img, rw=0.6, rh=0.8, color=(255, 0, 0), thickness=2):
 
 
 def print_help():
-    log('\n\n=== Control keys ===')
-    log('1-9: Change avatar')
-    log('W: Zoom camera in')
-    log('S: Zoom camera out')
-    log('A: Previous avatar in folder')
-    log('D: Next avatar in folder')
-    log('Q: Get random avatar')
-    log('X: Calibrate face pose')
-    log('I: Show FPS')
-    log('ESC: Quit')
-    log('\nFull key list: https://github.com/alievk/avatarify#controls')
-    log('\n\n')
+    info('\n\n=== Control keys ===')
+    info('1-9: Change avatar')
+    info('W: Zoom camera in')
+    info('S: Zoom camera out')
+    info('A: Previous avatar in folder')
+    info('D: Next avatar in folder')
+    info('Q: Get random avatar')
+    info('X: Calibrate face pose')
+    info('I: Show FPS')
+    info('ESC: Quit')
+    info('\nFull key list: https://github.com/alievk/avatarify#controls')
+    info('\n\n')
 
 if __name__ == "__main__":
 

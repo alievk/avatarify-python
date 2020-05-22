@@ -11,6 +11,10 @@ def log(*args, file=sys.stderr, **kwargs):
     print(f'[{time_str}]', *args, file=file, **kwargs)
 
 
+def info(*args, file=sys.stdout, **kwargs):
+    print(*args, file=file, **kwargs)
+
+
 class Tee(object):
     def __init__(self, filename, mode='w', terminal=sys.stderr):
         self.file = open(filename, mode, buffering=1)
