@@ -115,6 +115,30 @@ def print_help():
     info('\nFull key list: https://github.com/alievk/avatarify#controls')
     info('\n\n')
 
+
+def select_camera(config):
+    cam_config = config['cam_config']
+    cam_id = None
+
+    if os.path.isfile(cam_config):
+        with open(cam_config, 'r') as f:
+            cam_config = yaml.load(f)
+            cam_id = cam_config['cam_id']
+    else:
+        cam_frames = cam_selector.query_cameras(config['query_n_cams'])
+
+        if cam_frames:
+            cam_id = cam_selector.select_camera(cam_frames, window="CLICK ON YOUR CAMERA")
+            log(f"Selected camera {cam_id}")
+
+            with open(cam_config, 'w') as f:
+                yaml.dump({'cam_id': cam_id}, f)
+        else:
+            log("No cameras are available")
+
+    return cam_id
+
+
 if __name__ == "__main__":
     with open('config.yaml', 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
@@ -153,23 +177,10 @@ if __name__ == "__main__":
             **predictor_args
         )
 
-    cam_config = './cam.yaml'
+    cam_id = select_camera(config)
 
-    if os.path.isfile(cam_config):
-        with open(cam_config, 'r') as f:
-            cam_config = yaml.load(f)
-            cam_id = cam_config['cam_id']
-    else:
-        cam_frames = cam_selector.query_cameras(config['query_n_cams'])
-
-        if cam_frames:
-            cam_id = cam_selector.select_camera(cam_frames, window="CLICK ON YOUR CAMERA")
-            log(f"Selected camera {cam_id}")
-
-            with open(cam_config, 'w') as f:
-                yaml.dump({'cam_id': cam_id}, f)
-        else:
-            log("No cameras are available")
+    if cam_id is None:
+        exit(1)
 
     cap = VideoCaptureAsync(cam_id)
     cap.start()
