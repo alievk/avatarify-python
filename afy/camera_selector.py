@@ -13,7 +13,7 @@ def query_cameras(n_cams):
     cap = None
     for camid in range(n_cams):
         log(f"Trying camera with id {camid}")
-        cap = cv2.VideoCapture(camid)
+        cap = cv2.VideoCapture(1)
 
         if not cap.isOpened():
             log(f"Camera with id {camid} is not available")
@@ -61,7 +61,7 @@ def mouse_callback(event, x, y, flags, userdata):
         g_selected_cam = camid
 
 
-def select_camera():
+def select_camera(cam_frames):
     cell_size = 320, 240
     grid_cols = 2
     grid = make_grid(cam_frames, cols=grid_cols)
@@ -82,7 +82,7 @@ def select_camera():
 
     cv2.destroyAllWindows()
 
-    return g_selected_cam
+    return list(cam_frames)[g_selected_cam]
 
 
 if __name__ == '__main__':
@@ -92,8 +92,8 @@ if __name__ == '__main__':
     cam_frames = query_cameras(config['query_n_cams'])
 
     if cam_frames:
-        selected_cam = select_camera()
-        print(f"Selected camera {g_selected_cam}")
+        selected_cam = select_camera(cam_frames)
+        print(f"Selected camera {selected_cam}")
     else:
         log("No cameras are available")
 
