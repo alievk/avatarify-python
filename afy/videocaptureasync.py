@@ -14,7 +14,7 @@ class VideoCaptureAsync:
 
         self.cap = cv2.VideoCapture(self.src)
         if not self.cap.isOpened():
-            raise RuntimeError("Cannot open camera. Try to choose other CAMID in './scripts/settings.sh'")
+            raise RuntimeError("Cannot open camera")
         
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
