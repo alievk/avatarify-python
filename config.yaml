@@ -1,0 +1,3 @@
+# how many cameras to query at the first start
+query_n_cams: 4
+
