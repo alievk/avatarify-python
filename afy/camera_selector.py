@@ -13,7 +13,7 @@ def query_cameras(n_cams):
     cap = None
     for camid in range(n_cams):
         log(f"Trying camera with id {camid}")
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(camid)
 
         if not cap.isOpened():
             log(f"Camera with id {camid} is not available")
@@ -61,12 +61,11 @@ def mouse_callback(event, x, y, flags, userdata):
         g_selected_cam = camid
 
 
-def select_camera(cam_frames):
+def select_camera(cam_frames, window="cameras"):
     cell_size = 320, 240
     grid_cols = 2
     grid = make_grid(cam_frames, cols=grid_cols)
 
-    window = "cameras"
     cv2.namedWindow(window)
     cv2.setMouseCallback(window, mouse_callback, (cell_size, grid_cols))
     cv2.imshow(window, grid)

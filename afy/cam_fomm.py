@@ -11,6 +11,7 @@ import cv2
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
 from afy.utils import info, Once, Tee, crop, pad_img, resize, TicToc
+import afy.camera_selector as cam_selector
 
 
 log = Tee('./var/log/cam_fomm.log')
@@ -115,6 +116,9 @@ def print_help():
     info('\n\n')
 
 if __name__ == "__main__":
+    with open('config.yaml', 'r') as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+
     global display_string
     display_string = ""
 
@@ -149,7 +153,25 @@ if __name__ == "__main__":
             **predictor_args
         )
 
-    cap = VideoCaptureAsync(opt.cam)
+    cam_config = './cam.yaml'
+
+    if os.path.isfile(cam_config):
+        with open(cam_config, 'r') as f:
+            cam_config = yaml.load(f)
+            cam_id = cam_config['cam_id']
+    else:
+        cam_frames = cam_selector.query_cameras(config['query_n_cams'])
+
+        if cam_frames:
+            cam_id = cam_selector.select_camera(cam_frames, window="CLICK ON YOUR CAMERA")
+            log(f"Selected camera {cam_id}")
+
+            with open(cam_config, 'w') as f:
+                yaml.dump({'cam_id': cam_id}, f)
+        else:
+            log("No cameras are available")
+
+    cap = VideoCaptureAsync(cam_id)
     cap.start()
 
     avatars, avatar_names = load_images()
