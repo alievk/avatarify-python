@@ -1,0 +1,5 @@
+# how many cameras to query at the first start
+query_n_cams: 4
+
+# camera configuration path
+cam_config: ./cam.yaml
