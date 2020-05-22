@@ -34,11 +34,13 @@ class PredictorRemote:
 
         self.send_process = mp.Process(
             target=self.send_worker, 
-            args=(self.in_addr, self.send_queue, self.worker_alive)
+            args=(self.in_addr, self.send_queue, self.worker_alive),
+            name="send_process"
             )
         self.recv_process = mp.Process(
             target=self.recv_worker, 
-            args=(self.out_addr, self.recv_queue, self.worker_alive)
+            args=(self.out_addr, self.recv_queue, self.worker_alive),
+            name="recv_process"
             )
 
         self._i_msg = -1
@@ -55,6 +57,8 @@ class PredictorRemote:
         self.log("join worker processes...")
         self.send_process.join(timeout=5)
         self.recv_process.join(timeout=5)
+        self.send_process.terminate()
+        self.recv_process.terminate()
 
     def init_remote_worker(self):
         return self._send_recv_async('__init__', self.predictor_args, critical=True)
@@ -152,6 +156,8 @@ class PredictorRemote:
             worker_alive.value = 0
 
         sender.disconnect(address)
+        sender.close()
+        ctx.destroy()
         log("send_worker exit")
 
     @staticmethod
@@ -190,4 +196,6 @@ class PredictorRemote:
             worker_alive.value = 0
 
         receiver.disconnect(address)
+        receiver.close()
+        ctx.destroy()
         log("recv_worker exit")
