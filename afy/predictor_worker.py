@@ -183,7 +183,7 @@ class PredictorWorker():
     @staticmethod
     def send_worker(port, send_queue, worker_alive):
         timing = AccumDict()
-        log = Tee('send_worker.log')
+        log = Tee('./var/log/send_worker.log')
 
         ctx = SerializingContext()
         socket = ctx.socket(zmq.PUSH)
