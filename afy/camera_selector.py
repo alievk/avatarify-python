@@ -56,7 +56,7 @@ def make_grid(images, cell_size=(320, 240), cols=2):
 def mouse_callback(event, x, y, flags, userdata):
     global g_selected_cam
     if event == 1:
-        cell_size, grid_cols = userdata
+        cell_size, grid_cols, cam_frames = userdata
         c = x // cell_size[0]
         r = y // cell_size[1]
         camid = r * grid_cols + c
@@ -70,7 +70,7 @@ def select_camera(cam_frames, window="cameras"):
     grid = make_grid(cam_frames, cols=grid_cols)
 
     cv2.namedWindow(window)
-    cv2.setMouseCallback(window, mouse_callback, (cell_size, grid_cols))
+    cv2.setMouseCallback(window, mouse_callback, (cell_size, grid_cols, cam_frames))
     cv2.imshow(window, grid)
 
     while True:
