@@ -38,7 +38,9 @@ def query_cameras(n_cams):
 
 def make_grid(images, cell_size=(320, 240), cols=2):
     w0, h0 = cell_size
-    grid = np.zeros((h0 * max(1, (len(images) // cols)), w0 * min(len(images), cols), 3), dtype=np.uint8)
+    _rows = len(images) // cols + int(len(images) % cols)
+    _cols = min(len(images), cols)
+    grid = np.zeros((h0 * _rows, w0 * _cols, 3), dtype=np.uint8)
     for i, (camid, img) in enumerate(images.items()):
         img = cv2.resize(img, (w0, h0))
         # add rect
@@ -58,7 +60,8 @@ def mouse_callback(event, x, y, flags, userdata):
         c = x // cell_size[0]
         r = y // cell_size[1]
         camid = r * grid_cols + c
-        g_selected_cam = camid
+        if camid < len(cam_frames):
+            g_selected_cam = camid
 
 
 def select_camera(cam_frames, window="cameras"):
@@ -81,7 +84,10 @@ def select_camera(cam_frames, window="cameras"):
 
     cv2.destroyAllWindows()
 
-    return list(cam_frames)[g_selected_cam]
+    if g_selected_cam is not None:
+        return list(cam_frames)[g_selected_cam]
+    else:
+        return list(cam_frames)[0]
 
 
 if __name__ == '__main__':
