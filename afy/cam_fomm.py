@@ -207,6 +207,9 @@ if __name__ == "__main__":
 
     enable_vcam = not opt.no_stream
 
+    ret, frame = cap.read()
+    stream_img_size = frame.shape[1], frame.shape[0]
+
     if enable_vcam:
         if _platform in ['linux', 'linux2']:
             try:
@@ -215,8 +218,6 @@ if __name__ == "__main__":
                 log("pyfakewebcam is not installed.")
                 exit(1)
 
-            ret, frame = cap.read()
-            stream_img_size = frame.shape[1], frame.shape[0]
             stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', *stream_img_size)
         else:
             enable_vcam = False
