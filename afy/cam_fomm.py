@@ -128,7 +128,7 @@ def select_camera(config):
         cam_frames = cam_selector.query_cameras(config['query_n_cams'])
 
         if cam_frames:
-            cam_id = cam_selector.select_camera(cam_frames, window="CLICK ON YOUR CAMERA")
+            cam_id = cam_selector.select_camera(cam_frames)
             log(f"Selected camera {cam_id}")
 
             with open(cam_config, 'w') as f:

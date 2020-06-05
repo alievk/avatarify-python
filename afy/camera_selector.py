@@ -46,7 +46,7 @@ def make_grid(images, cell_size=(320, 240), cols=2):
         # add rect
         img = cv2.rectangle(img, (1, 1), (w0 - 1, h0 - 1), (0, 0, 255), 2)
         # add id
-        img = cv2.putText(img, f'{camid}', (10, 30), 0, 1, (0, 255, 0), 2)
+        img = cv2.putText(img, f'Camera {camid}', (10, 30), 0, 1, (0, 255, 0), 2)
         c = i % cols
         r = i // cols
         grid[r * h0:(r + 1) * h0, c * w0:(c + 1) * w0] = img[..., :3]
@@ -64,10 +64,17 @@ def mouse_callback(event, x, y, flags, userdata):
             g_selected_cam = camid
 
 
-def select_camera(cam_frames, window="cameras"):
+def select_camera(cam_frames, window="Camera selector"):
     cell_size = 320, 240
     grid_cols = 2
     grid = make_grid(cam_frames, cols=grid_cols)
+
+    # to fit the text if only one cam available
+    if grid.shape[1] == 320:
+        cell_size = 640, 480
+        grid = cv2.resize(grid, cell_size)
+
+    cv2.putText(grid, f'Click on the web camera to use', (10, grid.shape[0] - 30), 0, 0.7, (200, 200, 200), 2)
 
     cv2.namedWindow(window)
     cv2.setMouseCallback(window, mouse_callback, (cell_size, grid_cols, cam_frames))
