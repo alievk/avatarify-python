@@ -116,6 +116,24 @@ def print_help():
     info('\n\n')
 
 
+def draw_fps(frame, fps, timing, x0=10, y0=20, ystep=30, fontsz=0.5, color=(255, 255, 255)):
+    frame = frame.copy()
+    cv2.putText(frame, f"FPS: {fps:.1f}", (x0, y0 + ystep * 0), 0, fontsz * IMG_SIZE / 256, color, 1)
+    cv2.putText(frame, f"Model time (ms): {timing['predict']:.1f}", (x0, y0 + ystep * 1), 0, fontsz * IMG_SIZE / 256, color, 1)
+    cv2.putText(frame, f"Preproc time (ms): {timing['preproc']:.1f}", (x0, y0 + ystep * 2), 0, fontsz * IMG_SIZE / 256, color, 1)
+    cv2.putText(frame, f"Postproc time (ms): {timing['postproc']:.1f}", (x0, y0 + ystep * 3), 0, fontsz * IMG_SIZE / 256, color, 1)
+    return frame
+
+
+def draw_calib_text(frame, thk=2, fontsz=0.5, color=(0, 0, 255)):
+    frame = frame.copy()
+    cv2.putText(frame, "FIT FACE IN RECTANGLE", (40, 20), 0, fontsz * IMG_SIZE / 255, color, thk)
+    cv2.putText(frame, "W - ZOOM IN", (60, 40), 0, fontsz * IMG_SIZE / 255, color, thk)
+    cv2.putText(frame, "S - ZOOM OUT", (60, 60), 0, fontsz * IMG_SIZE / 255, color, thk)
+    cv2.putText(frame, "THEN PRESS X", (60, 245), 0, fontsz * IMG_SIZE / 255, color, thk)
+    return frame
+
+
 def select_camera(config):
     cam_config = config['cam_config']
     cam_id = None
@@ -128,7 +146,7 @@ def select_camera(config):
         cam_frames = cam_selector.query_cameras(config['query_n_cams'])
 
         if cam_frames:
-            cam_id = cam_selector.select_camera(cam_frames)
+            cam_id = cam_selector.select_camera(cam_frames, window="CLICK ON YOUR CAMERA")
             log(f"Selected camera {cam_id}")
 
             with open(cam_config, 'w') as f:
@@ -393,17 +411,10 @@ if __name__ == "__main__":
                 preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
 
             if show_fps:
-                timing_string = f"FPS/Model/Pre/Post: {fps:.1f} / {timing['predict']:.1f} / {timing['preproc']:.1f} / {timing['postproc']:.1f}"
-                preview_frame = cv2.putText(preview_frame, timing_string, (10, 240), 0, 0.3 * IMG_SIZE / 256, (255, 255, 255), 1)
+                preview_frame = draw_fps(preview_frame, fps, timing)
 
             if not is_calibrated:
-                color = (0, 0, 255)
-                thk = 2
-                fontsz = 0.5
-                preview_frame = cv2.putText(preview_frame, "FIT FACE IN RECTANGLE", (40, 20), 0, fontsz * IMG_SIZE / 255, color, thk)
-                preview_frame = cv2.putText(preview_frame, "W - ZOOM IN", (60, 40), 0, fontsz * IMG_SIZE / 255, color, thk)
-                preview_frame = cv2.putText(preview_frame, "S - ZOOM OUT", (60, 60), 0, fontsz * IMG_SIZE / 255, color, thk)
-                preview_frame = cv2.putText(preview_frame, "THEN PRESS X", (60, 245), 0, fontsz * IMG_SIZE / 255, color, thk)
+                preview_frame = draw_calib_text(preview_frame)
 
             if not opt.hide_rect:
                 draw_rect(preview_frame)
