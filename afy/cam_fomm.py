@@ -221,10 +221,10 @@ if __name__ == "__main__":
             stream = pyfakewebcam.FakeWebcam(f'/dev/video{opt.virt_cam}', *stream_img_size)
         else:
             enable_vcam = False
-            log("Virtual camera is supported only on Linux.")
+            # log("Virtual camera is supported only on Linux.")
         
-        if not enable_vcam:
-            log("Virtual camera streaming will be disabled.")
+        # if not enable_vcam:
+            # log("Virtual camera streaming will be disabled.")
 
     cur_ava = 0    
     avatar = None

@@ -70,13 +70,6 @@ class TicToc:
         log(f"{str} took {t:.4f}ms")
         return t
 
-    @staticmethod
-    def print(name=''):
-        log(f'\n=== {name} Timimg ===')
-        for fn, times in self.timing.items():
-            min, max, mean, p95 = np.min(times), np.max(times), np.mean(times), np.percentile(times, 95)
-            log(f'{fn}:\tmin: {min:.4f}\tmax: {max:.4f}\tmean: {mean:.4f}ms\tp95: {p95:.4f}ms')
-
 
 class AccumDict:
     def __init__(self, num_f=3):
