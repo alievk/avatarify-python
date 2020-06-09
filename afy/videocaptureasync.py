@@ -50,18 +50,18 @@ class VideoCaptureAsync:
     def update(self):
         while self.started:
             grabbed, frame = self.cap.read()
+            if not grabbed or frame is None or frame.size == 0:
+                print('bad camera frame')
+                continue
             with self.read_lock:
                 self.grabbed = grabbed
                 self.frame = frame
 
     def read(self):
         while True:
-            try:
-                with self.read_lock:
-                    frame = self.frame.copy()
-                    grabbed = self.grabbed
-            except AttributeError:
-                continue
+            with self.read_lock:
+                frame = self.frame.copy()
+                grabbed = self.grabbed
             break
         return grabbed, frame
 
