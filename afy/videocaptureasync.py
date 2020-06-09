@@ -51,7 +51,6 @@ class VideoCaptureAsync:
         while self.started:
             grabbed, frame = self.cap.read()
             if not grabbed or frame is None or frame.size == 0:
-                print('bad camera frame')
                 continue
             with self.read_lock:
                 self.grabbed = grabbed
