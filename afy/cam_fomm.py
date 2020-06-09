@@ -27,26 +27,26 @@ if _platform == 'darwin':
 def is_new_frame_better(source, driving, precitor):
     global avatar_kp
     global display_string
-    
+
     if avatar_kp is None:
         display_string = "No face detected in avatar."
         return False
-    
+
     if predictor.get_start_frame() is None:
         display_string = "No frame to compare to."
         return True
-    
+
     driving_smaller = resize(driving, (128, 128))[..., :3]
     new_kp = predictor.get_frame_kp(driving)
-    
+
     if new_kp is not None:
         new_norm = (np.abs(avatar_kp - new_kp) ** 2).sum()
         old_norm = (np.abs(avatar_kp - predictor.get_start_frame_kp()) ** 2).sum()
-        
+
         out_string = "{0} : {1}".format(int(new_norm * 100), int(old_norm * 100))
         display_string = out_string
         log(out_string)
-        
+
         return new_norm < old_norm
     else:
         display_string = "No face found!"
@@ -222,11 +222,11 @@ if __name__ == "__main__":
         else:
             enable_vcam = False
             # log("Virtual camera is supported only on Linux.")
-        
+
         # if not enable_vcam:
             # log("Virtual camera streaming will be disabled.")
 
-    cur_ava = 0    
+    cur_ava = 0
     avatar = None
     change_avatar(predictor, avatars[cur_ava])
     passthrough = False
@@ -274,7 +274,11 @@ if __name__ == "__main__":
 
             frame, lrudwh = crop(frame, p=frame_proportion, offset_x=frame_offset_x, offset_y=frame_offset_y)
             frame_lrudwh = lrudwh
-            frame = resize(frame, (IMG_SIZE, IMG_SIZE))[..., :3]
+
+            try:
+                frame = resize(frame, (IMG_SIZE, IMG_SIZE))[..., :3]
+            except cv2.error:
+                continue
 
             if find_keyframe:
                 if is_new_frame_better(avatar, frame, predictor):
@@ -296,7 +300,7 @@ if __name__ == "__main__":
                 out = None
 
             tt.tic()
-            
+
             key = cv2.waitKey(1)
 
             if key == 27: # ESC
@@ -353,7 +357,7 @@ if __name__ == "__main__":
                 if not is_calibrated:
                     cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
                     cv2.moveWindow('avatarify', 600, 250)
-                
+
                 is_calibrated = True
             elif key == ord('z'):
                 overlay_alpha = max(overlay_alpha - 0.1, 0.0)
@@ -396,10 +400,10 @@ if __name__ == "__main__":
                 preview_frame = cv2.addWeighted( avatars[cur_ava], overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             else:
                 preview_frame = frame.copy()
-            
+
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
-                
+
             if green_overlay:
                 green_alpha = 0.8
                 overlay = preview_frame.copy()
@@ -407,7 +411,7 @@ if __name__ == "__main__":
                 preview_frame = cv2.addWeighted( preview_frame, green_alpha, overlay, 1.0 - green_alpha, 0.0)
 
             timing['postproc'] = tt.toc()
-                
+
             if find_keyframe:
                 preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
 
