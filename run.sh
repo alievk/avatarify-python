@@ -4,6 +4,7 @@
 
 ENABLE_CONDA=1
 ENABLE_VCAM=1
+KILL_PS=1
 
 FOMM_CONFIG=fomm/config/vox-adv-256.yaml
 FOMM_CKPT=vox-adv-cpk.pth.tar
