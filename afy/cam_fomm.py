@@ -376,7 +376,7 @@ if __name__ == "__main__":
             elif key == ord('l'):
                 try:
                     log('Reloading avatars...')
-                    avatars = load_images()
+                    avatars, avatar_names = load_images()
                     passthrough = False
                     log("Images reloaded")
                 except:
