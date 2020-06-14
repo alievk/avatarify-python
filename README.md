@@ -144,7 +144,7 @@ Avatarify comes with a standard set of avatars of famous people, but you can ext
 
 Follow these advices for better visual quality:
 * Make square crop of your avatar picture.
-* Crop avatar's face so that it's not too close not too far. Use standard avarars as reference.
+* Crop avatar's face so that it's not too close not too far. Use standard avatars as reference.
 * Prefer pictures with uniform background. It will diminish visual artifacts.
 
 ## Run
