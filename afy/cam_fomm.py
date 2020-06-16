@@ -24,7 +24,7 @@ if _platform == 'darwin':
         exit()
 
 
-def is_new_frame_better(source, driving, precitor):
+def is_new_frame_better(source, driving, predictor):
     global avatar_kp
     global display_string
     
@@ -376,7 +376,7 @@ if __name__ == "__main__":
             elif key == ord('l'):
                 try:
                     log('Reloading avatars...')
-                    avatars = load_images()
+                    avatars, avatar_names = load_images()
                     passthrough = False
                     log("Images reloaded")
                 except:
