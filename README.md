@@ -74,8 +74,6 @@ Download model's weights from [Dropbox](https://www.dropbox.com/s/t7h24l6wx9vret
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
 
-### Native installation
-
 <!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64). --->
 1. Download [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#linux-installers) and install using command:
 ```bash
@@ -89,17 +87,6 @@ bash scripts/install.sh
 ```
 3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
 
-### Docker installation
-1. Install Docker following the [Documentation](https://docs.docker.com/engine/install/). Then run this [step]{https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user} to make docker available for your user.
-2. For using the gpu (hardly recommended): Install nvidia drivers and [nvidia docker](https://github.com/NVIDIA/nvidia-docker#quickstart).
-2. Clone `avatarify`:
-```bash
-git clone https://github.com/alievk/avatarify.git
-```
-3. Build the Dockerfile:
-```bash
-docker build -t avatarify
-```
 
 #### Mac
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. To use Avatarify in Zoom you can choose from 2 options:
@@ -153,6 +140,19 @@ The steps 10-11 are required only once during setup.
 
 You can offload the heavy work to [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [server with a GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) and use your laptop just to communicate the video stream. The server and client software are native and dockerized available.
 
+### Docker installation
+Docker images are only availabe on Linux.
+
+1. Install Docker following the [Documentation](https://docs.docker.com/engine/install/). Then run this [step](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) to make docker available for your user.
+2. For using the gpu (hardly recommended): Install nvidia drivers and [nvidia docker](https://github.com/NVIDIA/nvidia-docker#quickstart).
+2. Clone `avatarify`:
+```bash
+git clone https://github.com/alievk/avatarify.git
+```
+3. Build the Dockerfile:
+```bash
+docker build -t avatarify
+```
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
 
@@ -172,15 +172,11 @@ The run script will create virtual camera `/dev/video9`. You can change these se
 <!--It is supposed that there is only one web cam connected to the computer at `/dev/video0`.-->
 You can use command `v4l2-ctl --list-devices` to list all devices in your system.
 
-With native installation run:
+Run:
 ```bash
 bash run.sh
 ```
-
-With docker installation run:
-```bash
-bash run.sh --docker
-```
+To utilize the gpus add the `--gpus` flag. In order to use Docker add the `--docker` flag.
 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
