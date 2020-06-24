@@ -32,12 +32,12 @@ Created by: GitHub community.
     - [Mac](#mac)
     - [Windows](#windows)
     - [Remote GPU](#remote-gpu)
+    - [Docker](#docker)
 - [Setup avatars](#setup-avatars)
 - [Run](#run)
-    - [Linux](#linux)
-    - [Mac](#mac)
-    - [Windows](#windows)
-    - [Docker](#docker)
+    - [Linux](#linux-1)
+    - [Mac](#mac-1)
+    - [Windows](#windows-1)
 - [Controls](#controls)
 - [Driving your avatar](#driving-your-avatar)
 - [Configure video meeting app](#configure-video-meeting-app)
@@ -141,7 +141,7 @@ The steps 10-11 are required only once during setup.
 
 You can offload the heavy work to [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [server with a GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) and use your laptop just to communicate the video stream. The server and client software are native and dockerized available.
 
-### Docker installation
+### Docker
 Docker images are only availabe on Linux.
 
 1. Install Docker following the [Documentation](https://docs.docker.com/engine/install/). Then run this [step](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) to make docker available for your user.
