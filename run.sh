@@ -94,7 +94,7 @@ if [[ $USE_DOCKER == 0 ]]; then
         --adapt_scale \
         $@
 else
-    xhost +local:root
+
     source scripts/settings.sh
     
     if [[ $ENABLE_VCAM == 1 ]]; then
@@ -108,19 +108,37 @@ else
     fi
 
     
-    docker run $DOCKER_ARGS -it --rm --privileged  \
-        -v $PWD:/root/.torch/models \
-        -v $PWD/avatars:/app/avatarify/avatars \
-        --env="DISPLAY" \
-        --env="QT_X11_NO_MITSHM=1" \
-        --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-        avatarify python3 afy/cam_fomm.py \
-            --config $FOMM_CONFIG \
-            --checkpoint $FOMM_CKPT \
-            --virt-cam $CAMID_VIRT \
-            --relative \
-            --adapt_scale \
-            $@
 
-    xhost -local:root
+    
+    if [[ $IS_WORKER == 0 ]]; then
+        xhost +local:root
+        docker run $DOCKER_ARGS -it --rm --privileged  \
+            -v $PWD:/root/.torch/models \
+            -v $PWD/avatars:/app/avatarify/avatars \
+            --env="DISPLAY" \
+            --env="QT_X11_NO_MITSHM=1" \
+            --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+            avatarify python3 afy/cam_fomm.py \
+                --config $FOMM_CONFIG \
+                --checkpoint $FOMM_CKPT \
+                --virt-cam $CAMID_VIRT \
+                --relative \
+                --adapt_scale \
+                $@
+        xhost -local:root
+
+    else
+        docker run $DOCKER_ARGS -it --rm --privileged  \
+            -v $PWD:/root/.torch/models \
+            -v $PWD/avatars:/app/avatarify/avatars \
+            avatarify python3 afy/cam_fomm.py \
+                --config $FOMM_CONFIG \
+                --checkpoint $FOMM_CKPT \
+                --virt-cam $CAMID_VIRT \
+                --relative \
+                --adapt_scale \
+                $@
+    fi
+    
+
 fi
