@@ -177,7 +177,7 @@ Run:
 ```bash
 bash run.sh
 ```
-To utilize the gpus add the `--gpus` flag. In order to use Docker add the `--docker` flag.
+If you haven't installed a GPU add the `--no-gpus` flag. In order to use Docker add the `--docker` flag.
 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
