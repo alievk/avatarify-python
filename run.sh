@@ -9,6 +9,7 @@ USE_DOCKER=0
 IS_WORKER=0
 IS_CLIENT=0
 DOCKER_IS_LOCAL_CLIENT=0
+DOCKER_NO_GPU=0
 
 FOMM_CONFIG=fomm/config/vox-adv-256.yaml
 FOMM_CKPT=vox-adv-cpk.pth.tar
@@ -35,8 +36,8 @@ while (( "$#" )); do
             USE_DOCKER=1
             shift
             ;;
-        --gpus)
-            DOCKER_ARGS="$DOCKER_ARGS --gpus all"
+        --no-gpus)
+            DOCKER_NO_GPU=1
             shift
             ;;
         --is-worker)
@@ -99,6 +100,10 @@ else
     
     if [[ $ENABLE_VCAM == 1 ]]; then
         bash scripts/create_virtual_camera.sh
+    fi
+    
+    if [[ $DOCKER_NO_GPU == 0 ]]; then
+        DOCKER_ARGS="$DOCKER_ARGS --gpus all"
     fi
 
     if [[ $DOCKER_IS_LOCAL_CLIENT == 1 ]]; then
