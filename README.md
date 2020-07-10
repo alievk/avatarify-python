@@ -146,11 +146,13 @@ Docker images are only availabe on Linux.
 
 1. Install Docker following the [Documentation](https://docs.docker.com/engine/install/). Then run this [step](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) to make docker available for your user.
 2. For using the gpu (hardly recommended): Install nvidia drivers and [nvidia docker](https://github.com/NVIDIA/nvidia-docker#quickstart).
-2. Clone `avatarify`:
+3. Clone `avatarify` and install its dependencies (v4l2loopback kernel module):
 ```bash
 git clone https://github.com/alievk/avatarify.git
+cd avatarify
+bash scripts/install_docker.sh
 ```
-3. Build the Dockerfile:
+4. Build the Dockerfile:
 ```bash
 docker build -t avatarify
 ```
