@@ -119,7 +119,8 @@ class PredictorRemote:
             result = msgpack.unpackb(data_recv)
         self.timing.add('UNPACK', tt.toc())
 
-        Once(self.timing, per=1)
+        if opt.verbose:
+            Once(self.timing, per=1)
 
         return result
 
@@ -147,7 +148,8 @@ class PredictorRemote:
                 sender.send_data(*msg)
                 timing.add('SEND', tt.toc())
 
-                Once(timing, log, per=1)
+                if opt.verbose:
+                    Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("send_worker: user interrupt")
         finally:
@@ -187,7 +189,8 @@ class PredictorRemote:
                     log('recv_queue full')
                     continue
 
-                Once(timing, log, per=1)
+                if opt.verbose:
+                    Once(timing, log, per=1)
         except KeyboardInterrupt:
             log("recv_worker: user interrupt")
         finally:
