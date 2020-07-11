@@ -1,6 +1,6 @@
 from arguments import opt
 from networking import SerializingContext, check_connection
-from utils import Tee, TicToc, AccumDict, Once
+from utils import Logger, TicToc, AccumDict, Once
 
 import multiprocessing as mp
 import queue
@@ -25,7 +25,7 @@ class PredictorRemote:
         self.out_addr = out_addr
         self.predictor_args = (args, kwargs)
         self.timing = AccumDict()
-        self.log = Tee('./var/log/predictor_remote.log')
+        self.log = Logger('./var/log/predictor_remote.log', verbose=opt.verbose)
 
         self.send_queue = mp.Queue(QUEUE_SIZE)
         self.recv_queue = mp.Queue(QUEUE_SIZE)
@@ -88,8 +88,7 @@ class PredictorRemote:
             'id': self._i_msg
         }
 
-        if opt.verbose:
-            self.log("send", meta)
+        self.log("send", meta)
 
         if critical:
             self.send_queue.put((meta, data))
@@ -111,8 +110,7 @@ class PredictorRemote:
                 self.log('recv_queue is empty')
                 return None
 
-        if opt.verbose:
-            self.log("recv", meta_recv)
+        self.log("recv", meta_recv)
 
         tt.tic()
         if meta_recv['name'] == 'predict':
@@ -128,7 +126,7 @@ class PredictorRemote:
     @staticmethod
     def send_worker(address, send_queue, worker_alive):
         timing = AccumDict()
-        log = Tee('./var/log/send_worker.log')
+        log = Logger('./var/log/send_worker.log', opt.verbose)
 
         ctx = SerializingContext()
         sender = ctx.socket(zmq.PUSH)
@@ -163,7 +161,7 @@ class PredictorRemote:
     @staticmethod
     def recv_worker(address, recv_queue, worker_alive):
         timing = AccumDict()
-        log = Tee('./var/log/recv_worker.log')
+        log = Logger('./var/log/recv_worker.log')
 
         ctx = SerializingContext()
         receiver = ctx.socket(zmq.PULL)

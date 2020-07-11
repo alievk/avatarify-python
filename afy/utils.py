@@ -34,6 +34,18 @@ class Tee(object):
         self.file.flush()
 
 
+class Logger():
+    def __init__(self, filename, verbose=True):
+        self.tee = Tee(filename)
+        self.verbose = verbose
+
+    def __call__(self, *args, important=False, **kwargs):
+        if not self.verbose and not important:
+            return
+
+        self.tee(*args, **kwargs)
+
+
 class Once():
     _id = {}
 

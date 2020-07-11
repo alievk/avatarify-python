@@ -1,7 +1,7 @@
 from predictor_local import PredictorLocal
 from arguments import opt
 from networking import SerializingContext, check_connection
-from utils import Tee, TicToc, AccumDict, Once
+from utils import Logger, TicToc, AccumDict, Once
 
 import cv2
 import numpy as np
@@ -58,14 +58,14 @@ class PredictorWorker():
     @staticmethod
     def recv_worker(port, recv_queue, worker_alive):
         timing = AccumDict()
-        log = Tee('./var/log/recv_worker.log')
+        log = Logger('./var/log/recv_worker.log', verbose=opt.verbose)
 
         ctx = SerializingContext()
         socket = ctx.socket(zmq.PULL)
         socket.bind(f"tcp://*:{port}")
         socket.RCVTIMEO = RECV_TIMEOUT
 
-        log(f'Receiving on port {port}')
+        log(f'Receiving on port {port}', important=True)
 
         try:
             while worker_alive.value:
@@ -92,17 +92,17 @@ class PredictorWorker():
 
                 Once(timing, log, per=1)
         except KeyboardInterrupt:
-            log("recv_worker: user interrupt")
+            log("recv_worker: user interrupt", important=True)
 
         worker_alive.value = 0
-        log("recv_worker exit")
+        log("recv_worker exit", important=True)
 
     @staticmethod
     def predictor_worker(recv_queue, send_queue, worker_alive):
         predictor = None
         predictor_args = ()
         timing = AccumDict()
-        log = Tee('./var/log/predictor_worker.log')
+        log = Logger('./var/log/predictor_worker.log', verbose=opt.verbose)
         
         try:
             while worker_alive.value:
@@ -129,7 +129,7 @@ class PredictorWorker():
                         args = msgpack.unpackb(data)
                     timing.add('UNPACK', tt.toc())
                 except ValueError:
-                    log("Invalid Message")
+                    log("Invalid Message", important=True)
                     continue
 
                 tt.tic()
@@ -142,7 +142,7 @@ class PredictorWorker():
                         del predictor
                         predictor_args = args
                         predictor = PredictorLocal(*predictor_args[0], **predictor_args[1])
-                        log("Initialized predictor with:", predictor_args)
+                        log("Initialized predictor with:", predictor_args, important=True)
                     result = True
                     tt.tic() # don't account for init
                 elif method['name'] == 'predict':
@@ -172,24 +172,24 @@ class PredictorWorker():
 
                 Once(timing, log, per=1)
         except KeyboardInterrupt:
-            log("predictor_worker: user interrupt")
+            log("predictor_worker: user interrupt", important=True)
         except Exception as e:
-            log("predictor_worker error")
+            log("predictor_worker error", important=True)
             traceback.print_exc()
     
         worker_alive.value = 0
-        log("predictor_worker exit")
+        log("predictor_worker exit", important=True)
 
     @staticmethod
     def send_worker(port, send_queue, worker_alive):
         timing = AccumDict()
-        log = Tee('./var/log/send_worker.log')
+        log = Logger('./var/log/send_worker.log', verbose=opt.verbose)
 
         ctx = SerializingContext()
         socket = ctx.socket(zmq.PUSH)
         socket.bind(f"tcp://*:{port}")
 
-        log(f'Sending on port {port}')
+        log(f'Sending on port {port}', important=True)
 
         try:
             while worker_alive.value:
@@ -215,10 +215,10 @@ class PredictorWorker():
 
                 Once(timing, log, per=1)
         except KeyboardInterrupt:
-            log("predictor_worker: user interrupt")
+            log("predictor_worker: user interrupt", important=True)
 
         worker_alive.value = 0
-        log("send_worker exit")
+        log("send_worker exit", important=True)
 
 
 def run_worker(in_port=None, out_port=None):
