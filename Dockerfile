@@ -6,7 +6,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
 
 ARG PYTORCH_WHEEL="https://download.pytorch.org/whl/cu100/torch-1.0.0-cp36-cp36m-linux_x86_64.whl"
 ARG FACE_ALIGNMENT_GIT="git+https://github.com/1adrianb/face-alignment"
-ARG AVATARIFY_COMMIT="01db88c8580b982278ae944b89b3bfab5d98c1dd"
+ARG AVATARIFY_COMMIT="v0.1-docker"
 ARG FOMM_COMMIT="efbe0a6f17b38360ff9a446fddfbb3ce5493534c"
 
 RUN git clone https://github.com/alievk/avatarify.git /app/avatarify && cd /app/avatarify && git checkout ${AVATARIFY_COMMIT} \
