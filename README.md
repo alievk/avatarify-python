@@ -17,7 +17,8 @@ Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-
 Created by: GitHub community.
 
 ## News
-- **22 May 2020.** Added [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) mode. Now you can running Avatarify on any computer without GPU!
+- **11 July 2020.** Added Docker support. Now you can run Avatarify from Docker on [Linux](#docker). Thanks to [mikaelhg](https://github.com/mikaelhg) and [mintmaker](https://github.com/mintmaker) for contribution!
+- **22 May 2020.** Added [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) mode. Now you can run Avatarify on any computer without GPU!
 - **7 May 2020.** Added remote GPU support for all platforms (based on [mynameisfiber's](https://github.com/mynameisfiber) solution). [Demo](https://youtu.be/3Dz_bUIPYFM). Deployment [instructions](https://github.com/alievk/avatarify/wiki/Remote-GPU). 
 - **24 April 2020.** Added Windows installation [tutorial](https://www.youtube.com/watch?v=lym9ANVb120).
 - **17 April 2020.** Created Slack community. Please join via [invitation link](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg).
