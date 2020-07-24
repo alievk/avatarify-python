@@ -155,7 +155,8 @@ bash scripts/install_docker.sh
 ```
 4. Build the Dockerfile:
 ```bash
-docker build -t avatarify
+cd avatarify
+docker build -t avatarify .
 ```
 ## Setup avatars
 Avatarify comes with a standard set of avatars of famous people, but you can extend this set simply copying your avatars into `avatars` folder.
