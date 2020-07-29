@@ -8,13 +8,13 @@
 
 :arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
 
-# Avatarify
+# Open Avatarify
 
 Photorealistic avatars for video-conferencing [apps](#configure-video-meeting-app). Democratized.
 
 Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-order-model).
 
-Created by: GitHub community.
+**Open Avatarify is not affiliated with Avatarify Inc.**
 
 ## News
 - **11 July 2020.** Added Docker support. Now you can run Avatarify from Docker on [Linux](#docker). Thanks to [mikaelhg](https://github.com/mikaelhg) and [mintmaker](https://github.com/mintmaker) for contribution!
