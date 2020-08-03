@@ -32,3 +32,5 @@ pyfakewebcam==0.1.0
 msgpack-numpy==0.4.5
 pyzmq==19.0.0
 #blosc==1.7.0
+filelock==3.0.0
+importlib-metadata==0.12
