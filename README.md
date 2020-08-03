@@ -71,7 +71,7 @@ Of course, you also need a webcam!
 ## Install
 
 #### Download network weights
-Download model's weights from [Dropbox](https://www.dropbox.com/s/t7h24l6wx9vreto/vox-adv-cpk.pth.tar?dl=0), [Yandex.Disk](https://yadi.sk/d/M0FWpz2ExBfgAA) or [Google Drive](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`]
+Download model's weights from [here](https://avatarify.s3.amazonaws.com/weights/vox-adv-cpk.pth.tar) or [here](https://yadi.sk/d/M0FWpz2ExBfgAA) or [here](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`]
 
 #### Linux
 Linux uses `v4l2loopback` to create virtual camera.
