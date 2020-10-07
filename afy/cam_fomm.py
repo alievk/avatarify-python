@@ -65,8 +65,14 @@ def load_stylegan_avatar():
 
     return image
 
-def load_images(IMG_SIZE = 256):
+def load_images(IMG_SIZE = 256, full_frame=False):
+    from afy.helper import extract_bbox
+    import face_alignment
+
+    fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cuda')
+
     avatars = []
+    full_avatars = []
     filenames = []
     images_list = sorted(glob.glob(f'{opt.avatars}/*'))
     for i, f in enumerate(images_list):
@@ -75,10 +81,16 @@ def load_images(IMG_SIZE = 256):
             if img.ndim == 2:
                 img = np.tile(img[..., None], [1, 1, 3])
             img = img[..., :3][..., ::-1]
+            full_avatars.append(img)
+
+            if full_frame:
+                bbox = extract_bbox(img, fa, increase_area=0.1)
+                img = img[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+
             img = resize(img, (IMG_SIZE, IMG_SIZE))
             avatars.append(img)
             filenames.append(f)
-    return avatars, filenames
+    return avatars, full_avatars, filenames
 
 def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp, kp_source
@@ -203,7 +215,7 @@ if __name__ == "__main__":
     cap = VideoCaptureAsync(cam_id)
     cap.start()
 
-    avatars, avatar_names = load_images()
+    avatars, full_avatars, avatar_names = load_images(resize=not opt.full_frame)
 
     enable_vcam = not opt.no_stream
 
