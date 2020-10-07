@@ -12,6 +12,7 @@ from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
 from afy.utils import info, Once, Tee, crop, pad_img, resize, TicToc
 import afy.camera_selector as cam_selector
+from afy.recorder import Recorder
 
 
 log = Tee('./var/log/cam_fomm.log')
@@ -134,6 +135,10 @@ def draw_calib_text(frame, thk=2, fontsz=0.5, color=(0, 0, 255)):
     return frame
 
 
+def overlay_rec(image):
+    return cv2.circle(image.copy(), (15, 15), 10, (255, 0, 0), -1)
+
+
 def select_camera(config):
     cam_config = config['cam_config']
     cam_id = None
@@ -233,6 +238,10 @@ if __name__ == "__main__":
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
     cv2.moveWindow('cam', 500, 250)
+
+    recorder = Recorder(save_dir=opt.record_dir, fps=opt.record_fps)
+    recording = False
+    record_task = None
 
     frame_proportion = 0.9
     frame_offset_x = 0
@@ -359,7 +368,7 @@ if __name__ == "__main__":
                 overlay_alpha = max(overlay_alpha - 0.1, 0.0)
             elif key == ord('c'):
                 overlay_alpha = min(overlay_alpha + 0.1, 1.0)
-            elif key == ord('r'):
+            elif key == ord('e'):
                 preview_flip = not preview_flip
             elif key == ord('t'):
                 output_flip = not output_flip
@@ -381,6 +390,11 @@ if __name__ == "__main__":
                     log("Images reloaded")
                 except:
                     log('Image reload failed')
+            elif key == ord('r'):
+                if recording:
+                    recorder.stop()
+
+                recording = not recording
             elif key == ord('i'):
                 show_fps = not show_fps
             elif 48 < key < 58:
@@ -432,6 +446,10 @@ if __name__ == "__main__":
                 if enable_vcam:
                     out = resize(out, stream_img_size)
                     stream.schedule_frame(out)
+
+                if recording:
+                    recorder.put_frame(out)
+                    out = overlay_rec(out)
 
                 cv2.imshow('avatarify', out[..., ::-1])
 

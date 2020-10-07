@@ -25,6 +25,9 @@ parser.add_argument("--in-addr", type=str, default=None, help="Socket address fo
 parser.add_argument("--out-addr", type=str, default=None, help="Socker address for outcoming messages, like example.com:5558")
 parser.add_argument("--jpg_quality", type=int, default=95, help="Jpeg copression quality for image transmission")
 
+parser.add_argument("--record-dir", type=str, default="./records", help="Save records in this directory")
+parser.add_argument("--record-fps", type=int, default=20, help="Record file FPS")
+
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
 parser.set_defaults(no_pad=False)
