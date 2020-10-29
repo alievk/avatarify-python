@@ -20,6 +20,7 @@ class PredictorLocal:
         self.adapt_movement_scale = adapt_movement_scale
         self.start_frame = None
         self.start_frame_kp = None
+        self.kp_driving = None
         self.kp_driving_initial = None
         self.config_path = config_path
         self.checkpoint_path = checkpoint_path
@@ -28,6 +29,7 @@ class PredictorLocal:
         self.source = None
         self.kp_source = None
         self.enc_downscale = enc_downscale
+        self.face_deviation = 0, 0
 
     def load_checkpoints(self):
         with open(self.config_path) as f:
@@ -53,6 +55,11 @@ class PredictorLocal:
     def reset_frames(self):
         self.kp_driving_initial = None
 
+    def set_deform_mask(self, mask):
+        mask = torch.tensor(mask).to(self.device).float() / 255
+        mask = mask[None, ..., None]
+        self.generator.set_deform_mask(mask)
+
     def set_source_image(self, source_image):
         self.source = to_tensor(source_image).to(self.device)
         self.kp_source = self.kp_detector(self.source)
@@ -65,6 +72,52 @@ class PredictorLocal:
 
         self.generator.encode_source(source_enc)
 
+    def update_kp_driving(self, kp_driving):
+        if self.kp_driving is None:
+            self.kp_driving = kp_driving
+
+        center_initial = self.kp_driving_initial['value'][0].mean(0)
+        center_driving = kp_driving['value'][0].mean(0)
+        #d_x, d_y = (center_initial - center_driving).cpu().numpy()
+        d_x, d_y = center_driving.cpu().numpy()
+
+        d_th_x = 0.25
+        d_th_y = 0.15
+
+        if d_x > 0:
+            dev_x = max(0, d_x - d_th_x)
+        else:
+            dev_x = min(0, d_x + d_th_x)
+        
+        if d_y > 0:
+            dev_y = max(0, d_y - d_th_y)
+        else:
+            dev_y = min(0, d_y + d_th_y)
+
+        if dev_x == 0 and dev_y == 0:
+            self.kp_driving = kp_driving
+            kp_out = kp_driving
+        else:
+            kp_zero_mean = kp_driving['value'] - kp_driving['value'].mean(1, keepdim=True)
+            kp_out = {
+                # 'value': self.kp_driving['value'] + kp_zero_mean,
+                'value': self.kp_driving['value'].mean(1, keepdim=True) + kp_zero_mean,
+                'jacobian': kp_driving['jacobian']
+            }
+
+        # self.face_deviation = dev_x, dev_y
+        self.face_deviation = d_x, d_y
+
+        print((d_x, d_y), (dev_x, dev_y), center_driving)
+
+        # self.kp_driving['value'] = kp_driving['value'] * alpha + self.kp_driving['value'] * (1 - alpha)
+        # self.kp_driving['jacobian'] = kp_driving['jacobian']
+
+        return kp_out
+
+    def get_face_deviation(self):
+        return self.face_deviation
+        
     def predict(self, driving_frame):
         assert self.kp_source is not None, "call set_source_image()"
         
@@ -77,7 +130,9 @@ class PredictorLocal:
                 self.start_frame_kp = self.get_frame_kp(driving_frame)
 
             kp_driving = self.kp_detector(driving)
-            kp_norm = normalize_kp(kp_source=self.kp_source, kp_driving=kp_driving,
+            kp_driving_upd = self.update_kp_driving(kp_driving)
+
+            kp_norm = normalize_kp(kp_source=self.kp_source, kp_driving=kp_driving_upd,
                                 kp_driving_initial=self.kp_driving_initial, use_relative_movement=self.relative,
                                 use_relative_jacobian=self.relative, adapt_movement_scale=self.adapt_movement_scale)
 
