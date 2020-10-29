@@ -84,7 +84,7 @@ def load_images(IMG_SIZE = 256, full_frame=False):
             img_full = img_full[..., :3][..., ::-1]
 
             if full_frame:
-                bbox = extract_bbox(img_full, fa, increase_area=0.2)
+                bbox = extract_bbox(img_full, fa, increase_area=0.3)
                 print(bbox)
                 img_crop = img_full[bbox[1]:bbox[3], bbox[0]:bbox[2]]
 
@@ -264,6 +264,7 @@ if __name__ == "__main__":
     frame_proportion = 0.9
     frame_offset_x = 0
     frame_offset_y = 0
+    padh = 0
 
     overlay_alpha = 0.0
     preview_flip = False
@@ -386,6 +387,10 @@ if __name__ == "__main__":
                 overlay_alpha = max(overlay_alpha - 0.1, 0.0)
             elif key == ord('c'):
                 overlay_alpha = min(overlay_alpha + 0.1, 1.0)
+            elif key == ord(','):
+                padh = max(0, padh - 0.1)
+            elif key == ord('.'):
+                padh += 0.1
             elif key == ord('r'):
                 preview_flip = not preview_flip
             elif key == ord('t'):
@@ -452,6 +457,18 @@ if __name__ == "__main__":
             if out is not None:
                 if opt.full_frame:
                     out = overlay(full_avatars[cur_ava], out, head_positions[cur_ava])
+
+                    dx, dy = predictor.get_face_deviation()
+                    # dx, dy = int(dx * 80), int(dy * 80)
+                    dx, dy = -int(dx * 40), -int(dy * 40)
+                    dx, dy = 0, 0
+                    yh, xh = head_positions[cur_ava]
+                    hf, wf = full_avatars[cur_ava].shape[:2]
+                    l = int(max(0, xh - padh * IMG_SIZE + dx))
+                    r = int(min(wf, xh + (1 + padh) * IMG_SIZE + dx))
+                    u = int(max(0, yh - padh * IMG_SIZE + dy))
+                    d = int(min(hf, yh + (1 + padh) * IMG_SIZE + dy))
+                    out = out[u:d, l:r]
 
                 if not opt.no_pad:
                     out = pad_img(out, stream_img_size)
