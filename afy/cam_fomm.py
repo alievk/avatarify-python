@@ -8,10 +8,13 @@ import requests
 import numpy as np
 import cv2
 
+import face_alignment
+
 from afy.videocaptureasync import VideoCaptureAsync
 from afy.arguments import opt
 from afy.utils import info, Once, Tee, crop, pad_img, resize, TicToc
 import afy.camera_selector as cam_selector
+from afy.helper import extract_bbox, overlay
 
 
 log = Tee('./var/log/cam_fomm.log')
@@ -66,31 +69,37 @@ def load_stylegan_avatar():
     return image
 
 def load_images(IMG_SIZE = 256, full_frame=False):
-    from afy.helper import extract_bbox
-    import face_alignment
-
-    fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cuda')
+    fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cpu')
 
     avatars = []
     full_avatars = []
+    head_positions = []
     filenames = []
     images_list = sorted(glob.glob(f'{opt.avatars}/*'))
-    for i, f in enumerate(images_list):
-        if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
-            img = cv2.imread(f)
-            if img.ndim == 2:
-                img = np.tile(img[..., None], [1, 1, 3])
-            img = img[..., :3][..., ::-1]
-            full_avatars.append(img)
+    for i, fname in enumerate(images_list):
+        if fname.endswith('.jpg') or fname.endswith('.jpeg') or fname.endswith('.png'):
+            img_full = cv2.imread(fname)
+            if img_full.ndim == 2:
+                img_full = np.tile(img_full[..., None], [1, 1, 3])
+            img_full = img_full[..., :3][..., ::-1]
 
             if full_frame:
-                bbox = extract_bbox(img, fa, increase_area=0.1)
-                img = img[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+                bbox = extract_bbox(img_full, fa, increase_area=0.3)
+                print(bbox)
+                img_crop = img_full[bbox[1]:bbox[3], bbox[0]:bbox[2]]
 
-            img = resize(img, (IMG_SIZE, IMG_SIZE))
-            avatars.append(img)
-            filenames.append(f)
-    return avatars, full_avatars, filenames
+                f = IMG_SIZE/(bbox[2]-bbox[0])
+                img_full = cv2.resize(img_full, None, None, fx=f, fy=f)
+                shift = (int(f * bbox[1]), int(f * bbox[0]))
+                head_positions.append(shift)
+
+            img_crop = resize(img_crop, (IMG_SIZE, IMG_SIZE))
+
+            avatars.append(img_crop)
+            full_avatars.append(img_full)
+            filenames.append(fname)
+
+    return avatars, full_avatars, head_positions, filenames
 
 def change_avatar(predictor, new_avatar):
     global avatar, avatar_kp, kp_source
@@ -215,7 +224,13 @@ if __name__ == "__main__":
     cap = VideoCaptureAsync(cam_id)
     cap.start()
 
-    avatars, full_avatars, avatar_names = load_images(resize=not opt.full_frame)
+    avatars, full_avatars, head_positions, avatar_names = load_images(full_frame=opt.full_frame)
+
+    if opt.full_frame:
+        deform_mask = cv2.imread('./dense_motion_mask_join.png', cv2.IMREAD_UNCHANGED)
+        assert deform_mask.ndim == 2
+        deform_mask = cv2.resize(deform_mask, (64, 64))
+        predictor.set_deform_mask(deform_mask)
 
     enable_vcam = not opt.no_stream
 
@@ -249,6 +264,7 @@ if __name__ == "__main__":
     frame_proportion = 0.9
     frame_offset_x = 0
     frame_offset_y = 0
+    padh = 0
 
     overlay_alpha = 0.0
     preview_flip = False
@@ -371,6 +387,10 @@ if __name__ == "__main__":
                 overlay_alpha = max(overlay_alpha - 0.1, 0.0)
             elif key == ord('c'):
                 overlay_alpha = min(overlay_alpha + 0.1, 1.0)
+            elif key == ord(','):
+                padh = max(0, padh - 0.1)
+            elif key == ord('.'):
+                padh += 0.1
             elif key == ord('r'):
                 preview_flip = not preview_flip
             elif key == ord('t'):
@@ -435,6 +455,21 @@ if __name__ == "__main__":
             cv2.imshow('cam', preview_frame[..., ::-1])
 
             if out is not None:
+                if opt.full_frame:
+                    out = overlay(full_avatars[cur_ava], out, head_positions[cur_ava])
+
+                    dx, dy = predictor.get_face_deviation()
+                    # dx, dy = int(dx * 80), int(dy * 80)
+                    dx, dy = -int(dx * 40), -int(dy * 40)
+                    dx, dy = 0, 0
+                    yh, xh = head_positions[cur_ava]
+                    hf, wf = full_avatars[cur_ava].shape[:2]
+                    l = int(max(0, xh - padh * IMG_SIZE + dx))
+                    r = int(min(wf, xh + (1 + padh) * IMG_SIZE + dx))
+                    u = int(max(0, yh - padh * IMG_SIZE + dy))
+                    d = int(min(hf, yh + (1 + padh) * IMG_SIZE + dy))
+                    out = out[u:d, l:r]
+
                 if not opt.no_pad:
                     out = pad_img(out, stream_img_size)
 

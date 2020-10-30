@@ -1,4 +1,7 @@
 import face_alignment
+from skimage.transform import resize
+from skimage import img_as_ubyte
+import numpy as np
 
 
 def extract_bbox(frame, fa, increase_area=0.1):
@@ -39,14 +42,27 @@ def extract_bbox(frame, fa, increase_area=0.1):
     return left, top, right, bot
 
 
-def overlay(background, result, offset):
-    background = deepcopy(background)
+def make_coordinate_grid():
+    X, Y = np.meshgrid(np.arange(256), np.arange(256))
+    X = 2 * (X / 255) - 1
+    Y = 2 * (Y / 255) - 1
+    return np.stack([X, Y], axis=-1)
+
+
+def make_overlay_mask():
+    identity_grid = make_coordinate_grid()
+    dist_to_edge_grid = ((np.abs(identity_grid) - np.array([[1, 1]], dtype=np.float32))**2).min(axis=-1)
+    mask = (1 - np.exp(-100*dist_to_edge_grid)).reshape(256, 256)
+    return mask
+
+
+def overlay(background, head, offset):
     background = np.array(background)[..., :3]
     mask = make_overlay_mask()[:, :, np.newaxis]
-    background[offset[0]:offset[0]+256, offset[1]:offset[1]+256] = \
-        background[offset[0]:offset[0]+256, offset[1]:offset[1]+256] * (1 - mask) + \
-        np.array(result)[..., :3] * mask
+    background[offset[0]:offset[0]+head.shape[0], offset[1]:offset[1]+head.shape[1]] = \
+        background[offset[0]:offset[0]+head.shape[0], offset[1]:offset[1]+head.shape[1]] * (1 - mask) + \
+        np.array(head)[..., :3] * mask
     
-    return Image.fromarray(background.astype(np.uint8))
+    return background.astype(np.uint8)
 
 
