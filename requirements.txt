@@ -10,7 +10,7 @@ networkx==2.1
 #numpy==1.15.0
 opencv-python==4.2.0.34
 pandas==0.23.4
-Pillow==6.2.2
+Pillow==7.1.0
 pycparser==2.18
 pygit==0.1
 pyparsing==2.2.0
