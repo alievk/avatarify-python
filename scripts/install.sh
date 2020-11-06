@@ -21,6 +21,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda create -y -n $CONDA_ENV_NAME python=3.7
 conda activate $CONDA_ENV_NAME
 
+conda install -y -c conda-forge numpy==1.15.0
 conda install -y pytorch==1.0.0 torchvision==0.2.1 cuda100 -c pytorch
 conda install -y python-blosc==1.7.0 -c conda-forge
 
