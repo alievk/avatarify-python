@@ -243,6 +243,7 @@ R | Mirror reference window.
 T | Mirror output window.
 L | Reload avatars.
 I | Show FPS
+O | Toggle face detection overlay.
 ESC | Quit
 
 ## Driving your avatar
@@ -250,7 +251,7 @@ ESC | Quit
 These are the main principles for driving your avatar:
 
 * Align your face in the camera window as closely as possible in proportion and position to the target avatar. Use zoom in/out function (W/S keys) and camera left, right, up, down translation (U/H/J/K keys). When you have aligned, hit 'X' to use this frame as reference to drive the rest of the animation
-* Use the overlay function (Z/C keys) to match your and avatar's face expressions as close as possible
+* Use the image overlay function (Z/C keys) or the face detection overlay function (O key) to match your and avatar's face expressions as close as possible
 
 Alternatively, you can hit 'F' for the software to attempt to find a better reference frame itself. This will slow down the framerate, but while this is happening, you can keep moving your head around: the preview window will flash green when it finds your facial pose is a closer match to the avatar than the one it is currently using. You will see two numbers displayed as well: the first number is how closely you are currently aligned to the avatar, and the second number is how closely the reference frame is aligned.
 
