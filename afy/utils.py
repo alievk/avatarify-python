@@ -114,6 +114,10 @@ class AccumDict:
         return self.__str__()
 
 
+def clamp(value, min_value, max_value):
+    return max(min(value, max_value), min_value)
+
+
 def crop(img, p=0.7, offset_x=0, offset_y=0):
     h, w = img.shape[:2]
     x = int(min(w, h) * p)
@@ -121,12 +125,16 @@ def crop(img, p=0.7, offset_x=0, offset_y=0):
     r = w - l
     u = (h - x) // 2
     d = h - u
+
+    offset_x = clamp(offset_x, -l, w - r)
+    offset_y = clamp(offset_y, -u, h - d)
+
     l += offset_x
     r += offset_x
     u += offset_y
     d += offset_y
 
-    return img[u:d, l:r], (l,r,u,d,w,h)
+    return img[u:d, l:r], (offset_x, offset_y)
 
 
 def pad_img(img, target_size, default_pad=0):

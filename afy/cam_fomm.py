@@ -272,8 +272,8 @@ if __name__ == "__main__":
             frame = frame[..., ::-1]
             frame_orig = frame.copy()
 
-            frame, lrudwh = crop(frame, p=frame_proportion, offset_x=frame_offset_x, offset_y=frame_offset_y)
-            frame_lrudwh = lrudwh
+            frame, (frame_offset_x, frame_offset_y) = crop(frame, p=frame_proportion, offset_x=frame_offset_x, offset_y=frame_offset_y)
+
             frame = resize(frame, (IMG_SIZE, IMG_SIZE))[..., :3]
 
             if find_keyframe:
@@ -320,29 +320,21 @@ if __name__ == "__main__":
                 frame_proportion += 0.05
                 frame_proportion = min(frame_proportion, 1.0)
             elif key == ord('H'):
-                if frame_lrudwh[0] - 1 > 0:
-                    frame_offset_x -= 1
+                frame_offset_x -= 1
             elif key == ord('h'):
-                if frame_lrudwh[0] - 5 > 0:
-                    frame_offset_x -= 5
+                frame_offset_x -= 5
             elif key == ord('K'):
-                if frame_lrudwh[1] + 1 < frame_lrudwh[4]:
-                    frame_offset_x += 1
+                frame_offset_x += 1
             elif key == ord('k'):
-                if frame_lrudwh[1] + 5 < frame_lrudwh[4]:
-                    frame_offset_x += 5
+                frame_offset_x += 5
             elif key == ord('J'):
-                if frame_lrudwh[2] - 1 > 0:
-                    frame_offset_y -= 1
+                frame_offset_y -= 1
             elif key == ord('j'):
-                if frame_lrudwh[2] - 5 > 0:
-                    frame_offset_y -= 5
+                frame_offset_y -= 5
             elif key == ord('U'):
-                if frame_lrudwh[3] + 1 < frame_lrudwh[5]:
-                    frame_offset_y += 1
+                frame_offset_y += 1
             elif key == ord('u'):
-                if frame_lrudwh[3] + 5 < frame_lrudwh[5]:
-                    frame_offset_y += 5
+                frame_offset_y += 5
             elif key == ord('Z'):
                 frame_offset_x = 0
                 frame_offset_y = 0
