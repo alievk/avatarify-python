@@ -302,6 +302,11 @@ if __name__ == "__main__":
             
             key = cv2.waitKey(1)
 
+            if cv2.getWindowProperty('cam', cv2.WND_PROP_VISIBLE) < 1.0:
+                break
+            elif is_calibrated and cv2.getWindowProperty('avatarify', cv2.WND_PROP_VISIBLE) < 1.0:
+                break
+
             if key == 27: # ESC
                 break
             elif key == ord('d'):
