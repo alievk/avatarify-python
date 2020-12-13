@@ -108,8 +108,6 @@ class PredictorLocal:
         # self.face_deviation = dev_x, dev_y
         self.face_deviation = d_x, d_y
 
-        print((d_x, d_y), (dev_x, dev_y), center_driving)
-
         # self.kp_driving['value'] = kp_driving['value'] * alpha + self.kp_driving['value'] * (1 - alpha)
         # self.kp_driving['jacobian'] = kp_driving['jacobian']
 

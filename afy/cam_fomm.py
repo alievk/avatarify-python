@@ -85,13 +85,14 @@ def load_images(IMG_SIZE = 256, full_frame=False):
 
             if full_frame:
                 bbox = extract_bbox(img_full, fa, increase_area=0.3)
-                print(bbox)
                 img_crop = img_full[bbox[1]:bbox[3], bbox[0]:bbox[2]]
 
                 f = IMG_SIZE/(bbox[2]-bbox[0])
                 img_full = cv2.resize(img_full, None, None, fx=f, fy=f)
                 shift = (int(f * bbox[1]), int(f * bbox[0]))
                 head_positions.append(shift)
+            else:
+                img_crop = img_full
 
             img_crop = resize(img_crop, (IMG_SIZE, IMG_SIZE))
 
@@ -256,10 +257,13 @@ if __name__ == "__main__":
     cur_ava = 0    
     avatar = None
     change_avatar(predictor, avatars[cur_ava])
-    passthrough = False
+    passthrough = True
 
     cv2.namedWindow('cam', cv2.WINDOW_GUI_NORMAL)
     cv2.moveWindow('cam', 500, 250)
+
+    cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
+    cv2.resizeWindow('avatarify', 640, 480)
 
     frame_proportion = 0.9
     frame_offset_x = 0
@@ -313,7 +317,7 @@ if __name__ == "__main__":
             timing['preproc'] = tt.toc()
 
             if passthrough:
-                out = frame
+                out = frame_orig
             elif is_calibrated:
                 tt.tic()
                 out = predictor.predict(frame)
@@ -455,7 +459,7 @@ if __name__ == "__main__":
             cv2.imshow('cam', preview_frame[..., ::-1])
 
             if out is not None:
-                if opt.full_frame:
+                if opt.full_frame and not passthrough:
                     out = overlay(full_avatars[cur_ava], out, head_positions[cur_ava])
 
                     dx, dy = predictor.get_face_deviation()
@@ -479,7 +483,6 @@ if __name__ == "__main__":
                 if enable_vcam:
                     out = resize(out, stream_img_size)
                     stream.schedule_frame(out)
-
                 cv2.imshow('avatarify', out[..., ::-1])
 
             fps_hist.append(tt.toc(total=True))

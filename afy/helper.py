@@ -2,6 +2,7 @@ import face_alignment
 from skimage.transform import resize
 from skimage import img_as_ubyte
 import numpy as np
+import cv2
 
 
 def extract_bbox(frame, fa, increase_area=0.1):
@@ -59,6 +60,8 @@ def make_overlay_mask():
 def overlay(background, head, offset):
     background = np.array(background)[..., :3]
     mask = make_overlay_mask()[:, :, np.newaxis]
+    if head.shape[:2] != mask.shape[:2]:
+        head = cv2.resize(head, (mask.shape[1], mask.shape[0]))
     background[offset[0]:offset[0]+head.shape[0], offset[1]:offset[1]+head.shape[1]] = \
         background[offset[0]:offset[0]+head.shape[0], offset[1]:offset[1]+head.shape[1]] * (1 - mask) + \
         np.array(head)[..., :3] * mask

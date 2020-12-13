@@ -134,9 +134,9 @@ def pad_img(img, target_size, default_pad=0):
     w, h = target_size
     pad_w, pad_h = default_pad, default_pad
     if w / h > 1:
-        pad_w += int(sw * (w / h) - sw) // 2
+        pad_w += int(sh * (w / h) - sw) // 2
     else:
-        pad_h += int(sh * (h / w) - sh) // 2
+        pad_h += int(sw * (h / w) - sh) // 2
     out = np.pad(img, [[pad_h, pad_h], [pad_w, pad_w], [0,0]], 'constant')
     return out
 
