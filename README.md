@@ -113,6 +113,8 @@ bash scripts/install_mac.sh
 
 #### Windows
 
+**New**: Check out our [app](https://github.com/alievk/avatarify/wiki/Windows-App) with graphical interface!
+
 :arrow_forward: [Video tutorial](https://youtu.be/lym9ANVb120)
 
 This guide is tested for Windows 10.
