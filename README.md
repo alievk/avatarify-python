@@ -94,13 +94,14 @@ bash scripts/install.sh
 
 
 #### Mac
+<!--
 *(!) Note*: we found out that in versions after [v4.6.8 (March 23, 2020)](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) Zoom disabled support for virtual cameras on Mac. To use Avatarify in Zoom you can choose from 2 options:
 - Install [Zoom v4.6.8](https://zoom.us/client/4.6.19178.0323/ZoomInstaller.pkg) which is the last version that supports virtual cameras
 - Use latest version of Zoom, but disable library validation by running this command in terminal:
 ```bash
 codesign --remove-signature /Applications/zoom.us.app
 ```
-
+-->
 <!--*(!) Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify/wiki/Remote-GPU) connection is required.-->
 
 We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
