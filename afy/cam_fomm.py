@@ -16,6 +16,8 @@ import afy.camera_selector as cam_selector
 
 log = Tee('./var/log/cam_fomm.log')
 
+# Where to split an array from face_alignment to separate each landmark
+LANDMARK_SLICE_ARRAY = np.array([17, 22, 27, 31, 36, 42, 48, 60])
 
 if _platform == 'darwin':
     if not opt.is_client:
@@ -96,6 +98,13 @@ def draw_rect(img, rw=0.6, rh=0.8, color=(255, 0, 0), thickness=2):
     d = h - u
     img = cv2.rectangle(img, (int(l), int(u)), (int(r), int(d)), color, thickness)
 
+def kp_to_pixels(arr):
+    '''Convert normalized landmark locations to screen pixels'''
+    return ((arr + 1) * 127).astype(np.int32)
+
+def draw_face_landmarks(img, face_kp, color=(20, 80, 255)):
+    if face_kp is not None:
+        img = cv2.polylines(img, np.split(kp_to_pixels(face_kp), LANDMARK_SLICE_ARRAY), False, color)
 
 def print_help():
     info('\n\n=== Control keys ===')
@@ -122,6 +131,13 @@ def draw_fps(frame, fps, timing, x0=10, y0=20, ystep=30, fontsz=0.5, color=(255,
     cv2.putText(frame, f"Model time (ms): {timing['predict']:.1f}", (x0, y0 + ystep * 1), 0, fontsz * IMG_SIZE / 256, color, 1)
     cv2.putText(frame, f"Preproc time (ms): {timing['preproc']:.1f}", (x0, y0 + ystep * 2), 0, fontsz * IMG_SIZE / 256, color, 1)
     cv2.putText(frame, f"Postproc time (ms): {timing['postproc']:.1f}", (x0, y0 + ystep * 3), 0, fontsz * IMG_SIZE / 256, color, 1)
+    return frame
+
+
+def draw_landmark_text(frame, thk=2, fontsz=0.5, color=(0, 0, 255)):
+    frame = frame.copy()
+    cv2.putText(frame, "ALIGN FACES", (60, 20), 0, fontsz * IMG_SIZE / 255, color, thk)
+    cv2.putText(frame, "THEN PRESS X", (60, 245), 0, fontsz * IMG_SIZE / 255, color, thk)
     return frame
 
 
@@ -247,6 +263,8 @@ if __name__ == "__main__":
     find_keyframe = False
     is_calibrated = False
 
+    show_landmarks = False
+
     fps_hist = []
     fps = 0
     show_fps = False
@@ -355,6 +373,7 @@ if __name__ == "__main__":
                     cv2.moveWindow('avatarify', 600, 250)
                 
                 is_calibrated = True
+                show_landmarks = False
             elif key == ord('z'):
                 overlay_alpha = max(overlay_alpha - 0.1, 0.0)
             elif key == ord('c'):
@@ -365,6 +384,8 @@ if __name__ == "__main__":
                 output_flip = not output_flip
             elif key == ord('f'):
                 find_keyframe = not find_keyframe
+            elif key == ord('o'):
+                show_landmarks = not show_landmarks
             elif key == ord('q'):
                 try:
                     log('Loading StyleGAN avatar...')
@@ -396,6 +417,14 @@ if __name__ == "__main__":
                 preview_frame = cv2.addWeighted( avatar, overlay_alpha, frame, 1.0 - overlay_alpha, 0.0)
             else:
                 preview_frame = frame.copy()
+
+            if show_landmarks:
+                # Dim the background to make it easier to see the landmarks
+                preview_frame = cv2.convertScaleAbs(preview_frame, alpha=0.5, beta=0.0)
+
+                draw_face_landmarks(preview_frame, avatar_kp, (200, 20, 10))
+                frame_kp = predictor.get_frame_kp(frame)
+                draw_face_landmarks(preview_frame, frame_kp)
             
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
@@ -416,6 +445,8 @@ if __name__ == "__main__":
 
             if not is_calibrated:
                 preview_frame = draw_calib_text(preview_frame)
+            elif show_landmarks:
+                preview_frame = draw_landmark_text(preview_frame)
 
             if not opt.hide_rect:
                 draw_rect(preview_frame)
