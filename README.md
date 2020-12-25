@@ -124,7 +124,7 @@ bash scripts/install_mac.sh
 This guide is tested for Windows 10.
 
 <!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exenetwork). -->
-1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
+1. Install [Miniconda Python 3.8](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
 2. Install [Git](https://git-scm.com/download/win).
 3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
 4. Download and install Avatarify (please copy-paste these commands and don't change them):
