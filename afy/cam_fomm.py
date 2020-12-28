@@ -258,7 +258,7 @@ if __name__ == "__main__":
     frame_offset_y = 0
 
     overlay_alpha = 0.0
-    preview_flip = False
+    input_flip = False
     output_flip = False
     find_keyframe = False
     is_calibrated = False
@@ -291,6 +291,10 @@ if __name__ == "__main__":
                 break
 
             frame = frame[..., ::-1]
+
+            if input_flip:
+                frame = cv2.flip(frame, 1)
+
             frame_orig = frame.copy()
 
             frame, (frame_offset_x, frame_offset_y) = crop(frame, p=frame_proportion, offset_x=frame_offset_x, offset_y=frame_offset_y)
@@ -379,7 +383,7 @@ if __name__ == "__main__":
             elif key == ord('c'):
                 overlay_alpha = min(overlay_alpha + 0.1, 1.0)
             elif key == ord('r'):
-                preview_flip = not preview_flip
+                input_flip = not input_flip
             elif key == ord('t'):
                 output_flip = not output_flip
             elif key == ord('f'):
@@ -425,9 +429,6 @@ if __name__ == "__main__":
                 draw_face_landmarks(preview_frame, avatar_kp, (200, 20, 10))
                 frame_kp = predictor.get_frame_kp(frame)
                 draw_face_landmarks(preview_frame, frame_kp)
-            
-            if preview_flip:
-                preview_frame = cv2.flip(preview_frame, 1)
                 
             if green_overlay:
                 green_alpha = 0.8
