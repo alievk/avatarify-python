@@ -1,6 +1,6 @@
 ![](docs/mona.gif)
 
- Download [Windows app (beta)](https://github.com/alievk/avatarify/wiki/Windows-App)
+<!-- Download [Windows app (beta)](https://github.com/alievk/avatarify/wiki/Windows-App) -->
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb)
 
@@ -117,7 +117,7 @@ bash scripts/install_mac.sh
 
 #### Windows
 
-**New**: Check out our [app](https://github.com/alievk/avatarify/wiki/Windows-App) with graphical interface!
+<!-- **New**: Check out our [app](https://github.com/alievk/avatarify/wiki/Windows-App) with graphical interface! -->
 
 :arrow_forward: [Video tutorial](https://youtu.be/lym9ANVb120)
 
