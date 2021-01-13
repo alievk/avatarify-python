@@ -74,6 +74,10 @@ def load_images(IMG_SIZE = 256):
     for i, f in enumerate(images_list):
         if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png'):
             img = cv2.imread(f)
+            if img is None:
+                log("Failed to open image: {}".format(f))
+                continue
+
             if img.ndim == 2:
                 img = np.tile(img[..., None], [1, 1, 3])
             img = img[..., :3][..., ::-1]
