@@ -31,7 +31,7 @@ class PredictorLocal:
 
     def load_checkpoints(self):
         with open(self.config_path) as f:
-            config = yaml.load(f)
+            config = yaml.load(f, Loader=yaml.FullLoader)
     
         generator = OcclusionAwareGenerator(**config['model_params']['generator_params'],
                                             **config['model_params']['common_params'])
