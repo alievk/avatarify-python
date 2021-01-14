@@ -134,7 +134,7 @@ else
                 --relative \
                 --adapt_scale \
                 $@ \
-        && $(DOCKER_DEPRECATION_WARNING)
+        && $DOCKER_DEPRECATION_WARNING
         xhost -local:root
 
     else
@@ -148,7 +148,7 @@ else
                 --relative \
                 --adapt_scale \
                 $@ \
-        && $(DOCKER_DEPRECATION_WARNING)
+        && $DOCKER_DEPRECATION_WARNING
     fi
 
 fi
