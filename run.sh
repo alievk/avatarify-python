@@ -97,7 +97,6 @@ if [[ $USE_DOCKER == 0 ]]; then
 else
 
     source scripts/settings.sh
-    DOCKER_DEPRECATION_WARNING=:
 
     if [[ $ENABLE_VCAM == 1 ]]; then
         bash scripts/create_virtual_camera.sh
@@ -106,7 +105,7 @@ else
     if [[ $DOCKER_NO_GPU == 0 ]]; then
         if nvidia-container-runtime -v &> /dev/null; then
             DOCKER_ARGS="$DOCKER_ARGS --runtime=nvidia"
-            DOCKER_DEPRECATION_WARNING= echo "Warning : Outdated Docker gpu support, please update !"
+            echo "Warning : Outdated Docker gpu support, please update !"
         else
             DOCKER_ARGS="$DOCKER_ARGS --gpus all"
         fi
@@ -133,8 +132,7 @@ else
                 --virt-cam $CAMID_VIRT \
                 --relative \
                 --adapt_scale \
-                $@ \
-        && $DOCKER_DEPRECATION_WARNING
+                $@
         xhost -local:root
 
     else
@@ -147,8 +145,7 @@ else
                 --virt-cam $CAMID_VIRT \
                 --relative \
                 --adapt_scale \
-                $@ \
-        && $DOCKER_DEPRECATION_WARNING
+                $@
     fi
 
 fi
