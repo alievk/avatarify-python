@@ -9,9 +9,8 @@ call scripts/settings_windows.bat
 call conda create -y -n %CONDA_ENV_NAME% python=3.7
 call conda activate %CONDA_ENV_NAME%
 
-call conda install -y -c conda-forge numpy==1.15.0
-call conda install -y pytorch==1.0.0 torchvision==0.2.1 cuda100 -c pytorch
-call conda install -y python-blosc==1.7.0 -c conda-forge
+call conda install -y numpy==1.19.0 scikit-image python-blosc==1.7.0 -c conda-forge
+call conda install -y pytorch==1.7.1 torchvision cudatoolkit=11.0 -c pytorch
 call conda install -y -c anaconda git
 
 REM ###FOMM###
