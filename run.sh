@@ -97,13 +97,18 @@ if [[ $USE_DOCKER == 0 ]]; then
 else
 
     source scripts/settings.sh
-    
+
     if [[ $ENABLE_VCAM == 1 ]]; then
         bash scripts/create_virtual_camera.sh
     fi
     
     if [[ $DOCKER_NO_GPU == 0 ]]; then
-        DOCKER_ARGS="$DOCKER_ARGS --gpus all"
+        if nvidia-container-runtime -v &> /dev/null; then
+            DOCKER_ARGS="$DOCKER_ARGS --runtime=nvidia"
+            echo "Warning : Outdated Docker gpu support, please update !"
+        else
+            DOCKER_ARGS="$DOCKER_ARGS --gpus all"
+        fi
     fi
 
     if [[ $DOCKER_IS_LOCAL_CLIENT == 1 ]]; then
@@ -112,9 +117,7 @@ else
         DOCKER_ARGS="$DOCKER_ARGS -p 5557:5554 -p 5557:5558"
     fi
 
-    
 
-    
     if [[ $IS_WORKER == 0 ]]; then
         xhost +local:root
         docker run $DOCKER_ARGS -it --rm --privileged  \
@@ -144,6 +147,5 @@ else
                 --adapt_scale \
                 $@
     fi
-    
 
 fi
