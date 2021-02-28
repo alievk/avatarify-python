@@ -25,8 +25,8 @@ WORKDIR /app/avatarify
 
 RUN bash scripts/download_data.sh
 
-RUN pip3 install ${PYTORCH_WHEEL} -r requirements.txt \
- && pip3 install ${PYTORCH_WHEEL} -r fomm/requirements.txt \
+RUN pip3 --no-cache-dir install ${PYTORCH_WHEEL} -r requirements.txt \
+ && pip3 --no-cache-dir install ${PYTORCH_WHEEL} -r fomm/requirements.txt \
  && rm -rf /root/.cache/pip
 
 ENV PYTHONPATH="/app/avatarify:/app/avatarify/fomm"
