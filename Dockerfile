@@ -29,6 +29,9 @@ RUN pip3 --no-cache-dir install ${PYTORCH_WHEEL} -r requirements.txt \
  && pip3 --no-cache-dir install ${PYTORCH_WHEEL} -r fomm/requirements.txt \
  && rm -rf /root/.cache/pip
 
+RUN mkdir -p /root/.face_alignment/data \
+ && curl https://www.adrianbulat.com/downloads/python-fan/s3fd_convert.pth /root/.face_alignment/data/s3fd_convert.pth
+
 ENV PYTHONPATH="/app/avatarify:/app/avatarify/fomm"
 
 EXPOSE 5557
