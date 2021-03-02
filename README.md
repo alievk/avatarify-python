@@ -276,7 +276,7 @@ Go to Settings -> Video and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS
 
 <img src=docs/zoom.jpg width=600>
 
-### Teams
+### Teams#
 
 Go to your profile picture -> Settings -> Devices and choose `avatarify` (Linux), `CamTwist` (Mac) or `OBS-Camera` (Windows) from Camera drop-down menu.
 
