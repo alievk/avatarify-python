@@ -240,7 +240,7 @@ Shift-Z | Reset camera zoom and translation
 Z/C | Adjust avatar target overlay opacity.
 X | Reset reference frame.
 F | Toggle reference frame search mode.
-R | Mirror reference window.
+R | Mirror camera input.
 T | Mirror output window.
 L | Reload avatars.
 I | Show FPS
