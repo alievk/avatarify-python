@@ -134,7 +134,7 @@ cd avatarify
 scripts\install_windows.bat
 ```
 5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
-6. Run `pip install -r -requirements.txt --use-feature=2020-resolver` to install the required dependencies.
+6. Run `pip install -r requirements.txt --use-feature=2020-resolver` to install the required dependencies.
 7. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. <!--If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...-->
 8. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
 9. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
