@@ -1,3 +1,9 @@
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb)
+
+:arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs)
+
+:arrow_forward: [AI-generated Elon Musk](https://youtu.be/lONuXGNqLO0)
+
 ## Table of Contents
 - [Requirements](#requirements)
 - [Install](#install)
