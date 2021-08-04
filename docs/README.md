@@ -63,10 +63,10 @@ bash Miniconda3-latest-Linux-x86_64.sh
 2. Clone `avatarify` and install its dependencies (sudo privelege is required):
 ```bash
 git clone https://github.com/alievk/avatarify-python.git
-cd avatarify
+cd avatarify-python
 bash scripts/install.sh
 ```
-3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+3. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify-python` directory (don't unpack it).
 
 
 #### Mac
@@ -86,7 +86,7 @@ We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for M
 2. [Download](https://github.com/alievk/avatarify-python/archive/master.zip) and unpack the repository or use `git`:
 ```bash
 git clone https://github.com/alievk/avatarify-python.git
-cd avatarify
+cd avatarify-python
 bash scripts/install_mac.sh
 ```
 3. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
@@ -106,10 +106,10 @@ This guide is tested for Windows 10.
 4. Download and install Avatarify (please copy-paste these commands and don't change them):
 ```bash
 git clone https://github.com/alievk/avatarify-python.git
-cd avatarify
+cd avatarify-python
 scripts\install_windows.bat
 ```
-5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify` directory (don't unpack it).
+5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify-python` directory (don't unpack it).
 6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. <!--If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...-->
 7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
 8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
@@ -132,7 +132,7 @@ Docker images are only availabe on Linux.
 3. Clone `avatarify` and install its dependencies (v4l2loopback kernel module):
 ```bash
 git clone https://github.com/alievk/avatarify-python.git
-cd avatarify
+cd avatarify-python
 bash scripts/install_docker.sh
 ```
 4. Build the Dockerfile:
