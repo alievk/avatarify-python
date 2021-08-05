@@ -18,7 +18,7 @@ ARG FACE_ALIGNMENT_GIT="git+https://github.com/1adrianb/face-alignment"
 ARG AVATARIFY_COMMIT="a300fcaadb6a6964e69d4a90db9e7d72bb87e791"
 ARG FOMM_COMMIT="efbe0a6f17b38360ff9a446fddfbb3ce5493534c"
 
-RUN git clone https://github.com/alievk/avatarify.git /app/avatarify && cd /app/avatarify && git checkout ${AVATARIFY_COMMIT} \
+RUN git clone https://github.com/alievk/avatarify-python.git /app/avatarify && cd /app/avatarify && git checkout ${AVATARIFY_COMMIT} \
  && git clone https://github.com/alievk/first-order-model.git /app/avatarify/fomm && cd /app/avatarify/fomm && git checkout ${FOMM_COMMIT}
 
 WORKDIR /app/avatarify
