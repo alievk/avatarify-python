@@ -195,7 +195,7 @@ If there are multiple cameras (including virtual ones) in your system, you may n
 cd C:\path\to\avatarify
 run_windows.bat
 ```
-2. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
+2. Run OBS Studio. It should automatically start streaming video from Avatarify to `OBS-Camera`.
 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
