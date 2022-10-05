@@ -14,6 +14,8 @@
 
 2- Install Miniconda Python 3.7. - [HERE](https://www.dropbox.com/s/qogfyvcgpm8xjwb/Miniconda3-py37_4.12.0-Windows-x86_64.exe?dl=0)
 
+3- Install CUDA for your GPU - [HERE](https://developer.nvidia.com/cuda-11-7-1-download-archive?target_os=Windows&target_arch=x86_64&target_version=11&target_type=exe_local)
+
 # Installing the app and the model
 
 Press the windows key and search for miniconda, open the app and you will have a terminal, then copy paste the commands below
