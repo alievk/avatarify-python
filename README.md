@@ -28,10 +28,10 @@ cd avatarify-python-youtube
 
 # Important `Download the model before installing`
 
-Download the model [HERE]([https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0](https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0)) 
+Download the model [HERE]([https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0](https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0)
 
 <aside>
-💡 Copy the file [vox-adv-cpk.pth.tar](https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0) to the avatarify-python-youtube folder and do not extract it.
+💡 Copy the file vox-adv-cpk.pth.tar to the avatarify-python-youtube folder and do not extract it.
 
 </aside>
 
