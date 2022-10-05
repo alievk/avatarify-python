@@ -21,7 +21,7 @@
 Press the windows key and search for miniconda, open the app and you will have a terminal, then copy paste the commands below
 
 ```bash
-git clone [https://github.com/technopremium/avatarify-python-youtube.git](https://github.com/technopremium/avatarify-python-youtube.git)
+git clone https://github.com/technopremium/avatarify-python-youtube.git
 cd avatarify-python-youtube
 
 ```
