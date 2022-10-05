@@ -1,7 +1,5 @@
 ![](docs/mona.gif)
 
-# Avatarify Python for Windows 11 (It may works on windows 10)
-
 # Requirements
 
 1- Nvidia RTX cards, recommend 8GB or more.
@@ -18,6 +16,53 @@
 
 # Installing the app and the model
 
+Press the windows key and search for miniconda, open the app and you will have a terminal, then copy paste the commands below
+
 ```bash
 git clone [https://github.com/technopremium/avatarify-python-youtube.git](https://github.com/technopremium/avatarify-python-youtube.git)
+cd avatarify-python-youtube
+
 ```
+
+# Important `Download the model before installing`
+
+Download the model [HERE]([https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0](https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0)) 
+
+<aside>
+💡 Copy the file [vox-adv-cpk.pth.tar](https://www.dropbox.com/s/vsokwc29rh1vqw3/vox-adv-cpk.pth.tar?dl=0) to the avatarify-python-youtube folder and do not extract it.
+
+</aside>
+
+# Installing the app
+
+Open the windows with miniconda and navigate to the avatrify-python-youtube folder if not there
+
+```bash
+cd avatarify-python-youtube
+scripts\install_windows.bat
+```
+
+`This will take some time to install all the dependencies and files`
+
+# Finally launching the app
+
+```bash
+run_windows.bat
+```
+
+<aside>
+💡 Next time to start the app you just need to:
+
+</aside>
+
+1- Open miniconda terminal 
+
+2- Navigate to the avatarify-python-youtube folder 
+
+3- type on terminal run_windows.bat
+
+# Enjoy
+
+Original project - https://github.com/alievk/avatarify-python 
+
+Thanks for this amazing project, I just make it easier for normal users to run on their machines.
