@@ -1,4 +1,4 @@
-numpy==1.15.0
+numpy==1.22.0
 PyYAML==5.1
 requests==2.23
 msgpack-numpy==0.4.5
