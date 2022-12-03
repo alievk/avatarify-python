@@ -285,7 +285,6 @@ if __name__ == "__main__":
     print_help()
 
     try:
-        start = time.time()
         while True:
             tt = TicToc()
             tt.tic()
