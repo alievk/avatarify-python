@@ -29,26 +29,26 @@ if _platform == 'darwin':
 def is_new_frame_better(source, driving, predictor):
     global avatar_kp
     global display_string
-    
+
     if avatar_kp is None:
         display_string = "No face detected in avatar."
         return False
-    
+
     if predictor.get_start_frame() is None:
         display_string = "No frame to compare to."
         return True
-    
+
     driving_smaller = resize(driving, (128, 128))[..., :3]
     new_kp = predictor.get_frame_kp(driving)
-    
+
     if new_kp is not None:
         new_norm = (np.abs(avatar_kp - new_kp) ** 2).sum()
         old_norm = (np.abs(avatar_kp - predictor.get_start_frame_kp()) ** 2).sum()
-        
+
         out_string = "{0} : {1}".format(int(new_norm * 100), int(old_norm * 100))
         display_string = out_string
         log(out_string)
-        
+
         return new_norm < old_norm
     else:
         display_string = "No face found!"
@@ -183,6 +183,15 @@ def select_camera(config):
 if __name__ == "__main__":
     with open('config.yaml', 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
+        if not 'max_fps' in config:
+            f.seek(0)
+            data = f.read(10 ** 4).rstrip("\n")
+            config['max_fps'] = None
+        max_fps = config['max_fps']
+    if config['max_fps'] == None:
+        with open('config.yaml', 'w') as f:
+            f.write(f"{data}\n\n# limit cam fps by setting this value to a positive integer\nmax_fps: 0")
+        max_fps = config['max_fps'] = 0
 
     global display_string
     display_string = ""
@@ -245,11 +254,11 @@ if __name__ == "__main__":
         else:
             enable_vcam = False
             # log("Virtual camera is supported only on Linux.")
-        
+
         # if not enable_vcam:
             # log("Virtual camera streaming will be disabled.")
 
-    cur_ava = 0    
+    cur_ava = 0
     avatar = None
     change_avatar(predictor, avatars[cur_ava])
     passthrough = False
@@ -276,8 +285,10 @@ if __name__ == "__main__":
     print_help()
 
     try:
+        start = time.time()
         while True:
             tt = TicToc()
+            tt.tic()
 
             timing = {
                 'preproc': 0,
@@ -287,7 +298,6 @@ if __name__ == "__main__":
 
             green_overlay = False
 
-            tt.tic()
 
             ret, frame = cap.read()
             if not ret:
@@ -321,7 +331,7 @@ if __name__ == "__main__":
                 out = None
 
             tt.tic()
-            
+
             key = cv2.waitKey(1)
 
             if cv2.getWindowProperty('cam', cv2.WND_PROP_VISIBLE) < 1.0:
@@ -375,7 +385,7 @@ if __name__ == "__main__":
                 if not is_calibrated:
                     cv2.namedWindow('avatarify', cv2.WINDOW_GUI_NORMAL)
                     cv2.moveWindow('avatarify', 600, 250)
-                
+
                 is_calibrated = True
                 show_landmarks = False
             elif key == ord('z'):
@@ -429,10 +439,10 @@ if __name__ == "__main__":
                 draw_face_landmarks(preview_frame, avatar_kp, (200, 20, 10))
                 frame_kp = predictor.get_frame_kp(frame)
                 draw_face_landmarks(preview_frame, frame_kp)
-            
+
             if preview_flip:
                 preview_frame = cv2.flip(preview_frame, 1)
-                
+
             if green_overlay:
                 green_alpha = 0.8
                 overlay = preview_frame.copy()
@@ -440,7 +450,7 @@ if __name__ == "__main__":
                 preview_frame = cv2.addWeighted( preview_frame, green_alpha, overlay, 1.0 - green_alpha, 0.0)
 
             timing['postproc'] = tt.toc()
-                
+
             if find_keyframe:
                 preview_frame = cv2.putText(preview_frame, display_string, (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
 
@@ -470,10 +480,17 @@ if __name__ == "__main__":
 
                 cv2.imshow('avatarify', out[..., ::-1])
 
+            if max_fps >= 1:
+                lapse = tt.toc(total=True) / 1000
+                sleep = (1 / max_fps) - lapse
+                if sleep > 0:
+                    time.sleep(sleep)
+
             fps_hist.append(tt.toc(total=True))
             if len(fps_hist) == 10:
                 fps = 10 / (sum(fps_hist) / 1000)
                 fps_hist = []
+
     except KeyboardInterrupt:
         log("main: user interrupt")
 
