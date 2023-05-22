@@ -1,6 +1,6 @@
 numpy==1.15.0
 PyYAML==5.1
-requests==2.23
+requests==2.31.0
 msgpack-numpy==0.4.5
 pyzmq==19.0.0
 opencv-python==3.4.5.20
