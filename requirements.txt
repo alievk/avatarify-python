@@ -3,5 +3,5 @@ face-alignment==1.3.3
 pyzmq==20.0.0
 msgpack-numpy==0.4.7.1
 pyyaml==5.4
-requests==2.25.1
+requests==2.31.0
 pyfakewebcam==0.1.0
