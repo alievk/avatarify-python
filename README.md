@@ -21,3 +21,9 @@ Based on [First Order Motion Model](https://github.com/AliaksandrSiarohin/first-
 - **15 April 2020.** Added [StyleGAN-generated](https://www.thispersondoesnotexist.com) avatars. Just press `Q` and now you drive a person that never existed. Every time you push the button – new avatar is sampled.
 - **13 April 2020.** Added Windows support (kudos to [9of9](https://github.com/9of9)).
 
+## Avatarify apps
+
+We have deployed Avatarify on iOS and Android devices using our proprietary inference engine. The iOS version features the Life mode for recording animations in real time. However, the Life mode is not available on Android devices due to the diversity of the devices we have to support.
+
+[<img src=docs/appstore-badge.png alt="drawing" height="40"/>](https://apps.apple.com/app/apple-store/id1512669147?pt=121960189&ct=GitHub&mt=8)
+[<img src=docs/google-play-badge.png alt="drawing" height="40"/>](https://play.google.com/store/apps/details?id=com.avatarify.android)
