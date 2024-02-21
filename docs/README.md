@@ -315,6 +315,8 @@ A: Avatarify creates a virtual camera which can be plugged into any app where vi
 Q: **Where can I discuss Avatarify-related topics with the community?**  
 A: We have Slack. Please join: [<img src="https://img.shields.io/badge/slack-join-brightgreen?style=flat&logo=slack">](https://join.slack.com/t/avatarify/shared_invite/zt-dyoqy8tc-~4U2ObQ6WoxuwSaWKKVOgg)
 
+Q: **How do I get rid of `Error: BadDrawable (invalid Pixmap or Window parameter) 9`**  
+A: Add QT_X11_NO_MITSHM=1 to your path variables
 
 ## Troubleshooting
 
