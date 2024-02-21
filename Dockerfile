@@ -25,9 +25,13 @@ WORKDIR /app/avatarify
 
 RUN bash scripts/download_data.sh
 
-RUN pip3 install ${PYTORCH_WHEEL} -r requirements.txt \
- && pip3 install ${PYTORCH_WHEEL} -r fomm/requirements.txt \
+RUN pip3 --no-cache-dir install ${PYTORCH_WHEEL} -r requirements.txt \
+ && pip3 --no-cache-dir install ${PYTORCH_WHEEL} -r fomm/requirements.txt \
  && rm -rf /root/.cache/pip
+
+RUN mkdir -p /root/.face_alignment/data \
+ && curl -s https://www.adrianbulat.com/downloads/python-fan/s3fd_convert.pth -o /root/.face_alignment/data/s3fd_convert.pth \
+ && curl -s https://www.adrianbulat.com/downloads/python-fan/2DFAN-4.pth.tar -o /root/.face_alignment/data/2DFAN-4.pth.tar
 
 ENV PYTHONPATH="/app/avatarify:/app/avatarify/fomm"
 
