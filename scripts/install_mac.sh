@@ -17,4 +17,6 @@ conda activate $CONDA_ENV_NAME
 #conda install -y pytorch==1.0.0 torchvision==0.2.1 -c pytorch
 #conda install -y python-blosc==1.7.0 -c conda-forge
 #conda install -y matplotlib==2.2.2
-pip install -r requirements_client.txt
+conda install -y conda-libmamba-solver pip==21.0.1
+
+conda run pip install -r requirements_client.txt

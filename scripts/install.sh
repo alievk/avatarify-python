@@ -21,6 +21,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda create -y -n $CONDA_ENV_NAME python=3.7
 conda activate $CONDA_ENV_NAME
 
+conda install -y conda-libmamba-solver pip==21.0.1
 conda install -y numpy==1.19.0 scikit-image python-blosc==1.7.0 -c conda-forge
 conda install -y pytorch==1.7.1 torchvision cudatoolkit=11.0 -c pytorch
 
@@ -28,4 +29,4 @@ conda install -y pytorch==1.7.1 torchvision cudatoolkit=11.0 -c pytorch
 rm -rf fomm 2> /dev/null
 git clone https://github.com/alievk/first-order-model.git fomm
 
-pip install -r requirements.txt
+conda run pip install -r requirements.txt
