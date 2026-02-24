@@ -10,6 +10,7 @@
     - [Download network weights](#download-network-weights)
     - [Linux](#linux)
     - [Mac](#mac)
+    - [Mac (Apple Silicon)](#mac-apple-silicon)
     - [Windows](#windows)
     - [Remote GPU](#remote-gpu)
     - [Docker](#docker)
@@ -90,6 +91,10 @@ cd avatarify-python
 bash scripts/install_mac.sh
 ```
 3. Download and install [CamTwist](http://camtwiststudio.com) from [here](http://camtwiststudio.com/download). It's easy.
+
+#### Mac (Apple Silicon)
+
+If you have a Mac with an M1, M2, M3, or M4 chip, you can run Avatarify locally using PyTorch's MPS backend for GPU acceleration. See the dedicated **[Apple Silicon Installation Guide](INSTALL_APPLE_SILICON.md)** for full step-by-step instructions.
 
 #### Windows
 

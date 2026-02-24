@@ -1,11 +1,33 @@
 from scipy.spatial import ConvexHull
 import torch
+import torch.nn.functional as F
 import yaml
 from modules.keypoint_detector import KPDetector
 from modules.generator_optim import OcclusionAwareGenerator
 from sync_batchnorm import DataParallelWithCallback
 import numpy as np
 import face_alignment
+
+
+def _patch_grid_sample_for_mps():
+    """Monkey-patch grid_sample to run on CPU when inputs are on MPS.
+
+    MPS grid_sample produces corrupted output, so we move tensors to CPU
+    for that single op and move the result back to MPS. All other ops
+    still benefit from MPS acceleration.
+    """
+    _original_grid_sample = F.grid_sample
+
+    def _safe_grid_sample(input, grid, mode='bilinear', padding_mode='zeros', align_corners=None):
+        if input.is_mps:
+            result = _original_grid_sample(
+                input.cpu(), grid.cpu(),
+                mode=mode, padding_mode=padding_mode, align_corners=align_corners
+            )
+            return result.to('mps')
+        return _original_grid_sample(input, grid, mode=mode, padding_mode=padding_mode, align_corners=align_corners)
+
+    F.grid_sample = _safe_grid_sample
 
 
 def normalize_kp(kp_source, kp_driving, kp_driving_initial, adapt_movement_scale=False,
@@ -37,7 +59,15 @@ def to_tensor(a):
 
 class PredictorLocal:
     def __init__(self, config_path, checkpoint_path, relative=False, adapt_movement_scale=False, device=None, enc_downscale=1):
-        self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        if device:
+            self.device = device
+        elif torch.cuda.is_available():
+            self.device = 'cuda'
+        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+            _patch_grid_sample_for_mps()
+            self.device = 'mps'
+        else:
+            self.device = 'cpu'
         self.relative = relative
         self.adapt_movement_scale = adapt_movement_scale
         self.start_frame = None
