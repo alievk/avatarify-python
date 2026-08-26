@@ -49,6 +49,13 @@ Of course, you also need a webcam!
 
 ## Install
 
+#### One-command setup
+Run the all-in-one setup helper to install dependencies for your platform and download the pretrained network weights:
+```bash
+bash scripts/setup_all.sh
+```
+On Linux, add `--no-vcam` if you want to skip virtual camera kernel module installation. Use `--skip-install` or `--skip-weights` to run only part of the setup. If the default weights host is unavailable, set `AVATARIFY_WEIGHTS_URL` to a reachable mirror before running the command.
+
 #### Download network weights
 Download model's weights from [here](https://openavatarify.s3-avatarify.com/weights/vox-adv-cpk.pth.tar) or [here](https://yadi.sk/d/M0FWpz2ExBfgAA) or [here](https://drive.google.com/file/d/1coUCdyRXDbpWnEkA99NLNY60mb9dQ_n3/view?usp=sharing) [228 MB, md5sum `8a45a24037871c045fbb8a6a8aa95ebc`]
 
